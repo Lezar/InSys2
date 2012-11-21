@@ -53,6 +53,10 @@ public:
 	/// \param[in] valueToFind identifies the value to be searched for in the primary key
 	/// \param[in] columnNameToModify identifies the column to change data for
 	/// \param[in] valueOfModify provides the new data for the desired column
+	/// \post total_quantity of product in Summary table is changed by the difference of the new value
+	///       when quantity in Invoice Item is changed
+	/// \post total_quantities of old and new products are modified in Summary when product_id is chaged
+	///       in Invoice Item
 	void modifyRow(string valueToFind, string columnNameToModify, string valueOfModify);
 
 	/// \brief Destructor for InvoiceItem

@@ -134,5 +134,34 @@ namespace TestInventory
 			// Check that summary is updated with right quantity
 			Assert::AreEqual("2543|220\n", summaryReturned.c_str()); //200 + 20
 		}
+
+		/// \brief Test modifying invoice_item's product_id updates product's quantity in Summary
+		TEST_METHOD(TestInvoiceItemModifyProductIDUpdatesQuantityInSummary)
+		{
+			// Log test name
+			Logger::WriteMessage("TestInvoiceItemModifyProductIDUpdatesQuantityInSummary");
+
+			invoiceItem2->modifyRow("1011", "product_id", "1002"); //chage 2543 to 1002
+
+			// string to store invoiceItem's search for invoice_item_id 1014
+			string invoiceItemReturned = invoiceItem2->search("invoice_item_id", "1011");
+			// string to store summary's search for product_id 2543
+			string summaryReturnedFor2543 = summary2->search("product_id", "2543");
+			// string to store summary's search for product_id 2543
+			string summaryReturnedFor1002 = summary2->search("product_id", "1002");
+
+
+			// Log results
+			Logger::WriteMessage(invoiceItemReturned.c_str());
+			Logger::WriteMessage(summaryReturnedFor2543.c_str());
+			Logger::WriteMessage(summaryReturnedFor1002.c_str());
+
+			// Check that invoice item's quantity was modified correctly
+			Assert::AreEqual("1011|1002|10\n", invoiceItemReturned.c_str());
+			// Check that product 2543's quantity is decreased by 10 because it is no longer in the invoice
+			Assert::AreEqual("2543|190\n", summaryReturnedFor2543.c_str());
+			// Check that product 1002's quantity is incread by 10 because it is given 2543's quantity
+			Assert::AreEqual("1002|110\n", summaryReturnedFor1002.c_str());
+		}
 	};
 }

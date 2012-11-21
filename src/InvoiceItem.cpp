@@ -165,6 +165,8 @@ string InvoiceItem::search(string columnName, string valueToFind) throw(DoesNotE
 // parameter[in]: columnNameToModify identifies the column to change data for
 // parameter[in]: valueOfModify provides the new data for the desired column
 // postcondition: total_quantity in Summary table is modified when quantity is modified
+// postcondition: total_quantity of old and new product_id's in Summary is modified appropriately
+//                when product_id is modified
 void InvoiceItem::modifyRow(string valueToFind, string columnNameToModify, string valueOfModify) {
 
 	ifstream infstream; // ifstream to be used to read invoiceItem.txt
@@ -176,9 +178,14 @@ void InvoiceItem::modifyRow(string valueToFind, string columnNameToModify, strin
 	string product_id; //string to store product_id of current row
 	string quantity; //string to store quantity of current row
 	string summaryProduct_id; //string to store the product_id to modify the summary table
+	string total_quantity; //string to store the total_quantity to modify the summary table
+	
+	stringstream totalQuantity; //stringstream to convert int to string
 
 	int delimPos1, delimPos2; // position of delimiters in current row
-	int differenceInQuantity; // int to store the difference between quantity and valueOfModify
+	int differenceInQuantity; // int to store the difference between quantity and 
+
+	Table summary = new Summary(); // Summary class obj used to change productID and quantities in Summmary Table
 
 	infstream.open(fileName);
 
@@ -210,12 +217,16 @@ void InvoiceItem::modifyRow(string valueToFind, string columnNameToModify, strin
 			if (invoice_item_id == valueToFind)
 			{
 				if (columnNameToModify == "product_id") // modify product_id
+				{
 					fileVector.push_back(invoice_item_id + "|" + valueOfModify + "|" + quantity + "\n");
+					differenceInQuantity = atoi(quantity.c_str()); // store the modified row's quantity
+					summaryProduct_id = product_id; //store the modified row's product_id to summaryProduct_id
+				}
 				else if (columnNameToModify == "quantity") // modify quantity
 				{
 					fileVector.push_back(invoice_item_id + "|" + product_id + "|" + valueOfModify + "\n");
 
-					// store valueOfModify - quantityin differenceInQuantity
+					// store valueOfModify - quantity in differenceInQuantity
 					differenceInQuantity =  atoi(valueOfModify.c_str()) - atoi(quantity.c_str());
 					summaryProduct_id = product_id; //store the modified row's product_id to summaryProduct_id
 				}
@@ -239,30 +250,62 @@ void InvoiceItem::modifyRow(string valueToFind, string columnNameToModify, strin
 	// change summary's total quantity if invoice item's quantity is changed
 	if (columnNameToModify == "quantity")
 	{
-	Table summary = new Summary(); // Summary class obj used to change product quantities in Summmary Table
+		// search for product_id in Summary table and store in current row
+		currentRow = summary->search("product_id", summaryProduct_id); // product_id will always exist
 
-	// search for product_id in Summary table and store in current row
-	currentRow = summary->search("product_id", summaryProduct_id); // product_id will always exist
+		// Update the product_id's quantity in the summary table
+		delimPos1 = currentRow.find('|'); // find delimiter in returned row from Summary
 
-	// Update the product_id's quantity in the summary table
-	delimPos1 = currentRow.find('|'); // find delimiter in returned row from Summary
+		summaryProduct_id = currentRow.substr(0, delimPos1); // product_id of row in Summary Table
+		total_quantity = currentRow.substr(delimPos1 + 1); // total quantity of row in Summary table
 
-	string total_quantity; // total_quantity of product in Summary table
+		// Add InvoiceItem's differenceInQuantity to total_quantity in Summary
+		// then output to stringstream totalQuantity
+		totalQuantity << atoi(total_quantity.c_str()) + differenceInQuantity;
 
-	summaryProduct_id = currentRow.substr(0, delimPos1); // product_id of row in Summary Table
-	total_quantity = currentRow.substr(delimPos1 + 1); // total quantity of row in Summary table
+		// change the total_quantity in summary using the stringstream totalQuantity
+		summary->modifyRow(summaryProduct_id, "total_quantity", totalQuantity.str());
+	}
+	// change the total quantity of both old and new product_id's in summary
+	else if (columnNameToModify == "product_id")
+	{
+		// ***change the OLD product_id's quantity in summary***
+		// search for product_id in Summary table and store in current row
+		currentRow = summary->search("product_id", summaryProduct_id); // old product_id of invoiceItem row
 
-	stringstream totalQuantity; //stringstream to convert int to string
+		// Update the product_id's quantity in the summary table
+		delimPos1 = currentRow.find('|'); // find delimiter in returned row from Summary
 
-	// Add InvoiceItem's differenceInQuantity to total_quantity in Summary
-	// then output to stringstream totalQuantity
-	totalQuantity << atoi(total_quantity.c_str()) + differenceInQuantity;
+		summaryProduct_id = currentRow.substr(0, delimPos1); // product_id of row in Summary Table
+		total_quantity = currentRow.substr(delimPos1 + 1); // total quantity of row in Summary table
 
-	// change the total_quantity in summary using the stringstream totalQuantity
-	summary->modifyRow(summaryProduct_id, "total_quantity", totalQuantity.str());
+		// subtract the invoiceItem's modified row's quantity from summary's total_quantity for that product
+		// then output to stringstream totalQuantity
+		totalQuantity << atoi(total_quantity.c_str()) - differenceInQuantity;
+
+		// change the total_quantity in summary using the stringstream totalQuantity
+		summary->modifyRow(summaryProduct_id, "total_quantity", totalQuantity.str());
+
+		// ***now change the NEW product_id's quantity in summary***
+		// search for product_id in Summary table and store in current row
+		currentRow = summary->search("product_id", valueOfModify); // modified product_id of invoiceItem row
+
+		// Update the product_id's quantity in the summary table
+		delimPos1 = currentRow.find('|'); // find delimiter in returned row from Summary
+
+		summaryProduct_id = currentRow.substr(0, delimPos1); // product_id of row in Summary Table
+		total_quantity = currentRow.substr(delimPos1 + 1); // total quantity of row in Summary table
+
+		// Add the quantity of the old product_id to the new one
+		// then output to stringstream totalQuantity
+		totalQuantity.str("");
+		totalQuantity << atoi(total_quantity.c_str()) + differenceInQuantity;
+
+		// change the total_quantity in summary using the stringstream totalQuantity
+		summary->modifyRow(summaryProduct_id, "total_quantity", totalQuantity.str());
+	}
 
 	delete summary;
-	}
 }
 
 // Invoice Items should not be deleted from the database
