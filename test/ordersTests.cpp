@@ -15,7 +15,7 @@ namespace TestInventory
 	TEST_CLASS(ordersTests)
 	{
 	public:
-		
+
 		/// \brief sets up each test method
 		///
 		/// - Initializes orders class
@@ -26,7 +26,7 @@ namespace TestInventory
 
 			ofstream ofstr;
 			ofstr.open("textfiles\\orders.txt", ios_base::trunc); // clear Orders table
-			
+
 			// Set up orders data for testing
 			ofstr << "101|1\n";
 			ofstr << "102|1\n";
@@ -51,7 +51,7 @@ namespace TestInventory
 
 			// String to store value returned by Orders::search
 			string returned = orders->search("invoice_id", "3"); // test invoice_id
-			
+
 			// Logs returned values
 			Logger::WriteMessage(returned.c_str());
 
@@ -62,12 +62,12 @@ namespace TestInventory
 		/// \brief tests if the Orders class can search a table by invoice_item_id
 		TEST_METHOD(TestOrdersSearchByInvoiceItemID)
 		{
-			
+
 			Logger::WriteMessage("TestOrdersSearchByInvoiceItemID");
 
 			// test search by invoice_item_id, store in returned
 			string returned = orders->search("invoice_item_id", "103");
-			
+
 			Logger::WriteMessage(returned.c_str());
 
 			Assert::AreEqual("103|2\n", returned.c_str());
@@ -80,7 +80,7 @@ namespace TestInventory
 
 			// multiple invoice_id's of value 2
 			string returned = orders->search("invoice_id", "2");
-			
+
 			Logger::WriteMessage(returned.c_str());
 
 			Assert::AreEqual("103|2\n104|2\n", returned.c_str());
@@ -90,7 +90,7 @@ namespace TestInventory
 		TEST_METHOD(TestOrdersSearchValueDoesNotExist)
 		{
 			Logger::WriteMessage("TestOrdersSearchValueDoesNotExist");
-			
+
 			// tests if DoesNotExistException is thrown 
 			try {
 				string returned = orders->search("invoice_item_id", "99999");
@@ -112,7 +112,7 @@ namespace TestInventory
 			vector<string> addVector;
 			addVector.push_back("106"); //invoice_item_id
 			addVector.push_back("3"); //invoice_id
-			
+
 			Logger::WriteMessage("TestOrdersAdd");
 
 			orders->add(addVector);
@@ -146,6 +146,28 @@ namespace TestInventory
 				Logger::WriteMessage("Other exception");
 				Assert::Fail(); 
 			} 
+
+		}
+
+		/// \brief tests if Orders class can delete a row in the table
+		TEST_METHOD(TestOrdersDelete)
+		{
+			Logger::WriteMessage("TestOrdersDelete");
+
+			orders->deleteRow("103");
+
+			// tests if DoesNotExistException is thrown, which means invoice_item_id no longer exists
+			try {
+				string returned = orders->search("invoice_item_id", "103");
+				Assert::Fail(); // fail test if no exception is thrown
+			}
+			catch (DoesNotExistException e) { // continue if DoesNotExistException was thrown
+				Logger::WriteMessage(e.what());
+			} 
+			catch (...) { // Fail if something else is thrown
+				Logger::WriteMessage("Other exception");
+				Assert::Fail(); 
+			}
 		}
 	};
 }

@@ -33,6 +33,17 @@ namespace TestInventory
 			ofstr << "104|00011|33\n";
 		
 			ofstr.close();
+
+			// Adds same products to summary for isolated testing
+			ofstr.open("textfiles\\summary.txt", ios_base::trunc); // clear summary table
+			
+			// Data for testing
+			ofstr << "00000|33\n";
+			ofstr << "1002|25\n";
+			ofstr << "2720|1\n";
+			ofstr << "00011|33\n";
+		
+			ofstr.close();
 		}
 
 		/// \brief clean up after every test method
@@ -119,13 +130,13 @@ namespace TestInventory
 		{
 			Logger::WriteMessage("TestInvoiceItemModifyProductID");
 
-			invoiceItem->modifyRow("103", "product_id", "1620"); //change 103's product id to 1620
+			invoiceItem->modifyRow("102", "product_id", "2720"); //change 103's product id to 1620
 
-			string returned = invoiceItem->search("quantity", "1");
+			string returned = invoiceItem->search("quantity", "25");
 
 			Logger::WriteMessage(returned.c_str());
 
-			Assert::AreEqual("103|1620|1\n", returned.c_str());
+			Assert::AreEqual("102|2720|25\n", returned.c_str());
 		}
 
 		/// \brief tests if the InvoiceItem class can modify a quantity in the InvoiceItem table
@@ -140,6 +151,27 @@ namespace TestInventory
 			Logger::WriteMessage(returned.c_str());
 
 			Assert::AreEqual("102|1002|9001\n", returned.c_str());
+		}
+
+		/// \brief tests if Invoice Item class can delete a row in the table
+		TEST_METHOD(TestInvoiceItemDelete)
+		{
+			Logger::WriteMessage("TestInvoiceItemDelete");
+
+			invoiceItem->deleteRow("103");
+
+			// tests if DoesNotExistException is thrown, which means invoice_item_id no longer exists
+			try {
+				string returned = invoiceItem->search("invoice_item_id", "103");
+				Assert::Fail(); // fail test if no exception is thrown
+			}
+			catch (DoesNotExistException e) { // continue if DoesNotExistException was thrown
+				Logger::WriteMessage(e.what());
+			} 
+			catch (...) { // Fail if something else is thrown
+				Logger::WriteMessage("Other exception");
+				Assert::Fail(); 
+			}
 		}
 	};
 }

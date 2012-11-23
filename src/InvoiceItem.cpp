@@ -308,9 +308,86 @@ void InvoiceItem::modifyRow(string valueToFind, string columnNameToModify, strin
 	delete summary;
 }
 
-// Invoice Items should not be deleted from the database
-// because all filed invoices will be kept
-void InvoiceItem::deleteRow(string valueToFind) {}
+// Deletes a row by searching for that row's invoice_item_id
+// parameter[in]: valueToFind is the value of the invoice_item_id of the row to delete
+// postcondition: the deleted product's quantity is subtracted from that product's total quantity in summary
+void InvoiceItem::deleteRow(string valueToFind) {
+
+	ifstream infstream; // ifstream to be used to read invoiceItem.txt
+	ofstream outfstream; // ofstream to be used to write to invoiceItem.txt	
+	vector<string> fileVector; // string vector to store each line of the invoiceIte.txt file
+
+	string currentRow; // string to store the current row in the table
+	string invoice_item_id; //string to store invoice_item_id of current row
+	string product_id; //string to store product_id of current row
+	string quantity; // string to store quantity of current rows
+	string summary_product_id; // string to store product_id to change summary's values
+	string total_quantity; // string to store total_quantity to change summary's values
+	string quantityOfDeleted; // string to store the quantity of the deleted 
+
+	int delimPos1, delimPos2; // position of delimiters in the current row
+
+	infstream.open(fileName);
+
+	if(infstream.is_open())
+	{
+		// while loop continues as long as there is another line in the text file
+		// transfers invoiceItem.txt to fileVector with the desired row removed
+		while(infstream.good())
+		{
+			getline(infstream, currentRow); // store next line of textfile in currentRow
+
+			// break when an empty string is assigned to currentRow
+			// which occurss if there are no more valid entries in the table
+			if (currentRow.empty())
+				break;
+
+			delimPos1 = currentRow.find('|'); // position of first delimiter '|'
+			delimPos2 = currentRow.find('|', delimPos1 + 1); // position of second delimiter
+
+			// find invoice item id, product id, and quantity by breaking up the string
+			invoice_item_id = currentRow.substr(0,delimPos1);
+			product_id = currentRow.substr(delimPos1 + 1, delimPos2 - delimPos1 - 1);
+			quantity = currentRow.substr(delimPos2 + 1);
+
+			// adds everything to vector but row to be deleted
+			if (invoice_item_id != valueToFind)
+				fileVector.push_back(invoice_item_id + "|" + product_id + "|" + quantity + "\n");
+			else
+			{
+				summary_product_id = product_id; // store deleted rows product_id to summary's product_id
+				quantityOfDeleted = quantity; // store deleted rows quantity to total_quantity
+			}
+		}
+	}
+
+	infstream.close();
+
+	// clears invoiceItem.txt so fileVector can be written on it
+	outfstream.open(fileName, ios_base::trunc);
+
+	// copy fileVector to invoiceItem.txt
+	for(int i = 0; i < (int) fileVector.size(); i++)
+		outfstream << fileVector[i];
+
+	outfstream.close();
+
+	// *** subtract deleted row's quantity from that products total quantity in summary
+
+	Table summary = new Summary(); // Table to modify summary
+	stringstream totalQuantity; // stringstream to convert int to string
+
+	// find the product in Summary which was deleted in Invoice Item
+	currentRow = summary->search("product_id", summary_product_id);
+
+	// find that product's total quantity
+	delimPos1 = currentRow.find('|');
+	total_quantity = currentRow.substr(delimPos1 + 1);
+
+	totalQuantity << atoi(total_quantity.c_str()) - atoi(quantityOfDeleted.c_str());
+
+	summary->modifyRow(summary_product_id, "total_quantity", totalQuantity.str());
+}
 
 // default constructor initialize fileName
 InvoiceItem::InvoiceItem() { fileName = "textfiles\\invoiceItem.txt"; }

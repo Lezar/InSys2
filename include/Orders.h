@@ -10,6 +10,7 @@
 /// Responsibilities of the Orders class include:
 /// - Add a row to the Orders table
 /// - Search for a row in the Orders table
+/// - Delete a row in the Orders table
 /// - Connect and disconnect from the database
 class Orders : public TableInterface
 {
@@ -17,12 +18,6 @@ private:
 
 	/// \brief file name of text file for Orders table
 	string fileName;
-
-	/// \brief rows will not be deleted
-	///
-	/// deleteRow will not do anything because rows will not be deleted.
-	/// This is because both Invoice and InvoiceItem cannot be deleted
-	void deleteRow(string valueToFind);
 
 	/// \brief rows will not be modified
 	///
@@ -46,6 +41,11 @@ public:
 	void add(vector<string> addVector) throw (AlreadyExistsException);
 
 	string search(string columnName, string valueToFind) throw(DoesNotExistException);
+
+	/// \brief Orders will delete a row by finding that row's invoice_item_id, which is unique
+	///
+	/// \param[in] valueToFind is the value of invoice_item_id of the row to be deleted
+	void deleteRow(string valueToFind);
 
 	/// \brief Destructor for Orders
 	~Orders();
