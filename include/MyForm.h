@@ -3160,8 +3160,11 @@ namespace InventoryManagement {
 	private: System::Void txtInvoiceProductQuantity_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 
 				 // Enable AddProduct only if ProductQuantity text is numeric and non-empty
+				 // and is not only 0
 				 if (System::Text::RegularExpressions::Regex::IsMatch
 					 (txtInvoiceProductQuantity->Text, "^[0-9]*$") &&
+					 !System::Text::RegularExpressions::Regex::IsMatch
+					 (txtInvoiceProductQuantity->Text, "^[0]*$") &&
 					 txtInvoiceProductQuantity->Text != "")
 				 {
 					 btnInvoiceAddProduct->Enabled = true;
@@ -3201,7 +3204,7 @@ namespace InventoryManagement {
 				 // Get product_id, name, and quantity
 				 product_id = product->Substring(0, delimiter1-1);
 				 name = product->Substring(delimiter3 + 2, delimiter4 - delimiter3 - 3);
-				 quantity = txtInvoiceProductQuantity->Text;
+				 quantity = txtInvoiceProductQuantity->Text->TrimStart('0'); // remove any leading 0's
 
 				 // Add product_id, name, and quantity to listbox if on Add function
 				 if (cmbInvoiceFunction->SelectedIndex == 0)
