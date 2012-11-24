@@ -1642,6 +1642,7 @@ namespace InventoryManagement {
 				 btnInvoiceCreateInvoice->Visible = false;
 				 btnInvoiceModify->Visible = false;
 				 btnInvoiceSearch->Visible = false;
+				 dtInvoiceDate->MaxDate = DateTime::Today;
 
 				 // Reports: all components (Except Report Selection label and combobox selector) set to invisible
 				 lblReportCategorySelect->Visible = false;
@@ -2243,7 +2244,7 @@ namespace InventoryManagement {
 					 lstInvoiceProductList->Enabled = false;
 					 btnInvoiceAddProduct->Enabled = false;
 					 btnInvoiceModify->Enabled = false;
-					 dtInvoiceDate->Enabled = false;
+					 dtInvoiceDate->Enabled = true;
 					 btnInvoiceRemoveProduct->Enabled = false;
 					 lblInvoiceProductSelect->Enabled = false;
 					 cmbInvoiceProductSelect->Enabled = false;
@@ -3490,8 +3491,7 @@ namespace InventoryManagement {
 	private: System::Void btnInvoiceRemoveProduct_Click(System::Object^  sender, System::EventArgs^  e) {
 
 				 // remove selected product
-				 if (lstInvoiceProductList->SelectedValue != NULL)
-					 lstInvoiceProductList->Items->Remove(lstInvoiceProductList->SelectedItem);
+				 lstInvoiceProductList->Items->Remove(lstInvoiceProductList->SelectedItem);
 
 				 //disable itself, invoice date, and creat invoice if there is nothing in the listbox
 				 if (lstInvoiceProductList->Items->Count == 0) {
@@ -3852,8 +3852,7 @@ namespace InventoryManagement {
 			 /// \brief Removes a product from the Sales product listbox when Remove Product is clicked
 	private: System::Void btnSalesRemoveProduct_Click(System::Object^  sender, System::EventArgs^  e) {
 
-				 if (lstSalesProducts->SelectedValue != NULL)
-					 lstSalesProducts->Items->Remove(lstSalesProducts->SelectedItem);
+				 lstSalesProducts->Items->Remove(lstSalesProducts->SelectedItem);
 
 				 //disable itself, date, and create receipt if there is nothing in the listbox
 				 if (lstSalesProducts->Items->Count == 0) {
@@ -4113,11 +4112,17 @@ namespace InventoryManagement {
 
 					 // change the text of the Product Quantity combobox to the selected quantity
 					 txtInvoiceProductQuantity->Text = quantity;
+
+					 btnInvoiceModify->Enabled = false;
 				 } // end if selected function is modify
 			 }
 
 			 /// \brief modifies the selected invoice item with the new product_id and quantity
+			 ///        and modifies selected invoice with selected date
 	private: System::Void btnInvoiceModify_Click_1(System::Object^  sender, System::EventArgs^  e) {
+
+				 Table invoiceItem = new InvoiceItem();
+				 Table invoice = new Invoice();
 
 				 System::String^ invoice_item; // selected invoice_item;
 				 System::String^ product; // selected product
@@ -4125,7 +4130,23 @@ namespace InventoryManagement {
 				 System::String^ product_id; // product_id of selected product
 				 System::String^ quantity; // changed quantity
 
-				 int delimiter1; // position of delimiter '|'
+				 int delimiter1, delimiter2; // position of delimiters
+
+				 // get the date from date time picker and convert to std::string
+
+				 System::String^ invoiceDate = dtInvoiceDate->Value.ToString("yyyy-MM-dd");	  	
+				 string date(marshal_as<std::string>(invoiceDate));
+
+				 // get invoice_id of selected invoice by converting selection to std::string
+				 // and then breaking it up with delimiters	  
+				 System::String^ invoiceSystemStr = cmbInvoiceSelect->SelectedItem->ToString();  	
+				 std::string invoiceSTDStr = marshal_as<std::string>(invoiceSystemStr);	  	
+				 delimiter1 = invoiceSTDStr.find(":"); 	
+				 delimiter2 = invoiceSTDStr.find(":", delimiter1 + 1);	  	
+				 std::string invoice_id = invoiceSTDStr.substr(delimiter1 + 2, delimiter2 - delimiter1 - 9); 
+
+				 // chage the date of the invoice	  	
+				 invoice->modifyRow(invoice_id, "date", date);
 
 				 // find invoice_item_id
 				 invoice_item = lstInvoiceProductList->SelectedItem->ToString();
@@ -4146,26 +4167,14 @@ namespace InventoryManagement {
 				 std::string quantityString = marshal_as<std::string>(quantity);
 
 				 // modify row and dislay message
-				 Table invoiceItem = new InvoiceItem();
 				 invoiceItem->modifyRow(invoice_item_idString, "quantity", quantityString);
+				 invoiceItem->modifyRow(invoice_item_idString, "product_id", product_idString);
 
 				 MessageBox::Show("Invoice Item Modified");
 
-				 // disables  and enables textboxes and buttons
-				 lstInvoiceProductList->Items->Clear();
-				 cmbInvoiceProductSelect->Items->Clear();
-				 txtInvoiceProductQuantity->Text = "";
-				 lstInvoiceProductList->Items->Clear();
-
-				 txtInvoiceProductQuantity->Enabled = false;
-				 lstInvoiceProductList->Enabled = false;
-				 btnInvoiceAddProduct->Enabled = false;
-				 btnInvoiceModify->Enabled = false;
-				 dtInvoiceDate->Enabled = false;
-				 btnInvoiceRemoveProduct->Enabled = false;
-				 lblInvoiceProductSelect->Enabled = false;
-				 cmbInvoiceProductSelect->Enabled = false;
-				 cmbInvoiceSelect->Enabled = true;
+				 // refresh modify
+				 cmbInvoiceFunction->SelectedIndex = 0;	  	
+				 cmbInvoiceFunction->SelectedIndex = 1;
 			 }
 
 			 /// \brief clear product quantity text when clicked
@@ -4279,5 +4288,5 @@ namespace InventoryManagement {
 				 reportForm.ShowDialog();
 
 			 }
-};
+	};
 }
