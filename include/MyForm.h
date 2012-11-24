@@ -94,6 +94,103 @@ namespace InventoryManagement {
 				 return fileVect;
 			 }
 
+			 /// \brief populates lstInvoiceProductList with the selected invoice's items
+			 ///
+			 /// \pre valid Invoice is currently selected
+	private: void populateInvoiceProductList() {
+
+				 // clear Product List
+				 lstInvoiceProductList->Items->Clear();
+
+				 // TablesInterfaces to interact with tables
+				 Table orders = new Orders();
+				 Table invoiceItem = new InvoiceItem();
+				 Table product = new Product();
+
+				 // String^ to hold the current selected invoice
+				 System::String^ invoiceSystemStr = cmbInvoiceSelect->SelectedItem->ToString();
+				 // convert to std::string
+				 std::string invoiceSTDStr = marshal_as<std::string>(invoiceSystemStr);
+
+				 // Integers to store delimiter positions
+				 int delimiter1, delimiter2, delimiter3, delimiter4;
+
+				 // strings to store returns of searches
+				 std::string ordersReturned, invoiceItemReturned, productReturned;
+
+				 // string to store current row in of search result of Orders
+				 std::string currentRow;
+
+				 // find delimiter for invoice_Id
+				 delimiter1 = invoiceSTDStr.find(":");
+				 delimiter2 = invoiceSTDStr.find(":", delimiter1 + 1);
+
+				 // strings for invoice_id, invoice_item_id, product_id, name, and quantity
+				 std::string invoice_id, invoice_item_id, product_id, name, quantity;
+
+				 // search Orders for all invoice_items with the invoice_id of selected invoice
+				 invoice_id = invoiceSTDStr.substr(delimiter1 + 2, delimiter2 - delimiter1 - 9); 
+				 ordersReturned = orders->search("invoice_id", invoice_id);
+
+				 // get the first row of the search result
+				 delimiter1 = ordersReturned.find("\n");
+				 currentRow = ordersReturned.substr(0, delimiter1+1);
+
+				 // if the current row is not equal to the ordersReturned
+				 // keep breaking down ordersReturned line by line until they do
+				 // ie, currentRow is the last line of the search result
+				 // find each invoice item id of each currentRow
+				 // and then find corresponding product_id and quantity
+				 // then search for product name and add all three to listbox
+				 while (!ordersReturned.empty()){
+
+					 // Remove first line from orders Returned and store to currentRow
+					 delimiter1 = ordersReturned.find("\n");
+					 ordersReturned = ordersReturned.substr(delimiter1+1);
+
+					 // find invoice_item_id
+					 delimiter1 = currentRow.find("|");
+					 invoice_item_id = currentRow.substr(0, delimiter1);
+
+					 // get new currentRow
+					 delimiter1 = ordersReturned.find("\n");
+					 currentRow = ordersReturned.substr(0, delimiter1 + 1);
+
+					 // search for that invoiceItem row
+					 invoiceItemReturned = invoiceItem->search("invoice_item_id", invoice_item_id);
+
+					 // find product_id and quantity
+					 delimiter1 = invoiceItemReturned.find("|");
+					 delimiter2 = invoiceItemReturned.find("|", delimiter1+1);
+					 product_id = invoiceItemReturned.substr(delimiter1 + 1, delimiter2 - delimiter1 - 1);
+					 quantity = invoiceItemReturned.substr(delimiter2 + 1);
+
+					 // search for the product
+					 productReturned = product->search("product_id", product_id);
+
+					 // find product name
+					 delimiter1 = productReturned.find("|");
+					 delimiter2 = productReturned.find("|", delimiter1+1);
+					 delimiter3 = productReturned.find("|", delimiter2+1);
+					 delimiter4 = productReturned.find("|", delimiter3+1);
+
+					 name = productReturned.substr(delimiter3 + 1, delimiter4 - delimiter3 - 1);
+
+					 // add invoice_item_id, product_id, name, and quantity
+					 lstInvoiceProductList->Items->Add(
+						 gcnew String(invoice_item_id.c_str()) + " | " +
+						 gcnew String(product_id.c_str()) + " | " +
+						 gcnew String(name.c_str()) + " | " +
+						 gcnew String(quantity.c_str()));
+
+				 } // end while for add to listbox
+
+				 delete invoiceItem;
+				 delete orders;
+				 delete product;
+			 }
+
+
 #pragma region Controls declared
 	private: System::Windows::Forms::TabControl^  tbInventorySystem;
 	protected: 
@@ -213,6 +310,7 @@ namespace InventoryManagement {
 	private: System::Windows::Forms::TextBox^  txtSearchReturns;
 	private: System::Windows::Forms::Label^  lblProductSearchInfo;
 	private: System::Windows::Forms::ComboBox^  cmbProductSelect;
+
 	private: System::Windows::Forms::TabPage^  tpReports;
 	private: System::Windows::Forms::ComboBox^  cmbReportSelect;
 	private: System::Windows::Forms::Label^  lblReportSelect;
@@ -230,8 +328,7 @@ namespace InventoryManagement {
 	private: System::Windows::Forms::Label^  lblReportCategorySelect;
 	private: System::Windows::Forms::Button^  btnReportGenerate;
 
-
-
+	private: System::Windows::Forms::Button^  btnInvoiceModifyInvoiceItem;
 
 #pragma endregion
 
@@ -311,6 +408,7 @@ namespace InventoryManagement {
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->cmbSalesFunction = (gcnew System::Windows::Forms::ComboBox());
 			this->tpInvoices = (gcnew System::Windows::Forms::TabPage());
+			this->btnInvoiceModifyInvoiceItem = (gcnew System::Windows::Forms::Button());
 			this->btnInvoiceSearch = (gcnew System::Windows::Forms::Button());
 			this->lblInvoiceProductList = (gcnew System::Windows::Forms::Label());
 			this->dtInvoiceDate = (gcnew System::Windows::Forms::DateTimePicker());
@@ -1017,6 +1115,7 @@ namespace InventoryManagement {
 			// 
 			// tpInvoices
 			// 
+			this->tpInvoices->Controls->Add(this->btnInvoiceModifyInvoiceItem);
 			this->tpInvoices->Controls->Add(this->btnInvoiceSearch);
 			this->tpInvoices->Controls->Add(this->lblInvoiceProductList);
 			this->tpInvoices->Controls->Add(this->dtInvoiceDate);
@@ -1040,6 +1139,16 @@ namespace InventoryManagement {
 			this->tpInvoices->TabIndex = 3;
 			this->tpInvoices->Text = L"Invoices";
 			this->tpInvoices->UseVisualStyleBackColor = true;
+			// 
+			// btnInvoiceModifyInvoiceItem
+			// 
+			this->btnInvoiceModifyInvoiceItem->Location = System::Drawing::Point(7, 234);
+			this->btnInvoiceModifyInvoiceItem->Name = L"btnInvoiceModifyInvoiceItem";
+			this->btnInvoiceModifyInvoiceItem->Size = System::Drawing::Size(89, 23);
+			this->btnInvoiceModifyInvoiceItem->TabIndex = 54;
+			this->btnInvoiceModifyInvoiceItem->Text = L"Modify Item";
+			this->btnInvoiceModifyInvoiceItem->UseVisualStyleBackColor = true;
+			this->btnInvoiceModifyInvoiceItem->Click += gcnew System::EventHandler(this, &MyForm::btnInvoiceModifyInvoiceItem_Click);
 			// 
 			// btnInvoiceSearch
 			// 
@@ -1071,11 +1180,11 @@ namespace InventoryManagement {
 			// 
 			// btnInvoiceModify
 			// 
-			this->btnInvoiceModify->Location = System::Drawing::Point(6, 333);
+			this->btnInvoiceModify->Location = System::Drawing::Point(7, 333);
 			this->btnInvoiceModify->Name = L"btnInvoiceModify";
-			this->btnInvoiceModify->Size = System::Drawing::Size(75, 23);
+			this->btnInvoiceModify->Size = System::Drawing::Size(98, 23);
 			this->btnInvoiceModify->TabIndex = 50;
-			this->btnInvoiceModify->Text = L"Modify";
+			this->btnInvoiceModify->Text = L"Modify Date";
 			this->btnInvoiceModify->UseVisualStyleBackColor = true;
 			this->btnInvoiceModify->Click += gcnew System::EventHandler(this, &MyForm::btnInvoiceModify_Click_1);
 			// 
@@ -1143,7 +1252,6 @@ namespace InventoryManagement {
 			this->txtInvoiceProductQuantity->Name = L"txtInvoiceProductQuantity";
 			this->txtInvoiceProductQuantity->Size = System::Drawing::Size(100, 20);
 			this->txtInvoiceProductQuantity->TabIndex = 41;
-			this->txtInvoiceProductQuantity->Click += gcnew System::EventHandler(this, &MyForm::txtInvoiceProductQuantity_Click);
 			this->txtInvoiceProductQuantity->TextChanged += gcnew System::EventHandler(this, &MyForm::txtInvoiceProductQuantity_TextChanged);
 			// 
 			// lblInvoiceProductQuantity
@@ -1642,6 +1750,7 @@ namespace InventoryManagement {
 				 btnInvoiceCreateInvoice->Visible = false;
 				 btnInvoiceModify->Visible = false;
 				 btnInvoiceSearch->Visible = false;
+				 btnInvoiceModifyInvoiceItem->Visible = false;
 				 dtInvoiceDate->MaxDate = DateTime::Today;
 
 				 // Reports: all components (Except Report Selection label and combobox selector) set to invisible
@@ -2183,6 +2292,7 @@ namespace InventoryManagement {
 					 btnInvoiceModify->Visible = false;
 					 lblInvoiceProductList->Visible = true;
 					 btnInvoiceSearch->Visible = false;
+					 btnInvoiceModifyInvoiceItem->Visible = false;
 					 lblInvoiceProductList->Text = "Product ID | Name | Quantity";
 
 					 // disables  and enables textboxes and buttons
@@ -2238,6 +2348,8 @@ namespace InventoryManagement {
 					 btnInvoiceModify->Visible = true;
 					 lblInvoiceProductList->Visible = true;
 					 btnInvoiceSearch->Visible = false;
+					 btnInvoiceModifyInvoiceItem->Visible = true;
+					 lblInvoiceProductList->Text = "Invoice Item ID | Product ID | Name | Quantity";
 
 					 // disables  and enables textboxes and buttons
 					 txtInvoiceProductQuantity->Enabled = false;
@@ -2249,6 +2361,7 @@ namespace InventoryManagement {
 					 lblInvoiceProductSelect->Enabled = false;
 					 cmbInvoiceProductSelect->Enabled = false;
 					 cmbInvoiceSelect->Enabled = true;
+					 btnInvoiceModifyInvoiceItem->Enabled = false;
 
 					 std::string currentRow; // store current row
 					 std::string invoice_id; // store invoice_id of current row
@@ -2295,6 +2408,7 @@ namespace InventoryManagement {
 					 btnInvoiceModify->Visible = false;
 					 lblInvoiceProductList->Visible = true;
 					 btnInvoiceSearch->Visible = true;
+					 btnInvoiceModifyInvoiceItem->Visible = false;
 					 lblInvoiceProductList->Text = "Invoice Item ID | Product ID | Name | Quantity";
 
 					 cmbInvoiceSelect->Enabled = false;
@@ -3258,50 +3372,54 @@ namespace InventoryManagement {
 			 /// \brief Set up the Product quantity textbox, and disable the add Product button
 	private: System::Void cmbInvoiceProductSelect_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 
-				 if(cmbInvoiceFunction->SelectedIndex == 0)
-				 {
-					 txtInvoiceProductQuantity->Clear(); // clear contents of product quantity textbox
-					 txtInvoiceProductQuantity->Enabled = true; // enable the product quantity textbox
-					 btnInvoiceAddProduct->Enabled = false; // disable AddProduct button
-				 }
+				 txtInvoiceProductQuantity->Enabled = true; // enable the product quantity textbox
+				 btnInvoiceRemoveProduct->Enabled = true; // enable remove button
+
+				 // Enable add product only if input of Quantity text is numerical
+				 if (System::Text::RegularExpressions::Regex::IsMatch
+					 (txtInvoiceProductQuantity->Text, "^[0-9]*$") &&
+					 txtInvoiceProductQuantity->Text != "")
+					 btnInvoiceAddProduct->Enabled = true;
+				 else
+					 btnInvoiceAddProduct->Enabled = false;
+
 			 }
 
-			 /// \brief Ensures that AddProduct and modify button is disabled if user input is not numeric
+			 /// \brief Ensures that AddProduct and modify Invoice button is disabled if user input is not numeric
 	private: System::Void txtInvoiceProductQuantity_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 
 				 // Enable AddProduct only if ProductQuantity text is numeric and non-empty
-				 if (txtInvoiceProductQuantity->Text == "")
+				 // and is not only 0
+				 if (System::Text::RegularExpressions::Regex::IsMatch
+					 (txtInvoiceProductQuantity->Text, "^[0-9]*$") &&
+					 !System::Text::RegularExpressions::Regex::IsMatch
+					 (txtInvoiceProductQuantity->Text, "^[0]*$") &&
+					 txtInvoiceProductQuantity->Text != "")
 				 {
-					 btnInvoiceAddProduct->Enabled = false;
-					 btnInvoiceModify->Enabled = false;
-				 }
-				 else if (System::Text::RegularExpressions::Regex::IsMatch
-					 (txtInvoiceProductQuantity->Text, "^[0-9]*$") &&
-					 cmbInvoiceFunction->SelectedIndex == 0 ) //add
 					 btnInvoiceAddProduct->Enabled = true;
-				 else if (System::Text::RegularExpressions::Regex::IsMatch
-					 (txtInvoiceProductQuantity->Text, "^[0-9]*$") &&
-					 cmbInvoiceFunction->SelectedIndex == 1 ) //modify
-					 btnInvoiceModify->Enabled = true;
+					 btnInvoiceModifyInvoiceItem->Enabled = true;
+				 }
 				 else
 				 {
 					 btnInvoiceAddProduct->Enabled = false;
-					 btnInvoiceModify->Enabled = false;
+					 btnInvoiceModifyInvoiceItem->Enabled = false;
 				 }
 			 }
 
 			 /// \brief Adds product, name, and quantity to the Product listbox when AddProduct button is clicked
+			 ///
+			 /// \post Invoice Item is added to database if Modify is selected
 	private: System::Void btnInvoiceAddProduct_Click(System::Object^  sender, System::EventArgs^  e) {
 
 				 // enable listbox, remove product, datetime, and create invoice
 				 lstInvoiceProductList->Enabled = true;
 				 dtInvoiceDate->Enabled = true;
 				 btnInvoiceRemoveProduct->Enabled = true;
-				 btnInvoiceCreateInvoice->Enabled = true;
 
 				 System::String^ product_id; // product_id to add to listbox
 				 System::String^ name; // name to add to listbox
 				 System::String^ quantity; //quantity to add to listbox
+
 
 				 // store current combo box selection to product
 				 System::String^ product = cmbInvoiceProductSelect->SelectedItem->ToString();
@@ -3315,15 +3433,87 @@ namespace InventoryManagement {
 				 // Get product_id, name, and quantity
 				 product_id = product->Substring(0, delimiter1-1);
 				 name = product->Substring(delimiter3 + 2, delimiter4 - delimiter3 - 3);
-				 quantity = txtInvoiceProductQuantity->Text;
+				 quantity = txtInvoiceProductQuantity->Text->TrimStart('0'); // remove any leading 0's
 
-				 // Add product_id, name, and quantity to listbox
-				 lstInvoiceProductList->Items->Add(product_id + " | " + name + " | " + quantity);
+				 // Add product_id, name, and quantity to listbox if on Add function
+				 if (cmbInvoiceFunction->SelectedIndex == 0)
+				 {
+					 lstInvoiceProductList->Items->Add(product_id + " | " + name + " | " + quantity);
+					 btnInvoiceCreateInvoice->Enabled = true; // Enable creating invoice when Adding invoice
+				 }
 
 				 // disable adding product and clear/disable quantity
 				 txtInvoiceProductQuantity->Enabled = false;
 				 txtInvoiceProductQuantity->Text = "";
 				 btnInvoiceAddProduct->Enabled = false;
+
+				 // Add invoice item to Orders and InvoiceItem tables if Modify is selected
+				 if (cmbInvoiceFunction->SelectedIndex == 1)
+				 {
+					 Table invoiceItem = new InvoiceItem();
+					 Table orders = new Orders();
+
+					 // get invoice_id of selected invoice by converting selection to std::string
+					 // and then breaking it up with delimiters
+					 System::String^ invoiceSystemStr = cmbInvoiceSelect->SelectedItem->ToString();
+					 std::string invoiceString = marshal_as<std::string>(invoiceSystemStr);
+					 delimiter1 = invoiceString.find(":");
+					 delimiter2 = invoiceString.find(":", delimiter1 + 1);
+					 std::string invoice_id = invoiceString.substr(delimiter1 + 2, delimiter2 - delimiter1 - 9); 
+
+					 //Convert product_id and quantity and invoice_id to std::string
+					 std::string product_idString = marshal_as<std::string>(product_id);
+					 std::string quantityString = marshal_as<std::string>(quantity);
+
+					 std::string invoice_item_id; // string to store invoice_item_id of last row
+					 std::string searchResult; // string to store search of InvoiceItem
+					 std::string currentRow; // string to store current row
+
+					 vector<string> addVector; // vector used to add to table
+
+					 // add new row to InvoiceItem
+					 addVector.push_back(product_idString);
+					 addVector.push_back(quantityString);
+					 invoiceItem->add(addVector);
+					 addVector.clear();
+
+					 //** find the invoice_item_id of newly added product by getting last line of search **//
+					 //** for newly added product by breaking the searchResult down line by line         **//
+
+					 // first search for newly added product
+					 searchResult = invoiceItem->search("product_id", product_idString);
+
+					 // get the first row of the search result
+					 delimiter1 = searchResult.find("\n");
+					 currentRow = searchResult.substr(0, delimiter1+1);
+
+					 // if the current row is not equal to the search result
+					 // keep breaking down searchResult line by line until they do
+					 // ie, currentRow is the last line of the search result
+					 while ( currentRow != searchResult){
+						 searchResult = searchResult.substr(delimiter1+1);
+						 delimiter1 = searchResult.find("\n");
+						 currentRow = searchResult.substr(0, delimiter1 + 1);
+					 }
+
+					 // get the latest invoice_item_id
+					 delimiter1 = currentRow.find("|");
+					 invoice_item_id = currentRow.substr(0, delimiter1);
+
+					 //** end search for newest invoice_item_id **//
+
+					 // add new row to orders
+					 addVector.push_back(invoice_item_id);
+					 addVector.push_back(invoice_id);
+					 orders->add(addVector);
+
+					 // add new invoice item to the Product List
+					 lstInvoiceProductList->Items->Add(gcnew String(invoice_item_id.c_str()) + 
+						 " | " + product_id + " | " + name + " | " + quantity);
+
+					 delete orders;
+					 delete invoiceItem;
+				 }
 			 }
 
 			 /// \brief Creates an invoice when Create Invoice is clicked
@@ -3371,7 +3561,7 @@ namespace InventoryManagement {
 					 currentRow = searchResult.substr(0, delimiter1 + 1);
 				 }
 
-				 // get the latest invoice_item_id
+				 // get the latest invoice_id
 				 delimiter1 = currentRow.find("|");
 				 string invoice_id = currentRow.substr(0, delimiter1); // latest invoice_id
 
@@ -3488,16 +3678,58 @@ namespace InventoryManagement {
 			 }
 
 			 /// \brief Removes an invoice item from product list when Remove Product is clicked
+			 ///
+			 /// \post invoice item is deleted from database if modifying
 	private: System::Void btnInvoiceRemoveProduct_Click(System::Object^  sender, System::EventArgs^  e) {
 
-				 // remove selected product
-				 lstInvoiceProductList->Items->Remove(lstInvoiceProductList->SelectedItem);
+
 
 				 //disable itself, invoice date, and creat invoice if there is nothing in the listbox
-				 if (lstInvoiceProductList->Items->Count == 0) {
+				 if (lstInvoiceProductList->Items->Count == 0 &&
+					 cmbInvoiceFunction->SelectedIndex == 0) // Adding an invoice
+				 {
+					 // remove selected product
+					 lstInvoiceProductList->Items->Remove(lstInvoiceProductList->SelectedItem); 
+
 					 btnInvoiceRemoveProduct->Enabled = false;
 					 btnInvoiceCreateInvoice->Enabled = false;
 					 dtInvoiceDate->Enabled = false;
+				 }
+				 // if Modifying, remove invoice item from database
+				 else if (cmbInvoiceFunction->SelectedIndex == 1)
+				 {
+					 // Must always have one item linked to an invoice
+					 if (lstInvoiceProductList->Items->Count == 1)
+					 {
+						 MessageBox::Show("You must always have at least one item in an Invoice!");
+					 }
+					 // delete row from invoice item table and product list
+					 // only when something is selected
+					 else if (lstInvoiceProductList->SelectedIndex >= 0)
+					 {
+						 Table invoiceItem = new InvoiceItem();
+						 Table orders = new Orders();
+
+						 // store current row as an std::string
+						 std::string currentRow = marshal_as<std::string>
+							 (lstInvoiceProductList->SelectedItem->ToString());
+
+						 // find the delimiter position
+						 int delimiter = currentRow.find('|');
+
+						 // get the invoice_item_id
+						 std::string invoice_item_id = currentRow.substr(0, delimiter - 1);
+
+						 // delete invoice item from database
+						 invoiceItem->deleteRow(invoice_item_id);
+						 orders->deleteRow(invoice_item_id);
+
+						 // remove selected product from listbox
+						 lstInvoiceProductList->Items->Remove(lstInvoiceProductList->SelectedItem); 
+
+						 delete invoiceItem;
+						 delete orders;
+					 }
 				 }
 			 }
 
@@ -3548,7 +3780,7 @@ namespace InventoryManagement {
 					 cmbInvoiceSelect->Enabled = true;
 				 }
 				 catch (DoesNotExistException e) {
-					 lstInvoiceProductList->Items->Add( gcnew String(e.what())); // error message
+					 MessageBox::Show(gcnew String(e.what())); // error message
 				 }
 				 delete invoice;
 			 }
@@ -3556,97 +3788,15 @@ namespace InventoryManagement {
 			 /// \brief Fills the listbox with invoiceItems of selected invoice
 	private: System::Void cmbInvoiceSelect_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 
-				 // Enable and clear Product List
+				 // populate Invoice Product List with selected invoice's items
 				 lstInvoiceProductList->Enabled = true;
-				 lstInvoiceProductList->Items->Clear();
-
-				 // TablesInterfaces to interact with tables
-				 Table orders = new Orders();
-				 Table invoiceItem = new InvoiceItem();
-				 Table product = new Product();
-
-				 // String^ to hold the current selected invoice
-				 System::String^ invoiceSystemStr = cmbInvoiceSelect->SelectedItem->ToString();
-				 // convert to std::string
-				 std::string invoiceSTDStr = marshal_as<std::string>(invoiceSystemStr);
-
-				 // Integers to store delimiter positions
-				 int delimiter1, delimiter2, delimiter3, delimiter4;
-
-				 // strings to store returns of searches
-				 std::string ordersReturned, invoiceItemReturned, productReturned;
-
-				 // string to store current row in of search result of Orders
-				 std::string currentRow;
-
-				 // find delimiter for invoice_Id
-				 delimiter1 = invoiceSTDStr.find(":");
-				 delimiter2 = invoiceSTDStr.find(":", delimiter1 + 1);
-
-				 // strings for invoice_id, invoice_item_id, product_id, name, and quantity
-				 std::string invoice_id, invoice_item_id, product_id, name, quantity;
-
-				 // search Orders for all invoice_items with the invoice_id of selected invoice
-				 invoice_id = invoiceSTDStr.substr(delimiter1 + 2, delimiter2 - delimiter1 - 9); 
-				 ordersReturned = orders->search("invoice_id", invoice_id);
-
-				 // get the first row of the search result
-				 delimiter1 = ordersReturned.find("\n");
-				 currentRow = ordersReturned.substr(0, delimiter1+1);
-
-				 // if the current row is not equal to the ordersReturned
-				 // keep breaking down ordersReturned line by line until they do
-				 // ie, currentRow is the last line of the search result
-				 // find each invoice item id of each currentRow
-				 // and then find corresponding product_id and quantity
-				 // then search for product name and add all three to listbox
-				 while (!ordersReturned.empty()){
-
-					 // Remove first line from orders Returned and store to currentRow
-					 delimiter1 = ordersReturned.find("\n");
-					 ordersReturned = ordersReturned.substr(delimiter1+1);
-
-					 // find invoice_item_id
-					 delimiter1 = currentRow.find("|");
-					 invoice_item_id = currentRow.substr(0, delimiter1);
-
-					 // get new currentRow
-					 delimiter1 = ordersReturned.find("\n");
-					 currentRow = ordersReturned.substr(0, delimiter1 + 1);
-
-					 // search for that invoiceItem row
-					 invoiceItemReturned = invoiceItem->search("invoice_item_id", invoice_item_id);
-
-					 // find product_id and quantity
-					 delimiter1 = invoiceItemReturned.find("|");
-					 delimiter2 = invoiceItemReturned.find("|", delimiter1+1);
-					 product_id = invoiceItemReturned.substr(delimiter1 + 1, delimiter2 - delimiter1 - 1);
-					 quantity = invoiceItemReturned.substr(delimiter2 + 1);
-
-					 // search for the product
-					 productReturned = product->search("product_id", product_id);
-
-					 // find product name
-					 delimiter1 = productReturned.find("|");
-					 delimiter2 = productReturned.find("|", delimiter1+1);
-					 delimiter3 = productReturned.find("|", delimiter2+1);
-					 delimiter4 = productReturned.find("|", delimiter3+1);
-
-					 name = productReturned.substr(delimiter3 + 1, delimiter4 - delimiter3 - 1);
-
-					 // add invoice_item_id, product_id, name, and quantity
-					 lstInvoiceProductList->Items->Add(
-						 gcnew String(invoice_item_id.c_str()) + " | " +
-						 gcnew String(product_id.c_str()) + " | " +
-						 gcnew String(name.c_str()) + " | " +
-						 gcnew String(quantity.c_str()) + "\n");
-
-				 } // end while for add to listbox
+				 populateInvoiceProductList();
 
 				 // if modifying, display a list of products as well
 				 if (cmbInvoiceFunction->SelectedIndex == 1)
 				 {
 					 cmbInvoiceProductSelect->Enabled = true;
+					 btnInvoiceModify->Enabled = true;
 
 					 // clear combobox
 					 cmbInvoiceProductSelect->Items->Clear();
@@ -3669,9 +3819,7 @@ namespace InventoryManagement {
 					 }
 				 }
 
-				 delete invoiceItem;
-				 delete orders;
-				 delete product;
+
 
 			 }
 
@@ -4082,53 +4230,48 @@ namespace InventoryManagement {
 			 /// \brief selects the product and fills the quantity text box with product and quantity of selected invoice item
 	private: System::Void lstInvoiceProductList_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 
-				 // if Modifying an invoice
-				 if (cmbInvoiceFunction->SelectedIndex == 1)
+				 // make sure something is selected
+				 if (lstInvoiceProductList->SelectedIndex >= 0)
 				 {
-					 // Enable the product quantity textbox and button
-					 txtInvoiceProductQuantity->Enabled = true;
-					 btnInvoiceModify->Enabled = true;
+					 // if Modifying an invoice
+					 if (cmbInvoiceFunction->SelectedIndex == 1)
+					 {
+						 // Enable the product quantity textbox and button, and remove button
+						 txtInvoiceProductQuantity->Enabled = true;
+						 btnInvoiceModifyInvoiceItem->Enabled = true;
 
-					 System::String^ invoice_item; // store selected invoice item
-					 System::String^ product_id; // product id of selected invoice item
-					 System::String^ quantity; // quantity of selected invoice item
+						 System::String^ invoice_item; // store selected invoice item
+						 System::String^ product_id; // product id of selected invoice item
+						 System::String^ quantity; // quantity of selected invoice item
 
-					 int delimiter1, delimiter2, delimiter3; // position of delimiters
+						 int delimiter1, delimiter2, delimiter3; // position of delimiters
 
-					 // store the selected item as a string
-					 invoice_item = lstInvoiceProductList->SelectedItem->ToString();
+						 // store the selected item as a string
+						 invoice_item = lstInvoiceProductList->SelectedItem->ToString();
 
-					 // find positons of delimiters
-					 delimiter1 = invoice_item->IndexOf('|');
-					 delimiter2 = invoice_item->IndexOf('|', delimiter1 + 1);
-					 delimiter3 = invoice_item->IndexOf('|', delimiter2 + 1);
+						 // find positons of delimiters
+						 delimiter1 = invoice_item->IndexOf('|');
+						 delimiter2 = invoice_item->IndexOf('|', delimiter1 + 1);
+						 delimiter3 = invoice_item->IndexOf('|', delimiter2 + 1);
 
-					 // find product_id and quantity of selected invoice item
-					 product_id = invoice_item->Substring(delimiter1 + 2, delimiter2 - delimiter1 - 2);
-					 quantity = invoice_item->Substring(delimiter3 + 2);
+						 // find product_id and quantity of selected invoice item
+						 product_id = invoice_item->Substring(delimiter1 + 2, delimiter2 - delimiter1 - 2);
+						 quantity = invoice_item->Substring(delimiter3 + 2);
 
-					 // select the product in the product select combobox
-					 cmbInvoiceProductSelect->SelectedIndex = cmbInvoiceProductSelect->FindString(product_id);
+						 // select the product in the product select combobox
+						 cmbInvoiceProductSelect->SelectedIndex = cmbInvoiceProductSelect->FindString(product_id);
 
-					 // change the text of the Product Quantity combobox to the selected quantity
-					 txtInvoiceProductQuantity->Text = quantity;
+						 // change the text of the Product Quantity combobox to the selected quantity
+						 txtInvoiceProductQuantity->Text = quantity->Trim();
 
-					 btnInvoiceModify->Enabled = false;
-				 } // end if selected function is modify
+					 } // end if selected function is modify
+				 } // end if a list item is currently selecte
 			 }
 
-			 /// \brief modifies the selected invoice item with the new product_id and quantity
-			 ///        and modifies selected invoice with selected date
+			 /// \brief modifies the selected invoice's date with date selected
 	private: System::Void btnInvoiceModify_Click_1(System::Object^  sender, System::EventArgs^  e) {
 
-				 Table invoiceItem = new InvoiceItem();
 				 Table invoice = new Invoice();
-
-				 System::String^ invoice_item; // selected invoice_item;
-				 System::String^ product; // selected product
-				 System::String^ invoice_item_id; // id of selected invoice_item
-				 System::String^ product_id; // product_id of selected product
-				 System::String^ quantity; // changed quantity
 
 				 int delimiter1, delimiter2; // position of delimiters
 
@@ -4147,6 +4290,29 @@ namespace InventoryManagement {
 
 				 // chage the date of the invoice	  	
 				 invoice->modifyRow(invoice_id, "date", date);
+
+				 MessageBox::Show("Invoice Date Modified");
+
+				 // refresh modify
+				 cmbInvoiceFunction->SelectedIndex = 0;
+				 cmbInvoiceFunction->SelectedIndex = 1;
+
+				 delete invoice;
+
+			 }
+
+			 /// \brief modifies the selected invoice item
+	private: System::Void btnInvoiceModifyInvoiceItem_Click(System::Object^  sender, System::EventArgs^  e) {
+
+				 Table invoiceItem = new InvoiceItem();
+
+				 System::String^ invoice_item; // selected invoice_item;
+				 System::String^ product; // selected product
+				 System::String^ invoice_item_id; // id of selected invoice_item
+				 System::String^ product_id; // product_id of selected product
+				 System::String^ quantity; // changed quantity
+
+				 int delimiter1; // position of delimiter
 
 				 // find invoice_item_id
 				 invoice_item = lstInvoiceProductList->SelectedItem->ToString();
@@ -4172,14 +4338,10 @@ namespace InventoryManagement {
 
 				 MessageBox::Show("Invoice Item Modified");
 
-				 // refresh modify
-				 cmbInvoiceFunction->SelectedIndex = 0;	  	
-				 cmbInvoiceFunction->SelectedIndex = 1;
-			 }
+				 // refresh the product list
+				 populateInvoiceProductList();
 
-			 /// \brief clear product quantity text when clicked
-	private: System::Void txtInvoiceProductQuantity_Click(System::Object^  sender, System::EventArgs^  e) {
-				 txtInvoiceProductQuantity->Text = "";
+				 delete invoiceItem;
 			 }
 
 			 /// \brief set component to visible or invisible based on which report is going to be generated
