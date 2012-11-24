@@ -12,6 +12,7 @@
 #include "SalesSummary.h"
 #include <msclr/marshal.h>
 #include <msclr/marshal_cppstd.h>
+#include <regex>
 
 namespace InventoryManagement {
 
@@ -23,6 +24,7 @@ namespace InventoryManagement {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace System::Runtime::InteropServices;
+	using namespace std::tr1;
 
 	/// \brief GUI class that uses TableInterface to allow the user to interact with the database
 	/// 
@@ -1483,8 +1485,6 @@ namespace InventoryManagement {
 				 btnInvoiceCreateInvoice->Visible = false;
 				 btnInvoiceModify->Visible = false;
 				 btnInvoiceSearch->Visible = false;
-				 dtInvoiceDate->MaxDate = DateTime::Today;
-
 			 }
 
 			 /// \brief Changes the visibility of certain components for the category tab based on the user selected function
@@ -2075,7 +2075,7 @@ namespace InventoryManagement {
 					 lstInvoiceProductList->Enabled = false;
 					 btnInvoiceAddProduct->Enabled = false;
 					 btnInvoiceModify->Enabled = false;
-					 dtInvoiceDate->Enabled = true;
+					 dtInvoiceDate->Enabled = false;
 					 btnInvoiceRemoveProduct->Enabled = false;
 					 lblInvoiceProductSelect->Enabled = false;
 					 cmbInvoiceProductSelect->Enabled = false;
@@ -2174,87 +2174,99 @@ namespace InventoryManagement {
 
 			 /// \brief Modify button on the category tab is pressed - performs modify function
 	private: System::Void btnCategoryModify_Click(System::Object^  sender, System::EventArgs^  e) {
-				 // create instance of Category()
-				 Table cat = new Category();
+				 if(txtCategoryName->Text->Contains("|")){
+					 MessageBox::Show("| is a reserved character - Please change the category name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if (txtCategoryDescription->Text->Contains("|")) {
+					 MessageBox::Show("| is a reserved character - Please change the category description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else {
+					 // create instance of Category()
+					 Table cat = new Category();
 
-				 // string for contents of selction in drop box
-				 System::String^ category = cmbCategorySelect->SelectedItem->ToString();
-				 // position of first delimiter
-				 int delimiter1 = category->IndexOf("|");
+					 // string for contents of selction in drop box
+					 System::String^ category = cmbCategorySelect->SelectedItem->ToString();
+					 // position of first delimiter
+					 int delimiter1 = category->IndexOf("|");
 
-				 // string for category ID
-				 System::String ^ categoryID = category->Substring(0,delimiter1);
+					 // string for category ID
+					 System::String ^ categoryID = category->Substring(0,delimiter1);
 
-				 // convert System::String to std::string
-				 string categoryIDstring(marshal_as<std::string>(categoryID));
-				 string categoryNameString(marshal_as<std::string>(txtCategoryName->Text->ToString()));
-				 string categoryDescriptionString(marshal_as<std::string>(txtCategoryDescription->Text->ToString()));
+					 // convert System::String to std::string
+					 string categoryIDstring(marshal_as<std::string>(categoryID));
+					 string categoryNameString(marshal_as<std::string>(txtCategoryName->Text->ToString()));
+					 string categoryDescriptionString(marshal_as<std::string>(txtCategoryDescription->Text->ToString()));
 
-				 // perform category::modify function
-				 cat->modifyRow(categoryIDstring,"name",categoryNameString);
-				 // perform category::modify function
-				 cat->modifyRow(categoryIDstring,"description",categoryDescriptionString);
+					 // perform category::modify function
+					 cat->modifyRow(categoryIDstring,"name",categoryNameString);
+					 // perform category::modify function
+					 cat->modifyRow(categoryIDstring,"description",categoryDescriptionString);
 
-				 // clear text boxes
-				 txtCategoryDescription->Text = "";
-				 txtCategoryName->Text = "";
+					 // clear text boxes
+					 txtCategoryDescription->Text = "";
+					 txtCategoryName->Text = "";
 
-				 // clear combobox
-				 cmbCategorySelect->Items->Clear();
+					 // clear combobox
+					 cmbCategorySelect->Items->Clear();
 
-				 // currentRow string
-				 System::String ^ currentRow;
+					 // currentRow string
+					 System::String ^ currentRow;
 
-				 // vector to contain the category file contents
-				 vector<string> categoriesFile;
-				 // retrieve vector containing contents of category file
-				 categoriesFile = returnFile("textFiles/category.txt");
+					 // vector to contain the category file contents
+					 vector<string> categoriesFile;
+					 // retrieve vector containing contents of category file
+					 categoriesFile = returnFile("textFiles/category.txt");
 
-				 // insert contents of category file into combobox
-				 for(size_t i = 0; i < categoriesFile.size(); i++)
-				 {
-					 currentRow = gcnew String (categoriesFile[i].c_str());
-					 cmbCategorySelect->Items->Add(currentRow);
+					 // insert contents of category file into combobox
+					 for(size_t i = 0; i < categoriesFile.size(); i++)
+					 {
+						 currentRow = gcnew String (categoriesFile[i].c_str());
+						 cmbCategorySelect->Items->Add(currentRow);
+					 }
+
+					 // disable textboxes and modify button
+					 txtCategoryName->Enabled = false;
+					 txtCategoryDescription->Enabled = false;
+					 btnCategoryModify->Enabled = false;
+
+					 // delete instance of category
+					 delete cat;
 				 }
-
-				 // disable textboxes and modify button
-				 txtCategoryName->Enabled = false;
-				 txtCategoryDescription->Enabled = false;
-				 btnCategoryModify->Enabled = false;
-
-				 // delete instance of category
-				 delete cat;
 			 }
 
 			 /// \brief Add button on the category tab is pressed - performs add function
 	private: System::Void btnCategoryAdd_Click(System::Object^  sender, System::EventArgs^  e) {
-				 // create instance of Category()
-				 Table cat = new Category();
+				 if(txtCategoryName->Text->Contains("|")){
+					 MessageBox::Show("| is a reserved character - Please change the category name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if (txtCategoryDescription->Text->Contains("|")) {
+					 MessageBox::Show("| is a reserved character - Please change the category description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else {
+					 // create instance of Category()
+					 Table cat = new Category();
 
-				 // retrieves category name from the textbox, converts it from System::String^ to std::string and stores it in categoryNameString
-				 string categoryNameString(marshal_as<std::string>(txtCategoryName->Text->ToString()));
+					 // retrieves category name from the textbox, converts it from System::String^ to std::string and stores it in categoryNameString
+					 string categoryNameString(marshal_as<std::string>(txtCategoryName->Text->ToString()));
 
-				 // retrieves category description from the textbox, converts it from System::String^ to std::string and stores it in categoryDescriptionString
-				 string categoryDescriptionString(marshal_as<std::string>(txtCategoryDescription->Text->ToString()));
+					 // retrieves category description from the textbox, converts it from System::String^ to std::string and stores it in categoryDescriptionString
+					 string categoryDescriptionString(marshal_as<std::string>(txtCategoryDescription->Text->ToString()));
 
-				 // vector to store the name and description for Category::Add
-				 vector<string> catVect;
+					 // vector to store the name and description for Category::Add
+					 vector<string> catVect;
 
-				 // adds description to catVect
-				 catVect.push_back(categoryDescriptionString);
+					 // adds description to catVect
+					 catVect.push_back(categoryDescriptionString);
 
-				 // adds name to catVect
-				 catVect.push_back(categoryNameString);
+					 // adds name to catVect
+					 catVect.push_back(categoryNameString);
 
-				 // calls the Category::Add function with the vector parameter
-				 cat->add(catVect);
+					 // calls the Category::Add function with the vector parameter
+					 cat->add(catVect);
 
-				 // delete instance of category
-				 delete cat;
+					 // delete instance of category
+					 delete cat;
 
-				 // clear text boxes
-				 txtCategoryDescription->Text = "";
-				 txtCategoryName->Text = "";
+					 // clear text boxes
+					 txtCategoryDescription->Text = "";
+					 txtCategoryName->Text = "";
+				 }
 			 }
 
 			 /// \brief Delete button on the category tab is pressed - performs delete function after confirming
@@ -2348,9 +2360,30 @@ namespace InventoryManagement {
 			 /// \brief Add button on the product tab is pressed - performs add function
 	private: System::Void btnProductAdd_Click(System::Object^  sender, System::EventArgs^  e) {
 				 try{
+
+					 regex rgxPrice("^[0-9]*[.][0-9][0-9]$");
+
+					 regex rgxID("^[0-9]+$");
+
+					 cmatch match;
+
+					 string productID = marshal_as<std::string>(txtProdID->Text->ToString());
+					 const char *targetProdID = productID.c_str();
+
+					 string productPrice = marshal_as<std::string>(txtProductPrice->Text->ToString());
+					 const char *targetProductPrice = productPrice.c_str();
+
 					 if(txtProdID->Text->Length == 0)
 					 {
 						 MessageBox::Show("Please Enter a Product ID", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+					 } else if(!regex_search(targetProdID, match, rgxID)) {
+						 MessageBox::Show("Invalid characters - please change the product ID", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+					 } else if(txtProductName->Text->Contains("|")) {
+						 MessageBox::Show("| is a reserved character - Please change the product name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+					 } else if(txtProductDescription->Text->Contains("|")) {
+						 MessageBox::Show("| is a reserved character - Please change the product description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+					 } else if(!regex_search(targetProductPrice, match, rgxPrice)) {
+						 MessageBox::Show("Invalid characters - please change the product price", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
 					 } else {
 						 Table prod = new Product();
 
@@ -2541,6 +2574,19 @@ namespace InventoryManagement {
 
 			 /// \brief Modify button on the product tab is pressed - performs modify function
 	private: System::Void btnProductModify_Click(System::Object^  sender, System::EventArgs^  e) {
+				 
+				 regex rgxPrice("^[0-9]*[.][0-9][0-9]$");
+
+				 regex rgxID("^[0-9]+$");
+
+				 cmatch match;
+
+				 string productID = marshal_as<std::string>(txtProdID->Text->ToString());
+				 const char *targetProdID = productID.c_str();
+
+				 string productPrice = marshal_as<std::string>(txtProductPrice->Text->ToString());
+				 const char *targetProductPrice = productPrice.c_str();
+
 				 // string for contents of selction in drop box
 				 System::String^ category = cmbProductCategorySelect->SelectedItem->ToString();
 				 // position of first delimiter
@@ -2552,66 +2598,81 @@ namespace InventoryManagement {
 				 // convert System::String to std::string
 				 string categoryIDstring(marshal_as<std::string>(categoryID));
 
-				 Table prod = new Product();
 
-				 // perform product modify function for product category id
-				 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"categoryID", categoryIDstring);
-
-				 // perform product modify function for product name
-				 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"name",
-					 marshal_as<std::string>(txtProductName->Text->ToString()));
-
-				 // perform product modify function for product description
-				 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"description",
-					 marshal_as<std::string>(txtProductDescription->Text->ToString()));
-
-				 // perform product modify function for product price
-				 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"price",
-					 marshal_as<std::string>(txtProductPrice->Text->ToString()));
-
-				 delete prod;
-
-				 // disable and clear components for modify function
-				 txtProdID->Text = "";
-				 txtProductName->Enabled = false;
-				 txtProductName->Text = "";
-				 txtProductDescription->Enabled = false;
-				 txtProductDescription->Text = "";
-				 txtProductPrice->Enabled = false;
-				 txtProductPrice->Text = "";
-				 btnProductModify->Enabled = false;
-				 cmbProductCategorySelect->Enabled = false;
-				 // clear combobox
-				 cmbProductCategorySelect->Items->Clear();
-
-				 // currentRow string
-				 System::String ^ currentRow;
-
-				 // vector to contain the category file contents
-				 vector<string> categoriesFile;
-				 // retrieve vector containing contents of category file
-				 categoriesFile = returnFile("textFiles/category.txt");
-
-				 // insert contents of category file into combobox
-				 for(size_t i = 0; i < categoriesFile.size(); i++)
+				 if(txtProdID->Text->Length == 0)
 				 {
-					 currentRow = gcnew String (categoriesFile[i].c_str());
-					 cmbProductCategorySelect->Items->Add(currentRow);
-				 }
+					 MessageBox::Show("Please Enter a Product ID", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if(!regex_search(targetProdID, match, rgxID)) {
+					 MessageBox::Show("Invalid characters - please change the product ID", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if(txtProductName->Text->Contains("|")) {
+					 MessageBox::Show("| is a reserved character - Please change the product name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if(txtProductDescription->Text->Contains("|")) {
+					 MessageBox::Show("| is a reserved character - Please change the product description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if(!regex_search(targetProductPrice, match, rgxPrice)) {
+					 MessageBox::Show("Invalid characters - please change the product price", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else {
 
-				 // populate product selection drop down list
-				 cmbProductSelect->Items->Clear();
+					 Table prod = new Product();
 
-				 // vector to contain the category file contents
-				 vector<string> productFile;
-				 // retrieve vector containing contents of category file
-				 productFile = returnFile("textFiles/product.txt");
+					 // perform product modify function for product category id
+					 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"categoryID", categoryIDstring);
 
-				 // insert contents of category file into combobox
-				 for(size_t i = 0; i < productFile.size(); i++)
-				 {
-					 currentRow = gcnew String (productFile[i].c_str());
-					 cmbProductSelect->Items->Add(currentRow);
+					 // perform product modify function for product name
+					 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"name",
+						 marshal_as<std::string>(txtProductName->Text->ToString()));
+
+					 // perform product modify function for product description
+					 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"description",
+						 marshal_as<std::string>(txtProductDescription->Text->ToString()));
+
+					 // perform product modify function for product price
+					 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"price",
+						 marshal_as<std::string>(txtProductPrice->Text->ToString()));
+
+					 delete prod;
+
+					 // disable and clear components for modify function
+					 txtProdID->Text = "";
+					 txtProductName->Enabled = false;
+					 txtProductName->Text = "";
+					 txtProductDescription->Enabled = false;
+					 txtProductDescription->Text = "";
+					 txtProductPrice->Enabled = false;
+					 txtProductPrice->Text = "";
+					 btnProductModify->Enabled = false;
+					 cmbProductCategorySelect->Enabled = false;
+					 // clear combobox
+					 cmbProductCategorySelect->Items->Clear();
+
+					 // currentRow string
+					 System::String ^ currentRow;
+
+					 // vector to contain the category file contents
+					 vector<string> categoriesFile;
+					 // retrieve vector containing contents of category file
+					 categoriesFile = returnFile("textFiles/category.txt");
+
+					 // insert contents of category file into combobox
+					 for(size_t i = 0; i < categoriesFile.size(); i++)
+					 {
+						 currentRow = gcnew String (categoriesFile[i].c_str());
+						 cmbProductCategorySelect->Items->Add(currentRow);
+					 }
+
+					 // populate product selection drop down list
+					 cmbProductSelect->Items->Clear();
+
+					 // vector to contain the category file contents
+					 vector<string> productFile;
+					 // retrieve vector containing contents of category file
+					 productFile = returnFile("textFiles/product.txt");
+
+					 // insert contents of category file into combobox
+					 for(size_t i = 0; i < productFile.size(); i++)
+					 {
+						 currentRow = gcnew String (productFile[i].c_str());
+						 cmbProductSelect->Items->Add(currentRow);
+					 }
 				 }
 			 }
 
@@ -3261,7 +3322,8 @@ namespace InventoryManagement {
 	private: System::Void btnInvoiceRemoveProduct_Click(System::Object^  sender, System::EventArgs^  e) {
 
 				 // remove selected product
-				 lstInvoiceProductList->Items->Remove(lstInvoiceProductList->SelectedItem);
+				 if (lstInvoiceProductList->SelectedValue != NULL)
+					 lstInvoiceProductList->Items->Remove(lstInvoiceProductList->SelectedItem);
 
 				 //disable itself, invoice date, and creat invoice if there is nothing in the listbox
 				 if (lstInvoiceProductList->Items->Count == 0) {
@@ -3622,7 +3684,8 @@ namespace InventoryManagement {
 			 /// \brief Removes a product from the Sales product listbox when Remove Product is clicked
 	private: System::Void btnSalesRemoveProduct_Click(System::Object^  sender, System::EventArgs^  e) {
 
-				 lstSalesProducts->Items->Remove(lstSalesProducts->SelectedItem);
+				 if (lstSalesProducts->SelectedValue != NULL)
+					 lstSalesProducts->Items->Remove(lstSalesProducts->SelectedItem);
 
 				 //disable itself, date, and create receipt if there is nothing in the listbox
 				 if (lstSalesProducts->Items->Count == 0) {
@@ -3882,17 +3945,11 @@ namespace InventoryManagement {
 
 					 // change the text of the Product Quantity combobox to the selected quantity
 					 txtInvoiceProductQuantity->Text = quantity;
-
-					 btnInvoiceModify->Enabled = false;
 				 } // end if selected function is modify
 			 }
 
 			 /// \brief modifies the selected invoice item with the new product_id and quantity
-			 ///        and modifies selected invoice with selected date
 	private: System::Void btnInvoiceModify_Click_1(System::Object^  sender, System::EventArgs^  e) {
-
-				 Table invoiceItem = new InvoiceItem();
-				 Table invoice = new Invoice();
 
 				 System::String^ invoice_item; // selected invoice_item;
 				 System::String^ product; // selected product
@@ -3900,22 +3957,7 @@ namespace InventoryManagement {
 				 System::String^ product_id; // product_id of selected product
 				 System::String^ quantity; // changed quantity
 
-				 int delimiter1, delimiter2; // position of delimiters
-
-				 // get the date from date time picker and convert to std::string
-				 System::String^ invoiceDate = dtInvoiceDate->Value.ToString("yyyy-MM-dd");
-				 string date(marshal_as<std::string>(invoiceDate));
-
-				 // get invoice_id of selected invoice by converting selection to std::string
-				 // and then breaking it up with delimiters
-				 System::String^ invoiceSystemStr = cmbInvoiceSelect->SelectedItem->ToString();
-				 std::string invoiceSTDStr = marshal_as<std::string>(invoiceSystemStr);
-				 delimiter1 = invoiceSTDStr.find(":");
-				 delimiter2 = invoiceSTDStr.find(":", delimiter1 + 1);
-				 std::string invoice_id = invoiceSTDStr.substr(delimiter1 + 2, delimiter2 - delimiter1 - 9); 
-
-				 // chage the date of the invoice
-				 invoice->modifyRow(invoice_id, "date", date);
+				 int delimiter1; // position of delimiter '|'
 
 				 // find invoice_item_id
 				 invoice_item = lstInvoiceProductList->SelectedItem->ToString();
@@ -3936,15 +3978,26 @@ namespace InventoryManagement {
 				 std::string quantityString = marshal_as<std::string>(quantity);
 
 				 // modify row and dislay message
+				 Table invoiceItem = new InvoiceItem();
 				 invoiceItem->modifyRow(invoice_item_idString, "quantity", quantityString);
-				 invoiceItem->modifyRow(invoice_item_idString, "product_id", product_idString);
 
 				 MessageBox::Show("Invoice Item Modified");
 
-				 // refresh modify
-				 cmbInvoiceFunction->SelectedIndex = 0;
-				 cmbInvoiceFunction->SelectedIndex = 1;
+				 // disables  and enables textboxes and buttons
+				 lstInvoiceProductList->Items->Clear();
+				 cmbInvoiceProductSelect->Items->Clear();
+				 txtInvoiceProductQuantity->Text = "";
+				 lstInvoiceProductList->Items->Clear();
 
+				 txtInvoiceProductQuantity->Enabled = false;
+				 lstInvoiceProductList->Enabled = false;
+				 btnInvoiceAddProduct->Enabled = false;
+				 btnInvoiceModify->Enabled = false;
+				 dtInvoiceDate->Enabled = false;
+				 btnInvoiceRemoveProduct->Enabled = false;
+				 lblInvoiceProductSelect->Enabled = false;
+				 cmbInvoiceProductSelect->Enabled = false;
+				 cmbInvoiceSelect->Enabled = true;
 			 }
 
 			 /// \brief clear product quantity text when clicked
