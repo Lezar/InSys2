@@ -111,7 +111,6 @@ namespace TestInventory
 			Assert::AreEqual("1002|150\n", summaryReturned.c_str());
 		}
 
-
 		/// \brief Test modifying invoice_item's quantity updates product's quantity in Summary
 		TEST_METHOD(TestInvoiceItemModifyQuantityUpdatesQuantityInSummary)
 		{
@@ -162,6 +161,37 @@ namespace TestInventory
 			Assert::AreEqual("2543|190\n", summaryReturnedFor2543.c_str());
 			// Check that product 1002's quantity is incread by 10 because it is given 2543's quantity
 			Assert::AreEqual("1002|110\n", summaryReturnedFor1002.c_str());
+		}
+
+		/// \brief Test deleting a row in InvoiceItem, substracts that product's quantity from Summary
+		TEST_METHOD(TestInvoiceItemDeleteUpdatesQuantityInSummary)
+		{
+			// Log test name
+			Logger::WriteMessage("TestInvoiceItemDeleteyUpdatesQuantityInSummary");
+
+			invoiceItem2->deleteRow("1011"); //increase by 20
+
+			// tests if DoesNotExistException is thrown, which means invoice_item_id no longer exists
+			try {
+				string returned = invoiceItem2->search("invoice_item_id", "1011");
+				Assert::Fail(); // fail test if no exception is thrown
+			}
+			catch (DoesNotExistException e) { // continue if DoesNotExistException was thrown
+				Logger::WriteMessage(e.what());
+			} 
+			catch (...) { // Fail if something else is thrown
+				Logger::WriteMessage("Other exception");
+				Assert::Fail(); 
+			}
+
+			// string to store summary's search for product_id 1002
+			string summaryReturned = summary2->search("product_id", "2543");
+
+			// Log results
+			Logger::WriteMessage(summaryReturned.c_str());
+
+			// Check that summary is updated with right quantity
+			Assert::AreEqual("2543|190\n", summaryReturned.c_str()); //200 - 1
 		}
 	};
 }

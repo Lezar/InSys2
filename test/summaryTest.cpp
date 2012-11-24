@@ -138,13 +138,13 @@ namespace TestInventory
 
 			Logger::WriteMessage("TestSummaryModifyTotalQuantity");
 
-			summary->modifyRow("1002", "total_quantity", "99"); // change total quantity
+			summary->modifyRow("1003", "total_quantity", "99"); // change total quantity
 
 			string returned = summary->search("total_quantity", "99");
 
 			Logger::WriteMessage(returned.c_str());
 
-			Assert::AreEqual("1002|99\n", returned.c_str());
+			Assert::AreEqual("1003|99\n", returned.c_str());
 
 		}
 
