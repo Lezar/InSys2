@@ -10,6 +10,7 @@
 #include "Sales.h"
 #include "Receipt.h"
 #include "SalesSummary.h"
+#include "Report.h"
 #include <msclr/marshal.h>
 #include <msclr/marshal_cppstd.h>
 #include <regex>
@@ -212,6 +213,26 @@ namespace InventoryManagement {
 	private: System::Windows::Forms::TextBox^  txtSearchReturns;
 	private: System::Windows::Forms::Label^  lblProductSearchInfo;
 	private: System::Windows::Forms::ComboBox^  cmbProductSelect;
+	private: System::Windows::Forms::TabPage^  tpReports;
+	private: System::Windows::Forms::ComboBox^  cmbReportSelect;
+	private: System::Windows::Forms::Label^  lblReportSelect;
+	private: System::Windows::Forms::Label^  lblReportDescription;
+
+	private: System::Windows::Forms::TextBox^  txtReportDescription;
+	private: System::Windows::Forms::Label^  lblReportEndDate;
+	private: System::Windows::Forms::DateTimePicker^  dtReportEndDate;
+
+	private: System::Windows::Forms::Label^  lblReportStartDate;
+	private: System::Windows::Forms::DateTimePicker^  dtReportStartDate;
+	private: System::Windows::Forms::ComboBox^  cmbReportCategorySelect;
+
+
+	private: System::Windows::Forms::Label^  lblReportCategorySelect;
+	private: System::Windows::Forms::Button^  btnReportGenerate;
+
+
+
+
 #pragma endregion
 
 	private:
@@ -322,6 +343,18 @@ namespace InventoryManagement {
 			this->cmbSale = (gcnew System::Windows::Forms::ComboBox());
 			this->lblFunction = (gcnew System::Windows::Forms::Label());
 			this->cmbReturnFunction = (gcnew System::Windows::Forms::ComboBox());
+			this->tpReports = (gcnew System::Windows::Forms::TabPage());
+			this->btnReportGenerate = (gcnew System::Windows::Forms::Button());
+			this->cmbReportCategorySelect = (gcnew System::Windows::Forms::ComboBox());
+			this->lblReportCategorySelect = (gcnew System::Windows::Forms::Label());
+			this->lblReportEndDate = (gcnew System::Windows::Forms::Label());
+			this->dtReportEndDate = (gcnew System::Windows::Forms::DateTimePicker());
+			this->lblReportStartDate = (gcnew System::Windows::Forms::Label());
+			this->dtReportStartDate = (gcnew System::Windows::Forms::DateTimePicker());
+			this->lblReportDescription = (gcnew System::Windows::Forms::Label());
+			this->txtReportDescription = (gcnew System::Windows::Forms::TextBox());
+			this->cmbReportSelect = (gcnew System::Windows::Forms::ComboBox());
+			this->lblReportSelect = (gcnew System::Windows::Forms::Label());
 			this->msMenu = (gcnew System::Windows::Forms::MenuStrip());
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -334,6 +367,7 @@ namespace InventoryManagement {
 			this->tpSales->SuspendLayout();
 			this->tpInvoices->SuspendLayout();
 			this->tpReturns->SuspendLayout();
+			this->tpReports->SuspendLayout();
 			this->msMenu->SuspendLayout();
 			this->SuspendLayout();
 			// 
@@ -344,6 +378,7 @@ namespace InventoryManagement {
 			this->tbInventorySystem->Controls->Add(this->tpSales);
 			this->tbInventorySystem->Controls->Add(this->tpInvoices);
 			this->tbInventorySystem->Controls->Add(this->tpReturns);
+			this->tbInventorySystem->Controls->Add(this->tpReports);
 			this->tbInventorySystem->Location = System::Drawing::Point(12, 28);
 			this->tbInventorySystem->Name = L"tbInventorySystem";
 			this->tbInventorySystem->SelectedIndex = 0;
@@ -1332,6 +1367,126 @@ namespace InventoryManagement {
 			this->cmbReturnFunction->TabIndex = 71;
 			this->cmbReturnFunction->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbReturnFunction_SelectedIndexChanged);
 			// 
+			// tpReports
+			// 
+			this->tpReports->Controls->Add(this->btnReportGenerate);
+			this->tpReports->Controls->Add(this->cmbReportCategorySelect);
+			this->tpReports->Controls->Add(this->lblReportCategorySelect);
+			this->tpReports->Controls->Add(this->lblReportEndDate);
+			this->tpReports->Controls->Add(this->dtReportEndDate);
+			this->tpReports->Controls->Add(this->lblReportStartDate);
+			this->tpReports->Controls->Add(this->dtReportStartDate);
+			this->tpReports->Controls->Add(this->lblReportDescription);
+			this->tpReports->Controls->Add(this->txtReportDescription);
+			this->tpReports->Controls->Add(this->cmbReportSelect);
+			this->tpReports->Controls->Add(this->lblReportSelect);
+			this->tpReports->Location = System::Drawing::Point(4, 22);
+			this->tpReports->Name = L"tpReports";
+			this->tpReports->Padding = System::Windows::Forms::Padding(3);
+			this->tpReports->Size = System::Drawing::Size(503, 471);
+			this->tpReports->TabIndex = 5;
+			this->tpReports->Text = L"Reports";
+			this->tpReports->UseVisualStyleBackColor = true;
+			// 
+			// btnReportGenerate
+			// 
+			this->btnReportGenerate->Location = System::Drawing::Point(8, 230);
+			this->btnReportGenerate->Name = L"btnReportGenerate";
+			this->btnReportGenerate->Size = System::Drawing::Size(111, 23);
+			this->btnReportGenerate->TabIndex = 22;
+			this->btnReportGenerate->Text = L"Generate Report";
+			this->btnReportGenerate->UseVisualStyleBackColor = true;
+			this->btnReportGenerate->Click += gcnew System::EventHandler(this, &MyForm::btnReportGenerate_Click);
+			// 
+			// cmbReportCategorySelect
+			// 
+			this->cmbReportCategorySelect->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->cmbReportCategorySelect->FormattingEnabled = true;
+			this->cmbReportCategorySelect->Location = System::Drawing::Point(6, 190);
+			this->cmbReportCategorySelect->Name = L"cmbReportCategorySelect";
+			this->cmbReportCategorySelect->Size = System::Drawing::Size(491, 21);
+			this->cmbReportCategorySelect->TabIndex = 21;
+			// 
+			// lblReportCategorySelect
+			// 
+			this->lblReportCategorySelect->AutoSize = true;
+			this->lblReportCategorySelect->Location = System::Drawing::Point(6, 169);
+			this->lblReportCategorySelect->Name = L"lblReportCategorySelect";
+			this->lblReportCategorySelect->Size = System::Drawing::Size(52, 13);
+			this->lblReportCategorySelect->TabIndex = 8;
+			this->lblReportCategorySelect->Text = L"Category:";
+			// 
+			// lblReportEndDate
+			// 
+			this->lblReportEndDate->AutoSize = true;
+			this->lblReportEndDate->Location = System::Drawing::Point(5, 114);
+			this->lblReportEndDate->Name = L"lblReportEndDate";
+			this->lblReportEndDate->Size = System::Drawing::Size(55, 13);
+			this->lblReportEndDate->TabIndex = 7;
+			this->lblReportEndDate->Text = L"End Date:";
+			// 
+			// dtReportEndDate
+			// 
+			this->dtReportEndDate->Location = System::Drawing::Point(8, 135);
+			this->dtReportEndDate->Name = L"dtReportEndDate";
+			this->dtReportEndDate->Size = System::Drawing::Size(154, 20);
+			this->dtReportEndDate->TabIndex = 6;
+			// 
+			// lblReportStartDate
+			// 
+			this->lblReportStartDate->AutoSize = true;
+			this->lblReportStartDate->Location = System::Drawing::Point(6, 61);
+			this->lblReportStartDate->Name = L"lblReportStartDate";
+			this->lblReportStartDate->Size = System::Drawing::Size(58, 13);
+			this->lblReportStartDate->TabIndex = 5;
+			this->lblReportStartDate->Text = L"Start Date:";
+			// 
+			// dtReportStartDate
+			// 
+			this->dtReportStartDate->Location = System::Drawing::Point(8, 82);
+			this->dtReportStartDate->Name = L"dtReportStartDate";
+			this->dtReportStartDate->Size = System::Drawing::Size(154, 20);
+			this->dtReportStartDate->TabIndex = 4;
+			// 
+			// lblReportDescription
+			// 
+			this->lblReportDescription->AutoSize = true;
+			this->lblReportDescription->Location = System::Drawing::Point(203, 7);
+			this->lblReportDescription->Name = L"lblReportDescription";
+			this->lblReportDescription->Size = System::Drawing::Size(98, 13);
+			this->lblReportDescription->TabIndex = 3;
+			this->lblReportDescription->Text = L"Report Description:";
+			// 
+			// txtReportDescription
+			// 
+			this->txtReportDescription->Location = System::Drawing::Point(206, 28);
+			this->txtReportDescription->Multiline = true;
+			this->txtReportDescription->Name = L"txtReportDescription";
+			this->txtReportDescription->ReadOnly = true;
+			this->txtReportDescription->Size = System::Drawing::Size(276, 73);
+			this->txtReportDescription->TabIndex = 2;
+			// 
+			// cmbReportSelect
+			// 
+			this->cmbReportSelect->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->cmbReportSelect->FormattingEnabled = true;
+			this->cmbReportSelect->Items->AddRange(gcnew cli::array< System::Object^  >(7) {L"Out of Stock", L"Current Stock", L"Sales by Date", 
+				L"Returns by Date", L"Invoices by Date", L"Top Selling Products", L"Revenue"});
+			this->cmbReportSelect->Location = System::Drawing::Point(8, 28);
+			this->cmbReportSelect->Name = L"cmbReportSelect";
+			this->cmbReportSelect->Size = System::Drawing::Size(131, 21);
+			this->cmbReportSelect->TabIndex = 1;
+			this->cmbReportSelect->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbReportSelect_SelectedIndexChanged);
+			// 
+			// lblReportSelect
+			// 
+			this->lblReportSelect->AutoSize = true;
+			this->lblReportSelect->Location = System::Drawing::Point(6, 7);
+			this->lblReportSelect->Name = L"lblReportSelect";
+			this->lblReportSelect->Size = System::Drawing::Size(134, 13);
+			this->lblReportSelect->TabIndex = 0;
+			this->lblReportSelect->Text = L"Select Report to Generate:";
+			// 
 			// msMenu
 			// 
 			this->msMenu->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->fileToolStripMenuItem, 
@@ -1399,6 +1554,8 @@ namespace InventoryManagement {
 			this->tpInvoices->PerformLayout();
 			this->tpReturns->ResumeLayout(false);
 			this->tpReturns->PerformLayout();
+			this->tpReports->ResumeLayout(false);
+			this->tpReports->PerformLayout();
 			this->msMenu->ResumeLayout(false);
 			this->msMenu->PerformLayout();
 			this->ResumeLayout(false);
@@ -1485,6 +1642,17 @@ namespace InventoryManagement {
 				 btnInvoiceCreateInvoice->Visible = false;
 				 btnInvoiceModify->Visible = false;
 				 btnInvoiceSearch->Visible = false;
+
+				 // Reports: all components (Except Report Selection label and combobox selector) set to invisible
+				 lblReportCategorySelect->Visible = false;
+				 cmbReportCategorySelect->Visible = false;
+				 lblReportDescription->Visible = false;
+				 txtReportDescription->Visible = false;
+				 lblReportStartDate->Visible = false;
+				 dtReportStartDate->Visible = false;
+				 lblReportEndDate->Visible = false;
+				 dtReportEndDate->Visible = false;
+				 btnReportGenerate->Visible = false;
 			 }
 
 			 /// \brief Changes the visibility of certain components for the category tab based on the user selected function
@@ -2574,7 +2742,7 @@ namespace InventoryManagement {
 
 			 /// \brief Modify button on the product tab is pressed - performs modify function
 	private: System::Void btnProductModify_Click(System::Object^  sender, System::EventArgs^  e) {
-				 
+
 				 regex rgxPrice("^[0-9]*[.][0-9][0-9]$");
 
 				 regex rgxID("^[0-9]+$");
@@ -4004,5 +4172,112 @@ namespace InventoryManagement {
 	private: System::Void txtInvoiceProductQuantity_Click(System::Object^  sender, System::EventArgs^  e) {
 				 txtInvoiceProductQuantity->Text = "";
 			 }
-	};
+
+			 /// \brief set component to visible or invisible based on which report is going to be generated
+	private: System::Void cmbReportSelect_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+
+				 // clear combobox
+				 cmbReportCategorySelect->Items->Clear();
+
+				 // currentRow string
+				 System::String ^ currentRow;
+
+				 // vector to contain the category file contents
+				 vector<string> categoriesFile;
+				 // retrieve vector containing contents of category file
+				 categoriesFile = returnFile("textFiles/category.txt");
+
+				 // insert contents of category file into combobox
+				 for(size_t i = 0; i < categoriesFile.size(); i++)
+				 {
+					 currentRow = gcnew String (categoriesFile[i].c_str());
+					 cmbReportCategorySelect->Items->Add(currentRow);
+				 }
+
+				 if(cmbReportSelect->SelectedIndex == 0) {
+					 lblReportCategorySelect->Visible = false;
+					 cmbReportCategorySelect->Visible = false;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays all products currently out of stock.";
+					 lblReportStartDate->Visible = false;
+					 dtReportStartDate->Visible = false;
+					 lblReportEndDate->Visible = false;
+					 dtReportEndDate->Visible = false;
+					 btnReportGenerate->Visible = true;
+				 } else if(cmbReportSelect->SelectedIndex == 1) {
+					 lblReportCategorySelect->Visible = true;
+					 cmbReportCategorySelect->Visible = true;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays the current stock of all products in the specified category.";
+					 lblReportStartDate->Visible = false;
+					 dtReportStartDate->Visible = false;
+					 lblReportEndDate->Visible = false;
+					 dtReportEndDate->Visible = false;
+					 btnReportGenerate->Visible = true;
+				 } else if(cmbReportSelect->SelectedIndex == 2) {
+					 lblReportCategorySelect->Visible = false;
+					 cmbReportCategorySelect->Visible = false;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays a list of all sales between the start and end dates selected.";
+					 lblReportStartDate->Visible = true;
+					 dtReportStartDate->Visible = true;
+					 lblReportEndDate->Visible = true;
+					 dtReportEndDate->Visible = true;
+					 btnReportGenerate->Visible = true;
+				 } else if(cmbReportSelect->SelectedIndex == 3) {
+					 lblReportCategorySelect->Visible = false;
+					 cmbReportCategorySelect->Visible = false;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays a list of all returns between the start and end dates selected.";
+					 lblReportStartDate->Visible = true;
+					 dtReportStartDate->Visible = true;
+					 lblReportEndDate->Visible = true;
+					 dtReportEndDate->Visible = true;
+					 btnReportGenerate->Visible = true;
+				 } else if(cmbReportSelect->SelectedIndex == 4) {
+					 lblReportCategorySelect->Visible = false;
+					 cmbReportCategorySelect->Visible = false;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays a list of all invoices between the start and end dates selected.";
+					 lblReportStartDate->Visible = true;
+					 dtReportStartDate->Visible = true;
+					 lblReportEndDate->Visible = true;
+					 dtReportEndDate->Visible = true;
+					 btnReportGenerate->Visible = true;
+				 } else if(cmbReportSelect->SelectedIndex == 5) {
+					 lblReportCategorySelect->Visible = true;
+					 cmbReportCategorySelect->Visible = true;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays a list of the 10 products in the selected category that sold the highest quantity between the start and end dates selected.";
+					 lblReportStartDate->Visible = true;
+					 dtReportStartDate->Visible = true;
+					 lblReportEndDate->Visible = true;
+					 dtReportEndDate->Visible = true;
+					 btnReportGenerate->Visible = true;
+				 } else if(cmbReportSelect->SelectedIndex == 6) {
+					 lblReportCategorySelect->Visible = false;
+					 cmbReportCategorySelect->Visible = false;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays the revenue of each category, as well as the total revenue of all categories combined, between the start and end dates selected.";
+					 lblReportStartDate->Visible = true;
+					 dtReportStartDate->Visible = true;
+					 lblReportEndDate->Visible = true;
+					 dtReportEndDate->Visible = true;
+					 btnReportGenerate->Visible = true;
+				 }
+			 }
+	private: System::Void btnReportGenerate_Click(System::Object^  sender, System::EventArgs^  e) {
+
+				 Report reportForm;
+				 reportForm.ShowDialog();
+
+			 }
+};
 }
