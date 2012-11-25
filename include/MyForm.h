@@ -10,8 +10,10 @@
 #include "Sales.h"
 #include "Receipt.h"
 #include "SalesSummary.h"
+#include "Report.h"
 #include <msclr/marshal.h>
 #include <msclr/marshal_cppstd.h>
+#include <regex>
 
 namespace InventoryManagement {
 
@@ -23,6 +25,7 @@ namespace InventoryManagement {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace System::Runtime::InteropServices;
+	using namespace std::tr1;
 
 	/// \brief GUI class that uses TableInterface to allow the user to interact with the database
 	/// 
@@ -307,7 +310,26 @@ namespace InventoryManagement {
 	private: System::Windows::Forms::TextBox^  txtSearchReturns;
 	private: System::Windows::Forms::Label^  lblProductSearchInfo;
 	private: System::Windows::Forms::ComboBox^  cmbProductSelect;
+
+	private: System::Windows::Forms::TabPage^  tpReports;
+	private: System::Windows::Forms::ComboBox^  cmbReportSelect;
+	private: System::Windows::Forms::Label^  lblReportSelect;
+	private: System::Windows::Forms::Label^  lblReportDescription;
+
+	private: System::Windows::Forms::TextBox^  txtReportDescription;
+	private: System::Windows::Forms::Label^  lblReportEndDate;
+	private: System::Windows::Forms::DateTimePicker^  dtReportEndDate;
+
+	private: System::Windows::Forms::Label^  lblReportStartDate;
+	private: System::Windows::Forms::DateTimePicker^  dtReportStartDate;
+	private: System::Windows::Forms::ComboBox^  cmbReportCategorySelect;
+
+
+	private: System::Windows::Forms::Label^  lblReportCategorySelect;
+	private: System::Windows::Forms::Button^  btnReportGenerate;
+
 	private: System::Windows::Forms::Button^  btnInvoiceModifyInvoiceItem;
+
 #pragma endregion
 
 	private:
@@ -419,6 +441,18 @@ namespace InventoryManagement {
 			this->cmbSale = (gcnew System::Windows::Forms::ComboBox());
 			this->lblFunction = (gcnew System::Windows::Forms::Label());
 			this->cmbReturnFunction = (gcnew System::Windows::Forms::ComboBox());
+			this->tpReports = (gcnew System::Windows::Forms::TabPage());
+			this->btnReportGenerate = (gcnew System::Windows::Forms::Button());
+			this->cmbReportCategorySelect = (gcnew System::Windows::Forms::ComboBox());
+			this->lblReportCategorySelect = (gcnew System::Windows::Forms::Label());
+			this->lblReportEndDate = (gcnew System::Windows::Forms::Label());
+			this->dtReportEndDate = (gcnew System::Windows::Forms::DateTimePicker());
+			this->lblReportStartDate = (gcnew System::Windows::Forms::Label());
+			this->dtReportStartDate = (gcnew System::Windows::Forms::DateTimePicker());
+			this->lblReportDescription = (gcnew System::Windows::Forms::Label());
+			this->txtReportDescription = (gcnew System::Windows::Forms::TextBox());
+			this->cmbReportSelect = (gcnew System::Windows::Forms::ComboBox());
+			this->lblReportSelect = (gcnew System::Windows::Forms::Label());
 			this->msMenu = (gcnew System::Windows::Forms::MenuStrip());
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -431,6 +465,7 @@ namespace InventoryManagement {
 			this->tpSales->SuspendLayout();
 			this->tpInvoices->SuspendLayout();
 			this->tpReturns->SuspendLayout();
+			this->tpReports->SuspendLayout();
 			this->msMenu->SuspendLayout();
 			this->SuspendLayout();
 			// 
@@ -441,6 +476,7 @@ namespace InventoryManagement {
 			this->tbInventorySystem->Controls->Add(this->tpSales);
 			this->tbInventorySystem->Controls->Add(this->tpInvoices);
 			this->tbInventorySystem->Controls->Add(this->tpReturns);
+			this->tbInventorySystem->Controls->Add(this->tpReports);
 			this->tbInventorySystem->Location = System::Drawing::Point(12, 28);
 			this->tbInventorySystem->Name = L"tbInventorySystem";
 			this->tbInventorySystem->SelectedIndex = 0;
@@ -1439,6 +1475,126 @@ namespace InventoryManagement {
 			this->cmbReturnFunction->TabIndex = 71;
 			this->cmbReturnFunction->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbReturnFunction_SelectedIndexChanged);
 			// 
+			// tpReports
+			// 
+			this->tpReports->Controls->Add(this->btnReportGenerate);
+			this->tpReports->Controls->Add(this->cmbReportCategorySelect);
+			this->tpReports->Controls->Add(this->lblReportCategorySelect);
+			this->tpReports->Controls->Add(this->lblReportEndDate);
+			this->tpReports->Controls->Add(this->dtReportEndDate);
+			this->tpReports->Controls->Add(this->lblReportStartDate);
+			this->tpReports->Controls->Add(this->dtReportStartDate);
+			this->tpReports->Controls->Add(this->lblReportDescription);
+			this->tpReports->Controls->Add(this->txtReportDescription);
+			this->tpReports->Controls->Add(this->cmbReportSelect);
+			this->tpReports->Controls->Add(this->lblReportSelect);
+			this->tpReports->Location = System::Drawing::Point(4, 22);
+			this->tpReports->Name = L"tpReports";
+			this->tpReports->Padding = System::Windows::Forms::Padding(3);
+			this->tpReports->Size = System::Drawing::Size(503, 471);
+			this->tpReports->TabIndex = 5;
+			this->tpReports->Text = L"Reports";
+			this->tpReports->UseVisualStyleBackColor = true;
+			// 
+			// btnReportGenerate
+			// 
+			this->btnReportGenerate->Location = System::Drawing::Point(8, 230);
+			this->btnReportGenerate->Name = L"btnReportGenerate";
+			this->btnReportGenerate->Size = System::Drawing::Size(111, 23);
+			this->btnReportGenerate->TabIndex = 22;
+			this->btnReportGenerate->Text = L"Generate Report";
+			this->btnReportGenerate->UseVisualStyleBackColor = true;
+			this->btnReportGenerate->Click += gcnew System::EventHandler(this, &MyForm::btnReportGenerate_Click);
+			// 
+			// cmbReportCategorySelect
+			// 
+			this->cmbReportCategorySelect->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->cmbReportCategorySelect->FormattingEnabled = true;
+			this->cmbReportCategorySelect->Location = System::Drawing::Point(6, 190);
+			this->cmbReportCategorySelect->Name = L"cmbReportCategorySelect";
+			this->cmbReportCategorySelect->Size = System::Drawing::Size(491, 21);
+			this->cmbReportCategorySelect->TabIndex = 21;
+			// 
+			// lblReportCategorySelect
+			// 
+			this->lblReportCategorySelect->AutoSize = true;
+			this->lblReportCategorySelect->Location = System::Drawing::Point(6, 169);
+			this->lblReportCategorySelect->Name = L"lblReportCategorySelect";
+			this->lblReportCategorySelect->Size = System::Drawing::Size(52, 13);
+			this->lblReportCategorySelect->TabIndex = 8;
+			this->lblReportCategorySelect->Text = L"Category:";
+			// 
+			// lblReportEndDate
+			// 
+			this->lblReportEndDate->AutoSize = true;
+			this->lblReportEndDate->Location = System::Drawing::Point(5, 114);
+			this->lblReportEndDate->Name = L"lblReportEndDate";
+			this->lblReportEndDate->Size = System::Drawing::Size(55, 13);
+			this->lblReportEndDate->TabIndex = 7;
+			this->lblReportEndDate->Text = L"End Date:";
+			// 
+			// dtReportEndDate
+			// 
+			this->dtReportEndDate->Location = System::Drawing::Point(8, 135);
+			this->dtReportEndDate->Name = L"dtReportEndDate";
+			this->dtReportEndDate->Size = System::Drawing::Size(154, 20);
+			this->dtReportEndDate->TabIndex = 6;
+			// 
+			// lblReportStartDate
+			// 
+			this->lblReportStartDate->AutoSize = true;
+			this->lblReportStartDate->Location = System::Drawing::Point(6, 61);
+			this->lblReportStartDate->Name = L"lblReportStartDate";
+			this->lblReportStartDate->Size = System::Drawing::Size(58, 13);
+			this->lblReportStartDate->TabIndex = 5;
+			this->lblReportStartDate->Text = L"Start Date:";
+			// 
+			// dtReportStartDate
+			// 
+			this->dtReportStartDate->Location = System::Drawing::Point(8, 82);
+			this->dtReportStartDate->Name = L"dtReportStartDate";
+			this->dtReportStartDate->Size = System::Drawing::Size(154, 20);
+			this->dtReportStartDate->TabIndex = 4;
+			// 
+			// lblReportDescription
+			// 
+			this->lblReportDescription->AutoSize = true;
+			this->lblReportDescription->Location = System::Drawing::Point(203, 7);
+			this->lblReportDescription->Name = L"lblReportDescription";
+			this->lblReportDescription->Size = System::Drawing::Size(98, 13);
+			this->lblReportDescription->TabIndex = 3;
+			this->lblReportDescription->Text = L"Report Description:";
+			// 
+			// txtReportDescription
+			// 
+			this->txtReportDescription->Location = System::Drawing::Point(206, 28);
+			this->txtReportDescription->Multiline = true;
+			this->txtReportDescription->Name = L"txtReportDescription";
+			this->txtReportDescription->ReadOnly = true;
+			this->txtReportDescription->Size = System::Drawing::Size(276, 73);
+			this->txtReportDescription->TabIndex = 2;
+			// 
+			// cmbReportSelect
+			// 
+			this->cmbReportSelect->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->cmbReportSelect->FormattingEnabled = true;
+			this->cmbReportSelect->Items->AddRange(gcnew cli::array< System::Object^  >(7) {L"Out of Stock", L"Current Stock", L"Sales by Date", 
+				L"Returns by Date", L"Invoices by Date", L"Top Selling Products", L"Revenue"});
+			this->cmbReportSelect->Location = System::Drawing::Point(8, 28);
+			this->cmbReportSelect->Name = L"cmbReportSelect";
+			this->cmbReportSelect->Size = System::Drawing::Size(131, 21);
+			this->cmbReportSelect->TabIndex = 1;
+			this->cmbReportSelect->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbReportSelect_SelectedIndexChanged);
+			// 
+			// lblReportSelect
+			// 
+			this->lblReportSelect->AutoSize = true;
+			this->lblReportSelect->Location = System::Drawing::Point(6, 7);
+			this->lblReportSelect->Name = L"lblReportSelect";
+			this->lblReportSelect->Size = System::Drawing::Size(134, 13);
+			this->lblReportSelect->TabIndex = 0;
+			this->lblReportSelect->Text = L"Select Report to Generate:";
+			// 
 			// msMenu
 			// 
 			this->msMenu->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->fileToolStripMenuItem, 
@@ -1506,6 +1662,8 @@ namespace InventoryManagement {
 			this->tpInvoices->PerformLayout();
 			this->tpReturns->ResumeLayout(false);
 			this->tpReturns->PerformLayout();
+			this->tpReports->ResumeLayout(false);
+			this->tpReports->PerformLayout();
 			this->msMenu->ResumeLayout(false);
 			this->msMenu->PerformLayout();
 			this->ResumeLayout(false);
@@ -1595,6 +1753,16 @@ namespace InventoryManagement {
 				 btnInvoiceModifyInvoiceItem->Visible = false;
 				 dtInvoiceDate->MaxDate = DateTime::Today;
 
+				 // Reports: all components (Except Report Selection label and combobox selector) set to invisible
+				 lblReportCategorySelect->Visible = false;
+				 cmbReportCategorySelect->Visible = false;
+				 lblReportDescription->Visible = false;
+				 txtReportDescription->Visible = false;
+				 lblReportStartDate->Visible = false;
+				 dtReportStartDate->Visible = false;
+				 lblReportEndDate->Visible = false;
+				 dtReportEndDate->Visible = false;
+				 btnReportGenerate->Visible = false;
 			 }
 
 			 /// \brief Changes the visibility of certain components for the category tab based on the user selected function
@@ -2289,87 +2457,99 @@ namespace InventoryManagement {
 
 			 /// \brief Modify button on the category tab is pressed - performs modify function
 	private: System::Void btnCategoryModify_Click(System::Object^  sender, System::EventArgs^  e) {
-				 // create instance of Category()
-				 Table cat = new Category();
+				 if(txtCategoryName->Text->Contains("|")){
+					 MessageBox::Show("| is a reserved character - Please change the category name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if (txtCategoryDescription->Text->Contains("|")) {
+					 MessageBox::Show("| is a reserved character - Please change the category description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else {
+					 // create instance of Category()
+					 Table cat = new Category();
 
-				 // string for contents of selction in drop box
-				 System::String^ category = cmbCategorySelect->SelectedItem->ToString();
-				 // position of first delimiter
-				 int delimiter1 = category->IndexOf("|");
+					 // string for contents of selction in drop box
+					 System::String^ category = cmbCategorySelect->SelectedItem->ToString();
+					 // position of first delimiter
+					 int delimiter1 = category->IndexOf("|");
 
-				 // string for category ID
-				 System::String ^ categoryID = category->Substring(0,delimiter1);
+					 // string for category ID
+					 System::String ^ categoryID = category->Substring(0,delimiter1);
 
-				 // convert System::String to std::string
-				 string categoryIDstring(marshal_as<std::string>(categoryID));
-				 string categoryNameString(marshal_as<std::string>(txtCategoryName->Text->ToString()));
-				 string categoryDescriptionString(marshal_as<std::string>(txtCategoryDescription->Text->ToString()));
+					 // convert System::String to std::string
+					 string categoryIDstring(marshal_as<std::string>(categoryID));
+					 string categoryNameString(marshal_as<std::string>(txtCategoryName->Text->ToString()));
+					 string categoryDescriptionString(marshal_as<std::string>(txtCategoryDescription->Text->ToString()));
 
-				 // perform category::modify function
-				 cat->modifyRow(categoryIDstring,"name",categoryNameString);
-				 // perform category::modify function
-				 cat->modifyRow(categoryIDstring,"description",categoryDescriptionString);
+					 // perform category::modify function
+					 cat->modifyRow(categoryIDstring,"name",categoryNameString);
+					 // perform category::modify function
+					 cat->modifyRow(categoryIDstring,"description",categoryDescriptionString);
 
-				 // clear text boxes
-				 txtCategoryDescription->Text = "";
-				 txtCategoryName->Text = "";
+					 // clear text boxes
+					 txtCategoryDescription->Text = "";
+					 txtCategoryName->Text = "";
 
-				 // clear combobox
-				 cmbCategorySelect->Items->Clear();
+					 // clear combobox
+					 cmbCategorySelect->Items->Clear();
 
-				 // currentRow string
-				 System::String ^ currentRow;
+					 // currentRow string
+					 System::String ^ currentRow;
 
-				 // vector to contain the category file contents
-				 vector<string> categoriesFile;
-				 // retrieve vector containing contents of category file
-				 categoriesFile = returnFile("textFiles/category.txt");
+					 // vector to contain the category file contents
+					 vector<string> categoriesFile;
+					 // retrieve vector containing contents of category file
+					 categoriesFile = returnFile("textFiles/category.txt");
 
-				 // insert contents of category file into combobox
-				 for(size_t i = 0; i < categoriesFile.size(); i++)
-				 {
-					 currentRow = gcnew String (categoriesFile[i].c_str());
-					 cmbCategorySelect->Items->Add(currentRow);
+					 // insert contents of category file into combobox
+					 for(size_t i = 0; i < categoriesFile.size(); i++)
+					 {
+						 currentRow = gcnew String (categoriesFile[i].c_str());
+						 cmbCategorySelect->Items->Add(currentRow);
+					 }
+
+					 // disable textboxes and modify button
+					 txtCategoryName->Enabled = false;
+					 txtCategoryDescription->Enabled = false;
+					 btnCategoryModify->Enabled = false;
+
+					 // delete instance of category
+					 delete cat;
 				 }
-
-				 // disable textboxes and modify button
-				 txtCategoryName->Enabled = false;
-				 txtCategoryDescription->Enabled = false;
-				 btnCategoryModify->Enabled = false;
-
-				 // delete instance of category
-				 delete cat;
 			 }
 
 			 /// \brief Add button on the category tab is pressed - performs add function
 	private: System::Void btnCategoryAdd_Click(System::Object^  sender, System::EventArgs^  e) {
-				 // create instance of Category()
-				 Table cat = new Category();
+				 if(txtCategoryName->Text->Contains("|")){
+					 MessageBox::Show("| is a reserved character - Please change the category name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if (txtCategoryDescription->Text->Contains("|")) {
+					 MessageBox::Show("| is a reserved character - Please change the category description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else {
+					 // create instance of Category()
+					 Table cat = new Category();
 
-				 // retrieves category name from the textbox, converts it from System::String^ to std::string and stores it in categoryNameString
-				 string categoryNameString(marshal_as<std::string>(txtCategoryName->Text->ToString()));
+					 // retrieves category name from the textbox, converts it from System::String^ to std::string and stores it in categoryNameString
+					 string categoryNameString(marshal_as<std::string>(txtCategoryName->Text->ToString()));
 
-				 // retrieves category description from the textbox, converts it from System::String^ to std::string and stores it in categoryDescriptionString
-				 string categoryDescriptionString(marshal_as<std::string>(txtCategoryDescription->Text->ToString()));
+					 // retrieves category description from the textbox, converts it from System::String^ to std::string and stores it in categoryDescriptionString
+					 string categoryDescriptionString(marshal_as<std::string>(txtCategoryDescription->Text->ToString()));
 
-				 // vector to store the name and description for Category::Add
-				 vector<string> catVect;
+					 // vector to store the name and description for Category::Add
+					 vector<string> catVect;
 
-				 // adds description to catVect
-				 catVect.push_back(categoryDescriptionString);
+					 // adds description to catVect
+					 catVect.push_back(categoryDescriptionString);
 
-				 // adds name to catVect
-				 catVect.push_back(categoryNameString);
+					 // adds name to catVect
+					 catVect.push_back(categoryNameString);
 
-				 // calls the Category::Add function with the vector parameter
-				 cat->add(catVect);
+					 // calls the Category::Add function with the vector parameter
+					 cat->add(catVect);
 
-				 // delete instance of category
-				 delete cat;
+					 // delete instance of category
+					 delete cat;
 
-				 // clear text boxes
-				 txtCategoryDescription->Text = "";
-				 txtCategoryName->Text = "";
+					 // clear text boxes
+					 txtCategoryDescription->Text = "";
+					 txtCategoryName->Text = "";
+				 }
 			 }
 
 			 /// \brief Delete button on the category tab is pressed - performs delete function after confirming
@@ -2463,9 +2643,30 @@ namespace InventoryManagement {
 			 /// \brief Add button on the product tab is pressed - performs add function
 	private: System::Void btnProductAdd_Click(System::Object^  sender, System::EventArgs^  e) {
 				 try{
+
+					 regex rgxPrice("^[0-9]*[.][0-9][0-9]$");
+
+					 regex rgxID("^[0-9]+$");
+
+					 cmatch match;
+
+					 string productID = marshal_as<std::string>(txtProdID->Text->ToString());
+					 const char *targetProdID = productID.c_str();
+
+					 string productPrice = marshal_as<std::string>(txtProductPrice->Text->ToString());
+					 const char *targetProductPrice = productPrice.c_str();
+
 					 if(txtProdID->Text->Length == 0)
 					 {
 						 MessageBox::Show("Please Enter a Product ID", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+					 } else if(!regex_search(targetProdID, match, rgxID)) {
+						 MessageBox::Show("Invalid characters - please change the product ID", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+					 } else if(txtProductName->Text->Contains("|")) {
+						 MessageBox::Show("| is a reserved character - Please change the product name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+					 } else if(txtProductDescription->Text->Contains("|")) {
+						 MessageBox::Show("| is a reserved character - Please change the product description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+					 } else if(!regex_search(targetProductPrice, match, rgxPrice)) {
+						 MessageBox::Show("Invalid characters - please change the product price", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
 					 } else {
 						 Table prod = new Product();
 
@@ -2656,6 +2857,19 @@ namespace InventoryManagement {
 
 			 /// \brief Modify button on the product tab is pressed - performs modify function
 	private: System::Void btnProductModify_Click(System::Object^  sender, System::EventArgs^  e) {
+
+				 regex rgxPrice("^[0-9]*[.][0-9][0-9]$");
+
+				 regex rgxID("^[0-9]+$");
+
+				 cmatch match;
+
+				 string productID = marshal_as<std::string>(txtProdID->Text->ToString());
+				 const char *targetProdID = productID.c_str();
+
+				 string productPrice = marshal_as<std::string>(txtProductPrice->Text->ToString());
+				 const char *targetProductPrice = productPrice.c_str();
+
 				 // string for contents of selction in drop box
 				 System::String^ category = cmbProductCategorySelect->SelectedItem->ToString();
 				 // position of first delimiter
@@ -2667,66 +2881,81 @@ namespace InventoryManagement {
 				 // convert System::String to std::string
 				 string categoryIDstring(marshal_as<std::string>(categoryID));
 
-				 Table prod = new Product();
 
-				 // perform product modify function for product category id
-				 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"categoryID", categoryIDstring);
-
-				 // perform product modify function for product name
-				 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"name",
-					 marshal_as<std::string>(txtProductName->Text->ToString()));
-
-				 // perform product modify function for product description
-				 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"description",
-					 marshal_as<std::string>(txtProductDescription->Text->ToString()));
-
-				 // perform product modify function for product price
-				 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"price",
-					 marshal_as<std::string>(txtProductPrice->Text->ToString()));
-
-				 delete prod;
-
-				 // disable and clear components for modify function
-				 txtProdID->Text = "";
-				 txtProductName->Enabled = false;
-				 txtProductName->Text = "";
-				 txtProductDescription->Enabled = false;
-				 txtProductDescription->Text = "";
-				 txtProductPrice->Enabled = false;
-				 txtProductPrice->Text = "";
-				 btnProductModify->Enabled = false;
-				 cmbProductCategorySelect->Enabled = false;
-				 // clear combobox
-				 cmbProductCategorySelect->Items->Clear();
-
-				 // currentRow string
-				 System::String ^ currentRow;
-
-				 // vector to contain the category file contents
-				 vector<string> categoriesFile;
-				 // retrieve vector containing contents of category file
-				 categoriesFile = returnFile("textFiles/category.txt");
-
-				 // insert contents of category file into combobox
-				 for(size_t i = 0; i < categoriesFile.size(); i++)
+				 if(txtProdID->Text->Length == 0)
 				 {
-					 currentRow = gcnew String (categoriesFile[i].c_str());
-					 cmbProductCategorySelect->Items->Add(currentRow);
-				 }
+					 MessageBox::Show("Please Enter a Product ID", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if(!regex_search(targetProdID, match, rgxID)) {
+					 MessageBox::Show("Invalid characters - please change the product ID", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if(txtProductName->Text->Contains("|")) {
+					 MessageBox::Show("| is a reserved character - Please change the product name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if(txtProductDescription->Text->Contains("|")) {
+					 MessageBox::Show("| is a reserved character - Please change the product description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if(!regex_search(targetProductPrice, match, rgxPrice)) {
+					 MessageBox::Show("Invalid characters - please change the product price", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else {
 
-				 // populate product selection drop down list
-				 cmbProductSelect->Items->Clear();
+					 Table prod = new Product();
 
-				 // vector to contain the category file contents
-				 vector<string> productFile;
-				 // retrieve vector containing contents of category file
-				 productFile = returnFile("textFiles/product.txt");
+					 // perform product modify function for product category id
+					 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"categoryID", categoryIDstring);
 
-				 // insert contents of category file into combobox
-				 for(size_t i = 0; i < productFile.size(); i++)
-				 {
-					 currentRow = gcnew String (productFile[i].c_str());
-					 cmbProductSelect->Items->Add(currentRow);
+					 // perform product modify function for product name
+					 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"name",
+						 marshal_as<std::string>(txtProductName->Text->ToString()));
+
+					 // perform product modify function for product description
+					 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"description",
+						 marshal_as<std::string>(txtProductDescription->Text->ToString()));
+
+					 // perform product modify function for product price
+					 prod->modifyRow(marshal_as<std::string>(txtProdID->Text->ToString()),"price",
+						 marshal_as<std::string>(txtProductPrice->Text->ToString()));
+
+					 delete prod;
+
+					 // disable and clear components for modify function
+					 txtProdID->Text = "";
+					 txtProductName->Enabled = false;
+					 txtProductName->Text = "";
+					 txtProductDescription->Enabled = false;
+					 txtProductDescription->Text = "";
+					 txtProductPrice->Enabled = false;
+					 txtProductPrice->Text = "";
+					 btnProductModify->Enabled = false;
+					 cmbProductCategorySelect->Enabled = false;
+					 // clear combobox
+					 cmbProductCategorySelect->Items->Clear();
+
+					 // currentRow string
+					 System::String ^ currentRow;
+
+					 // vector to contain the category file contents
+					 vector<string> categoriesFile;
+					 // retrieve vector containing contents of category file
+					 categoriesFile = returnFile("textFiles/category.txt");
+
+					 // insert contents of category file into combobox
+					 for(size_t i = 0; i < categoriesFile.size(); i++)
+					 {
+						 currentRow = gcnew String (categoriesFile[i].c_str());
+						 cmbProductCategorySelect->Items->Add(currentRow);
+					 }
+
+					 // populate product selection drop down list
+					 cmbProductSelect->Items->Clear();
+
+					 // vector to contain the category file contents
+					 vector<string> productFile;
+					 // retrieve vector containing contents of category file
+					 productFile = returnFile("textFiles/product.txt");
+
+					 // insert contents of category file into combobox
+					 for(size_t i = 0; i < productFile.size(); i++)
+					 {
+						 currentRow = gcnew String (productFile[i].c_str());
+						 cmbProductSelect->Items->Add(currentRow);
+					 }
 				 }
 			 }
 
@@ -4047,18 +4276,19 @@ namespace InventoryManagement {
 				 int delimiter1, delimiter2; // position of delimiters
 
 				 // get the date from date time picker and convert to std::string
-				 System::String^ invoiceDate = dtInvoiceDate->Value.ToString("yyyy-MM-dd");
+
+				 System::String^ invoiceDate = dtInvoiceDate->Value.ToString("yyyy-MM-dd");	  	
 				 string date(marshal_as<std::string>(invoiceDate));
 
 				 // get invoice_id of selected invoice by converting selection to std::string
-				 // and then breaking it up with delimiters
-				 System::String^ invoiceSystemStr = cmbInvoiceSelect->SelectedItem->ToString();
-				 std::string invoiceSTDStr = marshal_as<std::string>(invoiceSystemStr);
-				 delimiter1 = invoiceSTDStr.find(":");
-				 delimiter2 = invoiceSTDStr.find(":", delimiter1 + 1);
+				 // and then breaking it up with delimiters	  
+				 System::String^ invoiceSystemStr = cmbInvoiceSelect->SelectedItem->ToString();  	
+				 std::string invoiceSTDStr = marshal_as<std::string>(invoiceSystemStr);	  	
+				 delimiter1 = invoiceSTDStr.find(":"); 	
+				 delimiter2 = invoiceSTDStr.find(":", delimiter1 + 1);	  	
 				 std::string invoice_id = invoiceSTDStr.substr(delimiter1 + 2, delimiter2 - delimiter1 - 9); 
 
-				 // chage the date of the invoice
+				 // chage the date of the invoice	  	
 				 invoice->modifyRow(invoice_id, "date", date);
 
 				 MessageBox::Show("Invoice Date Modified");
@@ -4112,6 +4342,113 @@ namespace InventoryManagement {
 				 populateInvoiceProductList();
 
 				 delete invoiceItem;
+			 }
+
+			 /// \brief set component to visible or invisible based on which report is going to be generated
+	private: System::Void cmbReportSelect_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+
+				 // clear combobox
+				 cmbReportCategorySelect->Items->Clear();
+
+				 // currentRow string
+				 System::String ^ currentRow;
+
+				 // vector to contain the category file contents
+				 vector<string> categoriesFile;
+				 // retrieve vector containing contents of category file
+				 categoriesFile = returnFile("textFiles/category.txt");
+
+				 // insert contents of category file into combobox
+				 for(size_t i = 0; i < categoriesFile.size(); i++)
+				 {
+					 currentRow = gcnew String (categoriesFile[i].c_str());
+					 cmbReportCategorySelect->Items->Add(currentRow);
+				 }
+
+				 if(cmbReportSelect->SelectedIndex == 0) {
+					 lblReportCategorySelect->Visible = false;
+					 cmbReportCategorySelect->Visible = false;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays all products currently out of stock.";
+					 lblReportStartDate->Visible = false;
+					 dtReportStartDate->Visible = false;
+					 lblReportEndDate->Visible = false;
+					 dtReportEndDate->Visible = false;
+					 btnReportGenerate->Visible = true;
+				 } else if(cmbReportSelect->SelectedIndex == 1) {
+					 lblReportCategorySelect->Visible = true;
+					 cmbReportCategorySelect->Visible = true;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays the current stock of all products in the specified category.";
+					 lblReportStartDate->Visible = false;
+					 dtReportStartDate->Visible = false;
+					 lblReportEndDate->Visible = false;
+					 dtReportEndDate->Visible = false;
+					 btnReportGenerate->Visible = true;
+				 } else if(cmbReportSelect->SelectedIndex == 2) {
+					 lblReportCategorySelect->Visible = false;
+					 cmbReportCategorySelect->Visible = false;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays a list of all sales between the start and end dates selected.";
+					 lblReportStartDate->Visible = true;
+					 dtReportStartDate->Visible = true;
+					 lblReportEndDate->Visible = true;
+					 dtReportEndDate->Visible = true;
+					 btnReportGenerate->Visible = true;
+				 } else if(cmbReportSelect->SelectedIndex == 3) {
+					 lblReportCategorySelect->Visible = false;
+					 cmbReportCategorySelect->Visible = false;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays a list of all returns between the start and end dates selected.";
+					 lblReportStartDate->Visible = true;
+					 dtReportStartDate->Visible = true;
+					 lblReportEndDate->Visible = true;
+					 dtReportEndDate->Visible = true;
+					 btnReportGenerate->Visible = true;
+				 } else if(cmbReportSelect->SelectedIndex == 4) {
+					 lblReportCategorySelect->Visible = false;
+					 cmbReportCategorySelect->Visible = false;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays a list of all invoices between the start and end dates selected.";
+					 lblReportStartDate->Visible = true;
+					 dtReportStartDate->Visible = true;
+					 lblReportEndDate->Visible = true;
+					 dtReportEndDate->Visible = true;
+					 btnReportGenerate->Visible = true;
+				 } else if(cmbReportSelect->SelectedIndex == 5) {
+					 lblReportCategorySelect->Visible = true;
+					 cmbReportCategorySelect->Visible = true;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays a list of the 10 products in the selected category that sold the highest quantity between the start and end dates selected.";
+					 lblReportStartDate->Visible = true;
+					 dtReportStartDate->Visible = true;
+					 lblReportEndDate->Visible = true;
+					 dtReportEndDate->Visible = true;
+					 btnReportGenerate->Visible = true;
+				 } else if(cmbReportSelect->SelectedIndex == 6) {
+					 lblReportCategorySelect->Visible = false;
+					 cmbReportCategorySelect->Visible = false;
+					 lblReportDescription->Visible = true;
+					 txtReportDescription->Visible = true;
+					 txtReportDescription->Text = "Displays the revenue of each category, as well as the total revenue of all categories combined, between the start and end dates selected.";
+					 lblReportStartDate->Visible = true;
+					 dtReportStartDate->Visible = true;
+					 lblReportEndDate->Visible = true;
+					 dtReportEndDate->Visible = true;
+					 btnReportGenerate->Visible = true;
+				 }
+			 }
+	private: System::Void btnReportGenerate_Click(System::Object^  sender, System::EventArgs^  e) {
+
+				 Report reportForm;
+				 reportForm.ShowDialog();
+
 			 }
 	};
 }
