@@ -197,5 +197,20 @@ namespace TestInventory
 					
 		}
 		
+		/// \brief tests if the Sales class can search and return the whole table
+		TEST_METHOD(TestSalesSearchAll)
+		{
+			Logger::WriteMessage("TestSalesSearchAll");
+
+			string returned = sale->search("all", "all"); // search all
+
+			Logger::WriteMessage(returned.c_str());
+
+			// see if whole table is returned
+			Assert::AreEqual("1|10|5|1\n"
+							"2|5|2|2\n"
+							"3|80|20|3\n"
+							"4|2|2|4\n", returned.c_str());
+		}
 	};
 }

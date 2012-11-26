@@ -169,5 +169,22 @@ namespace TestInventory
 				Assert::Fail(); 
 			}
 		}
+
+		/// \brief tests if the Orders class can search and return the whole table
+		TEST_METHOD(TestOrdersSearchAll)
+		{
+			Logger::WriteMessage("TestOrdersSearchAll");
+
+			string returned = orders->search("all", "all"); // search all
+
+			Logger::WriteMessage(returned.c_str());
+
+			// see if whole table is returned
+			Assert::AreEqual("101|1\n"
+							"102|1\n"
+							"103|2\n"
+							"104|2\n"
+							"105|3\n", returned.c_str());
+		}
 	};
 }

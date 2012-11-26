@@ -204,6 +204,21 @@ namespace TestInventory
 			// in this case the expectation is "1|Description Modified|Name Modified\n"
 			Assert::AreEqual(expectedString,returnedString);
 		}
+
+		/// \brief tests if the Category class can search and return the whole table
+		TEST_METHOD(TestCategorySearchAll)
+		{
+			Logger::WriteMessage("TestCategorySearchAll");
+
+			string returned = cat->search("all", "all"); // search all
+
+			Logger::WriteMessage(returned.c_str());
+
+			// see if whole table is returned
+			Assert::AreEqual("1|sweet and tangy produce|fruits\r\n"
+							"2|ready for your enjoyment|hot foods\r\n"
+							"3|underwater delicacies|seafood\r\n", returned.c_str());
+		}
 		
 	};
 }

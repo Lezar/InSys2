@@ -208,5 +208,20 @@ namespace TestInventory
 			Assert::AreEqual(expectedString,returnedString);
 		}
 
+		/// \brief tests if the Returns class can search and return the whole table
+		TEST_METHOD(TestReturnsSearchAll)
+		{
+			Logger::WriteMessage("TestReturnsSearchAll");
+
+			string returned = ret->search("all", "all"); // search all
+
+			Logger::WriteMessage(returned.c_str());
+
+			// see if whole table is returned
+			Assert::AreEqual("1|1|10|2012/11/09\n"
+							"2|7|5|2012/11/08\n"
+							"3|12|1|2012/10/29\n", returned.c_str());
+		}
+
 	};
 }

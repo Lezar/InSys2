@@ -184,5 +184,21 @@ namespace TestInventory
 				Assert::Fail(); 
 			}
 		}
+
+		/// \brief tests if the Summary class can search and return the whole table
+		TEST_METHOD(TestSummarySearchAll)
+		{
+			Logger::WriteMessage("TestSummarySearchAll");
+
+			string returned = summary->search("all", "all"); // search all
+
+			Logger::WriteMessage(returned.c_str());
+
+			// see if whole table is returned
+			Assert::AreEqual("1425|20\n"
+							"2543|0\n"
+							"1002|50\n"
+							"1003|0\n", returned.c_str());
+		}
 	};
 }

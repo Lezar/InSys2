@@ -114,6 +114,11 @@ string Product :: search(string columnName, string valueToFind) throw(DoesNotExi
 			// retrieves the next line in categoryInFile and assigns it to the string rowReceive
 			getline(productInFile, rowReceive);
 
+			// break when an empty string is assigned to rowReceive
+			// which occurss if there are no more valid entries in the table
+			if (rowReceive.empty())
+				break;
+
 			// finds the first delimiter position and assigns it to int delimiter
 			delimiter = rowReceive.find('|');
 			
@@ -198,6 +203,12 @@ string Product :: search(string columnName, string valueToFind) throw(DoesNotExi
 				// along with a line break at the end
 				returnString += rowReceive + "\r\n";
 
+				resultFound = true;
+			}
+			// return the whole table
+			else if(columnName == "all")
+			{
+				returnString += rowReceive + "\r\n";
 				resultFound = true;
 			}
 		}

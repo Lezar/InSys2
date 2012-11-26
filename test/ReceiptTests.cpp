@@ -118,5 +118,21 @@ namespace TestInventory
 
 		}
 
+		/// \brief tests if the Receipt class can search and return the whole table
+		TEST_METHOD(TestReceiptSearchAll)
+		{
+			Logger::WriteMessage("TestReceiptSearchAll");
+
+			string returned = receipt->search("all", "all"); // search all
+
+			Logger::WriteMessage(returned.c_str());
+
+			// see if whole table is returned
+			Assert::AreEqual("001|2012-11-12\n"
+							"002|2013-01-11\n"
+							"003|2013-12-10\n"
+							"004|2013-12-01\n", returned.c_str());
+		}
+
 	};
 }

@@ -129,5 +129,21 @@ namespace TestInventory
 			
 		}
 
+		/// \brief tests if the Invoice class can search and return the whole table
+		TEST_METHOD(TestInvoiceSearchAll)
+		{
+			Logger::WriteMessage("TestInvoiceSearchAll");
+
+			string returned = invoice->search("all", "all"); // search all
+
+			Logger::WriteMessage(returned.c_str());
+
+			// see if whole table is returned
+			Assert::AreEqual("1|2012-09-01\n"
+							"2|2012-09-08\n"
+							"3|2012-09-15\n"
+							"4|2012-09-15\n", returned.c_str());
+		}
+
 	};
 }

@@ -101,5 +101,20 @@ namespace TestInventory
 
 			Assert::AreEqual(ssExpected, ssReturned);
 		}
+
+		/// \brief tests if the SalesSummary class can search and return the whole table
+		TEST_METHOD(TestSalesSummarySearchAll)
+		{
+			Logger::WriteMessage("TestSalesSummarySearchAll");
+
+			string returned = ss->search("all", "all"); // search all
+
+			Logger::WriteMessage(returned.c_str());
+
+			// see if whole table is returned
+			Assert::AreEqual("1|001\n"
+							"2|002\n"
+							"3|003\n", returned.c_str());
+		}
 };
 }

@@ -25,24 +25,24 @@ namespace TestInventory
 
 			ofstream ofstr;
 			ofstr.open("textfiles\\invoiceItem.txt", ios_base::trunc); // clear InvoiceItem table
-			
+
 			// Data for testing
 			ofstr << "101|00000|33\n";
 			ofstr << "102|1002|25\n";
 			ofstr << "103|2720|1\n";
 			ofstr << "104|00011|33\n";
-		
+
 			ofstr.close();
 
 			// Adds same products to summary for isolated testing
 			ofstr.open("textfiles\\summary.txt", ios_base::trunc); // clear summary table
-			
+
 			// Data for testing
 			ofstr << "00000|33\n";
 			ofstr << "1002|25\n";
 			ofstr << "2720|1\n";
 			ofstr << "00011|33\n";
-		
+
 			ofstr.close();
 		}
 
@@ -51,7 +51,7 @@ namespace TestInventory
 		{
 			delete invoiceItem;
 		}
-		
+
 		/// \brief tests if the InvoiceItem class can search a table by invoice_item_id
 		TEST_METHOD(TestInvoiceItemSearchByInvoiceItemID)
 		{
@@ -60,7 +60,7 @@ namespace TestInventory
 
 			// String to store value returned by Invoice::search
 			string returned = invoiceItem->search("invoice_item_id", "102");
-			
+
 			// Logs returned values
 			Logger::WriteMessage(returned.c_str());
 
@@ -96,7 +96,7 @@ namespace TestInventory
 		TEST_METHOD(TestInvoiceItemSearchValueDoesNotExist)
 		{
 			Logger::WriteMessage("TestInvoiceSearchValueDoesNotExist");
-			
+
 			// tests if DoesNotExistException is thrown
 			try {
 				string returned = invoiceItem->search("product_id", "12345");
@@ -173,5 +173,22 @@ namespace TestInventory
 				Assert::Fail(); 
 			}
 		}
+
+		/// \brief tests if the InvoiceItem class can search and return the whole table
+		TEST_METHOD(TestInvoiceItemSearchAll)
+		{
+			Logger::WriteMessage("TestInvoiceItemSearchAll");
+
+			string returned = invoiceItem->search("all", "all"); // search all
+
+			Logger::WriteMessage(returned.c_str());
+
+			// see if whole table is returned
+			Assert::AreEqual("101|00000|33\n"
+							"102|1002|25\n"
+							"103|2720|1\n"
+							"104|00011|33\n", returned.c_str());
+		}
+
 	};
 }

@@ -287,5 +287,21 @@ namespace TestInventory
 			// in this case the expectation is "1|Description Modified|Name Modified\n"
 			Assert::AreEqual(expectedString,returnedString);
 		}
+
+		/// \brief tests if the Product class can search and return the whole table
+		TEST_METHOD(TestProductSearchAll)
+		{
+			Logger::WriteMessage("TestProductSearchAll");
+
+			string returned = prod->search("all", "all"); // search all
+
+			Logger::WriteMessage(returned.c_str());
+
+			// see if whole table is returned
+			Assert::AreEqual("1425|1|24 pack 355mL cans of Budget Brand Cola|BBCola24|5.98\r\n"
+							"2543|1|6 pack 710mL bottle Budget Brand Root Beer|BBRootBeer6Bottle|3.49\r\n"
+							"1002|2|250g bag Budget Brand Regular Tortilla Chips|BBRegTortillaChip|2.24\r\n"
+							, returned.c_str());
+		}
 	};
 }
