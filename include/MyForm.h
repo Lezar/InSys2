@@ -10,7 +10,7 @@
 #include "Sales.h"
 #include "Receipt.h"
 #include "SalesSummary.h"
-#include "Report.h"
+#include "ReportForm.h"
 #include <msclr/marshal.h>
 #include <msclr/marshal_cppstd.h>
 #include <regex>
@@ -4446,7 +4446,7 @@ namespace InventoryManagement {
 			 }
 	private: System::Void btnReportGenerate_Click(System::Object^  sender, System::EventArgs^  e) {
 
-				 Report reportForm;
+				 ReportForm reportForm;
 				 reportForm.ShowDialog();
 
 			 }

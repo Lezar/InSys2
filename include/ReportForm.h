@@ -10,12 +10,12 @@ namespace InventoryManagement {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for Report
+	/// Summary for ReportForm
 	/// </summary>
-	public ref class Report : public System::Windows::Forms::Form
+	public ref class ReportForm : public System::Windows::Forms::Form
 	{
 	public:
-		Report(void)
+		ReportForm(void)
 		{
 			InitializeComponent();
 			//
@@ -27,7 +27,7 @@ namespace InventoryManagement {
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		~Report()
+		~ReportForm()
 		{
 			if (components)
 			{
@@ -72,7 +72,7 @@ namespace InventoryManagement {
 			this->btnReportDone->TabIndex = 1;
 			this->btnReportDone->Text = L"Done";
 			this->btnReportDone->UseVisualStyleBackColor = true;
-			this->btnReportDone->Click += gcnew System::EventHandler(this, &Report::btnReportDone_Click);
+			this->btnReportDone->Click += gcnew System::EventHandler(this, &ReportForm::btnReportDone_Click);
 			// 
 			// Report
 			// 
