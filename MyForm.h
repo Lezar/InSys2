@@ -3139,7 +3139,42 @@ namespace InventoryManagement {
 
 	
 	private: System::Void cmbSalesProductSelect_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+				if (cmbSalesFunction->SelectedIndex == 0 )
+				{
+					Table summary = new Summary();
+				 
+				 // Integers to store delimiter positions
+				 int delimiter1, delimiter2, delimiter3, delimiter4;
 
+				 // strings to store returns of searches
+				 std::string qunatityReturned;
+				 // string to store current row in of search result of Orders
+				 std::string currentRow;
+
+				 System::String^ product_id;
+				
+				 std::string qSold;
+				 // product_id to add to listbox
+				 System::String^ product = cmbSalesProductSelect->SelectedItem->ToString();
+				 
+				 // find positions of delimiters
+				 int delimiter7 = product->IndexOf("|");
+				 int delimiter8 = product->IndexOf("|", delimiter1 + 1);
+
+				 // Get product_id, name, and quantity
+				 product_id = product->Substring(0, delimiter7-1);
+				 
+				 std::string pid = marshal_as<std::string>(product_id);
+				 qunatityReturned = summary->search("product_id", pid);
+
+				
+				 delimiter3 = qunatityReturned.find("|");
+				 delimiter4 = qunatityReturned.find("|", delimiter1+1);
+				 qSold = qunatityReturned.substr(delimiter3+1);
+				 MessageBox::Show("The total quantity of product#  " + gcnew String (pid.c_str())+ " is " + gcnew String(qSold.c_str()) + "Please enter a quantity below "+ gcnew String (qSold.c_str()));
+			 }
+				else if (cmbSalesFunction->SelectedIndex == 0 || cmbSalesFunction->SelectedIndex == 1)
+					
 				txtSalesProductQuantity->Enabled = true; // enable the product quantity textbox
 				txtSalesProductDiscount->Enabled = true;
 				btnSalesRemoveProduct->Enabled = true; // enable remove button
@@ -3195,25 +3230,80 @@ namespace InventoryManagement {
 					 btnSalesModify->Enabled = false;
 				 }
 			 }
+
+private: System :: Void quantityCheck(){
+				 Table summary = new Summary();
+				 
+				 // Integers to store delimiter positions
+				 int delimiter1, delimiter2, delimiter3, delimiter4;
+
+				 // strings to store returns of searches
+				 std::string qunatityReturned;
+				 // string to store current row in of search result of Orders
+				 std::string currentRow;
+
+				 System::String^ product_id;
+				
+				 std::string qSold;
+				 // product_id to add to listbox
+				 System::String^ product = cmbSalesProductSelect->SelectedItem->ToString();
+				 
+				 // find positions of delimiters
+				 int delimiter7 = product->IndexOf("|");
+				 int delimiter8 = product->IndexOf("|", delimiter1 + 1);
+
+				 // Get product_id, name, and quantity
+				 product_id = product->Substring(0, delimiter7-1);
+				 
+				 std::string pid = marshal_as<std::string>(product_id);
+				 qunatityReturned = summary->search("product_id", pid);
+
+				
+				 delimiter3 = qunatityReturned.find("|");
+				 delimiter4 = qunatityReturned.find("|", delimiter1+1);
+				 qSold = qunatityReturned.substr(delimiter3+1);
+					 
+				 System::String^ quanSold; // quantity sold to add to listbox
+				 System::String^ discount;
+
+				 quanSold = txtSalesProductQuantity->Text;
+				 discount = txtSalesProductDiscount->Text;
+				 std::string qSTDStr = marshal_as<std::string>(quanSold);
+
+				 //convert strings to integers
+				 int stock = atoi(qSold.c_str());
+				 int sold = atoi(qSTDStr.c_str()); 
+
+					if (stock < sold)
+				{
+					 MessageBox::Show("Invalid quantity! ");
+					quanSold = "";
+					discount = "";
+		
+			} // end while for add to listbox
+
+				 delete summary;
+				 
+			 }
+
 			 /// \brief Adds product, name, discountand quantity to the Product listbox when AddProduct button is clicked
 			 ///
 			 /// \post Sales is added to database if Modify is selected
 	private: System::Void btnSalesAddProduct_Click(System::Object^  sender, System::EventArgs^  e) {
-
+				 
 				 // enable listbox, remove product, date, and create receipt
 				 lstSalesProductList->Enabled = true;
 				 dtSalesReceiptDate->Enabled = true;
 				 btnSalesRemoveProduct->Enabled = true;
-
+				 
 				 System::String^ product_id; // product_id to add to listbox
 				 System::String^ qSold; // quantity sold to add to listbox
 				 System::String^ product_name; // name to add to listbox
 				 System::String^ discount; //discount to add to listbox
-
-
+				 System::String^ quantityReturned;
 				 // store current combo box selection to product
 				 System::String^ product = cmbSalesProductSelect->SelectedItem->ToString();
-
+				 
 				 // find positions of delimiters
 				 int delimiter1 = product->IndexOf("|");
 				 int delimiter2 = product->IndexOf("|", delimiter1 + 1);
@@ -3223,7 +3313,9 @@ namespace InventoryManagement {
 				 // Get product_id, name, and quantity
 				 product_id = product->Substring(0, delimiter1-1);
 				 product_name = product->Substring(delimiter3 + 2, delimiter4 - delimiter3 - 3);
+				 
 				 qSold = txtSalesProductQuantity->Text;
+				 quantityCheck();
 				 discount = txtSalesProductDiscount->Text;
 				 // Add product_id, name, discountand quantity to listbox if on Add function
 				 if (cmbSalesFunction->SelectedIndex == 0)
@@ -3243,7 +3335,7 @@ namespace InventoryManagement {
 				 {
 					 Table sales = new Sales();
 					 Table salesSummary = new SalesSummary();
-
+					 Table summary = new Summary ();
 					 // get receipt_id of selected invoice by converting selection to std::string
 					 // and then breaking it up with delimiters
 					 System::String^ receiptStr = cmbSalesReceiptSelect->SelectedItem->ToString();
@@ -3265,6 +3357,7 @@ namespace InventoryManagement {
 
 					 // add new row to InvoiceItem
 					 addVector.push_back(quantityString); 
+					 quantityCheck();
 					 addVector.push_back(product_idString);					
 					 addVector.push_back(discountString);
 					 sales->add(addVector);
@@ -3303,7 +3396,6 @@ namespace InventoryManagement {
 					 // add new sales to the Product List
 					 lstSalesProductList->Items->Add(gcnew String(salesID.c_str()) + 
 						 " | " + product_id + " | " + product_name +" | " + qSold + " | " + discount);
-
 					 delete salesSummary;
 					 delete sales;
 				 }
@@ -3646,7 +3738,9 @@ namespace InventoryManagement {
 						 discount = sales->Substring(delimiter4 + 1);
 						 // select the product in the product select combobox
 						 cmbSalesProductSelect->SelectedIndex = cmbSalesProductSelect->FindString(product_id);
-
+						 MessageBox::Show("Please select product# "+ gcnew String(product_id) + 
+					 " from the Product combo box. "  );
+	
 						 // change the text of the Product Quantity combobox to the selected quantity
 						 txtSalesProductQuantity->Text = qSold->Trim();
 						 txtSalesProductDiscount->Text = discount->Trim();
@@ -3671,7 +3765,7 @@ namespace InventoryManagement {
 				 std::string receiptSTDStr = marshal_as<std::string>(receiptSystemStr);
 				 delimiter1 = receiptSTDStr.find(":");
 				 delimiter2 = receiptSTDStr.find(":", delimiter1 + 1);
-				 std::string receipt_id = receiptSTDStr.substr(delimiter1 + 2, delimiter2 - delimiter1 - 9); 
+				 std::string receipt_id = receiptSTDStr.substr(delimiter1 + 2, delimiter2 - delimiter1 - 17); 
 
 				 // chage the date of the receipt
 				 receipt->modifyRow(receipt_id, "date", date);
