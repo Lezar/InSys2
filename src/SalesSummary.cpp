@@ -71,6 +71,11 @@ string SalesSummary :: search(string columnName, string valueToFind) throw (Does
 			// assigns the string with the next line in the file
 			getline(ssInFile, rowReceive);
 
+			// break when an empty string is assigned to rowReceive
+			// which occurss if there are no more valid entries in the table
+			if (rowReceive.empty())
+				break;
+
 			// assigns the first delimiter position
 			delimiter = rowReceive.find('|');
 
@@ -93,6 +98,9 @@ string SalesSummary :: search(string columnName, string valueToFind) throw (Does
 				receiptID == valueToFind)
 				returnString += rowReceive + "\n";
 				resultFound = true;
+				// return the whole table
+			if(columnName == "all")
+				returnString += rowReceive + "\n";
 		}
 	}
 	// closes the file

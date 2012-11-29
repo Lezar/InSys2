@@ -59,6 +59,7 @@ void Invoice::add(vector<string> addVector) throw(AlreadyExistsException) {
 // Search function to find a specific row of data and return it as a string
 //
 // param[in]: columnName identifies the name of the column to be searched
+//            columnName as "all" means the whole table is returned
 // param[in]: valueToFind identifies the value to be searched for in the column
 // return: a string which contains a concatenation of all values in the row found in the database table
 //         if multiple values exist, return all rows with that value, where
@@ -106,6 +107,9 @@ string Invoice::search(string columnName, string valueToFind) throw(DoesNotExist
 				date == valueToFind)	{	
 				returnString += currentRow + "\n"; //adds any row that contains same date
 			}
+			// return the whole table
+			else if(columnName == "all")
+				returnString += currentRow + "\n";
 		}
 	}
 	
