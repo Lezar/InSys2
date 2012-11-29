@@ -12,6 +12,9 @@
 #include "SalesSummary.h"
 #include <msclr/marshal.h>
 #include <msclr/marshal_cppstd.h>
+#include <sstream>
+#include <iomanip>
+
 
 namespace InventoryManagement {
 
@@ -3142,7 +3145,9 @@ namespace InventoryManagement {
 				if (cmbSalesFunction->SelectedIndex == 0 )
 				{
 					Table summary = new Summary();
-				 
+				 txtSalesProductQuantity->Enabled = true; // enable the product quantity textbox
+				txtSalesProductDiscount->Enabled = true;
+				btnSalesRemoveProduct->Enabled = true;
 				 // Integers to store delimiter positions
 				 int delimiter1, delimiter2, delimiter3, delimiter4;
 
@@ -3281,7 +3286,14 @@ private: System :: Void quantityCheck(){
 					discount = "";
 		
 			} // end while for add to listbox
+				 
+				 stock = stock - sold;
+				 System::String^ test;
+				test = System::Convert::ToString(stock);
+				 
+				 std::string strStock = marshal_as<std::string>(test);
 
+				 summary->modifyRow(pid, "total_quantity", strStock);
 				 delete summary;
 				 
 			 }
