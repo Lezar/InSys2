@@ -47,8 +47,8 @@ namespace TestInventory
 
 			ofstr.close();
 
-			// prepare sales table file with testing date
-			ofstr.open("textfiles\\sales.txt", ios_base::trunc); // clear sales table
+			// prepare receipt table file with testing date
+			ofstr.open("textfiles\\receipt.txt", ios_base::trunc); // clear Receipt table
 
 			// Data for testing
 			ofstr << "1|2011-07-11\n";
@@ -141,13 +141,13 @@ namespace TestInventory
 			Assert::AreEqual("6", returnedVector[0].c_str());
 		}
 
-		/// \brief Test if reports can find multiple Sales ID between Dates
-		TEST_METHOD(TestReportsFindMultipleSalesIDBetweenDates)
+		/// \brief Test if reports can find multiple Receipt IDs between Dates
+		TEST_METHOD(TestReportsFindMultipleReceiptIDBetweenDates)
 		{
-			Logger::WriteMessage("TestReportsFindMultipleSalesIDBetweenDates");
+			Logger::WriteMessage("TestReportsFindMultipleReceiptIDBetweenDates");
 
-			// find all Sales ID's between and including 2009-01-01 and 2015-12-12
-			vector<string> returnedVector = reports.findIDsBetweenDates(new Sales(), "2009-01-01", "2015-12-12");
+			// find all Receipt ID's between and including 2009-01-01 and 2015-12-12
+			vector<string> returnedVector = reports.findIDsBetweenDates(new Receipt(), "2009-01-01", "2015-12-12");
 
 			vector<string>::iterator it; // iterator for returnedVector
 

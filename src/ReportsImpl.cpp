@@ -31,7 +31,7 @@ time_t ReportsImpl::convertStringToDate(string dateString) {
 	// convert date_tm to time_t and returned
 	return mktime(&date_tm); 
 }
-// Finds all the sales/invoice/return id's between and including two dates
+// Finds all the receipt/invoice/return id's between and including two dates
 // precondition: The table is set in a way that the first column is the ID (primary key), 
 //               the date is in the form YYYY-MM-DD, all other entries are integers    
 // parameter[in]: table is a Table of the type to search in
@@ -67,21 +67,25 @@ vector<string> ReportsImpl::findIDsBetweenDates (Table table, string startDate, 
 
 			// find the date of the current row and convert to a time_t
 			delimiter = currentRow.find('-');
-			date = currentRow.substr(delimiter - 4, 10);
-			dateTime = convertStringToDate(date);
-
-			// if the date is between start and end dates, find the ID and add it to returnVector
-			if (dateTime >= startDateTime && dateTime <= endDateTime)
+			if (delimiter > -1)
 			{
-				delimiter = currentRow.find('|');
-				ID = currentRow.substr(0, delimiter);
-				returnVector.push_back(ID);
+				date = currentRow.substr(delimiter - 4, 10);
+				dateTime = convertStringToDate(date);
+
+				// if the date is between start and end dates, find the ID and add it to returnVector
+				if (dateTime >= startDateTime && dateTime <= endDateTime)
+				{
+					delimiter = currentRow.find('|');
+					ID = currentRow.substr(0, delimiter);
+					returnVector.push_back(ID);
+				}
+
+				// break down the searchResult and find currentRow
+				delimiter = searchResult.find('\n');
+				searchResult = searchResult.substr(delimiter + 1);
+				currentRow = searchResult.substr(0, delimiter + 1);
 			}
 
-			// break down the searchResult and find currentRow
-			delimiter = searchResult.find('\n');
-			searchResult = searchResult.substr(delimiter + 1);
-			currentRow = searchResult.substr(0, delimiter + 1);
 		}
 
 		// throw DoesNotExistException if there are no entries within date range
@@ -92,5 +96,18 @@ vector<string> ReportsImpl::findIDsBetweenDates (Table table, string startDate, 
 }
 
 string ReportsImpl::totalRevenueReport(string startDate, string endDate) { return NULL; }
+
+string ReportsImpl::reportBetweenDates(Table table, vector<string> IDs, string strColToSearch)
+{
+	string strSalesFound = "";
+	for (int i = 0; i < IDs.size(); i++)
+	{
+		strSalesFound += table->search(strColToSearch, IDs[i]) + "\r\n";
+	}
+	return strSalesFound;
+}
+
+
+
 
 ReportsImpl::~ReportsImpl() {};
