@@ -11,6 +11,7 @@
 /// - Add a row to the InvoiceItem table
 /// - Search for a row in the InvoiceItem table
 /// - Modify a row in the InvoiceItem table
+/// - Delete a row in the InvoiceItem table
 /// - Ensure that a new product is added to Summary table when a new product is received
 /// - Ensure that changes to existing product quantities are updated in the Summary table
 /// - Connect and disconnect from the database
@@ -19,12 +20,6 @@ private:
 
 	/// \brief file name of text file for InvoiceItem table
 	string fileName;
-
-	/// \brief deleteRow will do nothing for InvoiceItem class
-	///
-	/// Invoice Items should not be deleted from the database
-	/// because all filed invoices will be kept
-	void deleteRow(string valueToFind);
 
 public:
 
@@ -58,6 +53,12 @@ public:
 	/// \post total_quantities of old and new products are modified in Summary when product_id is chaged
 	///       in Invoice Item
 	void modifyRow(string valueToFind, string columnNameToModify, string valueOfModify);
+
+	/// \brief Deletes a row by searching for that row's invoice_item_id
+	///
+	/// \param[in] valueToFind is the value of the invoice_item_id of the row to delete
+	/// \post the deleted product's quantity is subtracted from that product's total quantity in summary
+	void deleteRow(string valueToFind);
 
 	/// \brief Destructor for InvoiceItem
 	~InvoiceItem();

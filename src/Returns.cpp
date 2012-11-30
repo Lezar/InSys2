@@ -115,6 +115,11 @@ string Returns :: search(string columnName, string valueToFind)
 			// retrieves the next line in returnsInFile and assigns it to the string rowReceive
 			getline(returnsInFile, rowReceive);
 
+			// break when an empty string is assigned to rowReceive
+			// which occurss if there are no more valid entries in the table
+			if (rowReceive.empty())
+				break;
+
 			// finds the positions of the delimeters and stores them in a variable
 			delimiter = rowReceive.find(delim);
 			delimiter2 = rowReceive.find(delim, delimiter+1);
@@ -157,6 +162,9 @@ string Returns :: search(string columnName, string valueToFind)
 				// concatenates the row that matched the search arguments to the string returnString 
 				// along with a line break at the end
 				returnString += rowReceive + "\r\n";
+			// return the whole table
+			else if(columnName == "all")
+				returnString += rowReceive + "\n";
 
 		}
 	}
@@ -207,6 +215,11 @@ void Returns :: deleteRow(string valueToFind)
 		{
 			// retrieves the next line in returnsInFile and assigns it to the string rowReceive
 			getline(returnsInFile, rowReceive);
+
+			// break when an empty string is assigned to rowReceive
+			// which occurss if there are no more valid entries in the table
+			if (rowReceive.empty())
+				break;
 
 			// finds the positions of the delimeters and stores them in a variable
 			delimiter = rowReceive.find(delim);
@@ -278,6 +291,11 @@ void Returns :: modifyRow(string valueToFind, string columnNameToModify, string 
 		{
 			// retrieves the next line in returnsInFile and assigns it to the string rowReceive
 			getline(returnsInFile, rowReceive);
+
+			// break when an empty string is assigned to rowReceive
+			// which occurss if there are no more valid entries in the table
+			if (rowReceive.empty())
+				break;
 
 			// finds the positions of the delimeters and stores them in a variable
 			delimiter = rowReceive.find(delim);

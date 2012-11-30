@@ -92,6 +92,9 @@ string Receipt::search(string columnName, string valueToFind) throw(DoesNotExist
 				date == valueToFind)	{	
 				returnString += rowReceived + "\n"; //adds any row that contains same date
 			}
+			// return the whole table
+			else if(columnName == "all")
+				returnString += rowReceived + "\n";
 		}
 	}
 

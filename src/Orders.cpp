@@ -30,6 +30,7 @@ void Orders::add(vector<string> addVector) throw (AlreadyExistsException) {
 // Search function to find a specific row of data and return it as a string
 //
 // param[in]: columnName identifies the name of the column to be searched
+//            columnName as "all" means the whole table is returned
 // param[in]: valueToFind identifies the value to be searched for in the column
 // return: a string which contains a concatenation of all values in the row found in the database table
 //         if multiple values exist, return all rows with that value, where
@@ -77,6 +78,9 @@ string Orders::search(string columnName, string valueToFind) throw(DoesNotExistE
 				invoice_id == valueToFind)	{	
 				returnString += currentRow + "\n"; //adds any row that contains same invoice_id
 			}
+			// return the whole table
+			else if(columnName == "all")
+				returnString += currentRow + "\n";
 		}
 	}
 	
@@ -89,9 +93,59 @@ string Orders::search(string columnName, string valueToFind) throw(DoesNotExistE
 	return returnString;
 }
 
-// deleteRow will not do anything because rows will not be deleted.
-// This is because both Invoice and InvoiceItem cannot be deleted
-void Orders::deleteRow(string valueToFind) {}
+// Orders will delete a row by finding that row's invoice_item_id, which is unique
+// parameter[in]: valueToFind is the value of invoice_item_id of the row to be deleted
+void Orders::deleteRow(string valueToFind) {
+
+	ifstream infstream; // ifstream to be used to read orders.txt
+	ofstream outfstream; // ofstream to be used to write to orders.txt	
+	vector<string> fileVector; // string vector to store each line of the orders.txt file
+
+	string currentRow; // string to store the current row in the table
+	string invoice_item_id; //string to store invoice_item_id of current row
+	string invoice_id; //string to store invoice_id of current row
+
+
+	int delimPos1; // position of delimiters in the current row
+
+	infstream.open(fileName);
+
+	if(infstream.is_open())
+	{
+		// while loop continues as long as there is another line in the text file
+		// transfers orders.txt to fileVector with the desired row removed
+		while(infstream.good())
+		{
+			getline(infstream, currentRow); // store next line of textfile in currentRow
+
+			// break when an empty string is assigned to currentRow
+			// which occurss if there are no more valid entries in the table
+			if (currentRow.empty())
+				break;
+
+			delimPos1 = currentRow.find('|'); // position of first delimiter '|'
+		
+			// find invoice item id and invoice_id by breaking up the string
+			invoice_item_id = currentRow.substr(0,delimPos1);
+			invoice_id = currentRow.substr(delimPos1 + 1);
+
+			// adds everything to vector but row to be deleted
+			if (invoice_item_id != valueToFind)
+				fileVector.push_back(invoice_item_id + "|" + invoice_id + "\n");
+		}
+	}
+
+	infstream.close();
+
+	// clears orders.txt so fileVector can be written on it
+	outfstream.open(fileName, ios_base::trunc);
+
+	// copy fileVector to orders.txt
+	for(int i = 0; i < (int) fileVector.size(); i++)
+		outfstream << fileVector[i];
+
+	outfstream.close();
+}
 
 // Orders contains two foreign primary keys of InvoiceItem and Invoice.
 // Both are auto-incrimented and thus, never changed

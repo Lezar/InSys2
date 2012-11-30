@@ -1,4 +1,5 @@
 #include "Product.h"
+#include "Summary.h"
 
 void Product :: add(vector<string> addVector) throw(AlreadyExistsException)
 {
@@ -72,6 +73,19 @@ void Product :: add(vector<string> addVector) throw(AlreadyExistsException)
 
 	// closes product.txt
 	productOutFile.close();
+
+	// declare an instance of the Summary class
+	Table summaryTable;
+
+	// create vector for the entry to the summary table
+	vector<string> summaryVect;
+	summaryVect.push_back(productID);
+	summaryVect.push_back("0");
+
+	// add new product to the summary file
+	summaryTable->add(summaryVect);
+
+	delete summaryTable;
 }
 
 string Product :: search(string columnName, string valueToFind) throw(DoesNotExistException)
@@ -113,6 +127,11 @@ string Product :: search(string columnName, string valueToFind) throw(DoesNotExi
 		{
 			// retrieves the next line in categoryInFile and assigns it to the string rowReceive
 			getline(productInFile, rowReceive);
+
+			// break when an empty string is assigned to rowReceive
+			// which occurss if there are no more valid entries in the table
+			if (rowReceive.empty())
+				break;
 
 			// finds the first delimiter position and assigns it to int delimiter
 			delimiter = rowReceive.find('|');
@@ -198,6 +217,12 @@ string Product :: search(string columnName, string valueToFind) throw(DoesNotExi
 				// along with a line break at the end
 				returnString += rowReceive + "\r\n";
 
+				resultFound = true;
+			}
+			// return the whole table
+			else if(columnName == "all")
+			{
+				returnString += rowReceive + "\r\n";
 				resultFound = true;
 			}
 		}

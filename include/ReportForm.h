@@ -10,12 +10,12 @@ namespace InventoryManagement {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for Report
+	/// Summary for ReportForm
 	/// </summary>
-	public ref class Report : public System::Windows::Forms::Form
+	public ref class ReportForm : public System::Windows::Forms::Form
 	{
 	public:
-		Report(void)
+		ReportForm(void)
 		{
 			InitializeComponent();
 			//
@@ -27,14 +27,14 @@ namespace InventoryManagement {
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		~Report()
+		~ReportForm()
 		{
 			if (components)
 			{
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::TextBox^  txtReport;
+	public: System::Windows::Forms::TextBox^  txtReport;
 	private: System::Windows::Forms::Button^  btnReportDone;
 	protected: 
 
@@ -63,6 +63,7 @@ namespace InventoryManagement {
 			this->txtReport->ReadOnly = true;
 			this->txtReport->Size = System::Drawing::Size(709, 397);
 			this->txtReport->TabIndex = 0;
+			this->txtReport->TabStop = false;
 			// 
 			// btnReportDone
 			// 
@@ -72,9 +73,9 @@ namespace InventoryManagement {
 			this->btnReportDone->TabIndex = 1;
 			this->btnReportDone->Text = L"Done";
 			this->btnReportDone->UseVisualStyleBackColor = true;
-			this->btnReportDone->Click += gcnew System::EventHandler(this, &Report::btnReportDone_Click);
+			this->btnReportDone->Click += gcnew System::EventHandler(this, &ReportForm::btnReportDone_Click);
 			// 
-			// Report
+			// ReportForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
@@ -82,7 +83,7 @@ namespace InventoryManagement {
 			this->Controls->Add(this->btnReportDone);
 			this->Controls->Add(this->txtReport);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
-			this->Name = L"Report";
+			this->Name = L"ReportForm";
 			this->Text = L"Report";
 			this->ResumeLayout(false);
 			this->PerformLayout();
