@@ -2,6 +2,8 @@
 #include "DoesNotExistException.h"
 #include "AlreadyExistsException.h"
 
+
+/// Add function to insert data into the receipt text file
 void Receipt::add(vector<string> addVector) throw(AlreadyExistsException) {
 
 	ifstream inputfile; // ifstream to be used to read receipt.txt
@@ -43,12 +45,14 @@ void Receipt::add(vector<string> addVector) throw(AlreadyExistsException) {
 
 	outputfile.open(fileName, ios_base::app);
 
-	// writes to receipt.txt the new row data as defined by receipt_id, and date 
-	// with delimiters between each input and a line break at the end
+	/// writes to receipt.txt the new row data as defined by receipt_id, and date 
+	/// with delimiters between each input and a line break at the end
 	outputfile << receipt_id << "|" + date + "\n";
 
 	outputfile.close();
 }
+
+/// Search function to find a specific row of data and return it as a string
 
 string Receipt::search(string columnName, string valueToFind) throw(DoesNotExistException) {
 
@@ -107,6 +111,8 @@ string Receipt::search(string columnName, string valueToFind) throw(DoesNotExist
 	return returnString;
 }
 
+/// Modify function to change the data in a given row
+
 void Receipt::modifyRow(string valueToFind, string columnNameToModify, string valueOfModify) {
 
 	ifstream inputfile; // ifstream to be used to read receipt.txt
@@ -159,7 +165,7 @@ void Receipt::modifyRow(string valueToFind, string columnNameToModify, string va
 	outputfile.close();
 }
 
-// Receipts will not be allowed to be deleted
+/// Receipts will not be allowed to be deleted
 void Receipt::deleteRow(string valueToFind){}
 
 // Initializes fileName
