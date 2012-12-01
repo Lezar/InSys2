@@ -284,6 +284,7 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 
 	// *** end adding all sales to total and category revenues
 
+	// Prepare and formate each category and their revenues and add to the revenueReport
 	for (int i = 0; i < (int) categoryIDVector.size(); i++)
 	{
 		converter.str("");
@@ -291,9 +292,9 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 		revenueReport += categoryNameVector[i] + " (ID:" + categoryIDVector[i] + ") ----- $" + converter.str() + "\n";
 	}
 
+	// Prepare the total revenue for the report
 	converter.str("");
 	converter << fixed << setprecision(2) << totalRevenue / 10000.0;
-
 	revenueReport += "TOTAL REVENUE ----- $" + converter.str() + "\n";
 
 	delete category;
