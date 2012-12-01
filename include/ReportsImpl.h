@@ -2,6 +2,7 @@
 #define REPORTSIMPL_H
 
 #include "ReportsInterface.h"
+#include <iomanip>
 
 /// \brief Implementation of ReportsInterface
 ///
@@ -30,7 +31,7 @@ public:
 	/// \return a string vector where each element an ID whose date is within the range
 	vector<string> findIDsBetweenDates (Table table, string startDate, string endDate) throw (DoesNotExistException);
 
-	string totalRevenueReport(string startDate, string endDate);
+	string totalRevenueReport(string startDate, string endDate) throw (DoesNotExistException);
 
 	/// \brief returns all rows found between two dates using our findIDsBetweenDates function for given table
 	///

@@ -52,19 +52,75 @@ namespace TestInventory
 
 			// Data for testing
 			ofstr << "1|2011-07-11\n";
-			ofstr << "2|2012-08-15\n";
+			ofstr << "2|2012-07-22\n";
 			ofstr << "3|2012-09-15\n";
 			ofstr << "4|2012-07-22\n";
-			ofstr << "5|2012-09-22\n";
-			ofstr << "6|2012-11-23\n";
+			ofstr << "6|2012-09-22\n";
+			ofstr << "7|2012-11-23\n";
 
 			ofstr.close();
+
+			// prepare salessummary table file with testing date
+			ofstr.open("textfiles\\SalesSummary.txt", ios_base::trunc); // clear SalesSummary table
+
+			// Data for testing
+			ofstr << "1|1\n";
+			ofstr << "1|2\n";
+			ofstr << "1|3\n";
+			ofstr << "2|5\n";
+			ofstr << "2|6\n";
+			ofstr << "3|8\n";
+			ofstr << "4|9\n";
+			ofstr << "6|10\n";
+			ofstr << "6|11\n";
+			ofstr << "7|12\n";
+			ofstr << "2|13\n";
+
+			ofstr.close();
+
+			// prepare Sales table file with testing date
+			ofstr.open("textfiles\\Sales.txt", ios_base::trunc); // clear Sales table
+
+			// Data for testing
+			ofstr << "1|3|11100|10\n";
+			ofstr << "2|4|22200|0\n";
+			ofstr << "3|5|33300|0\n";
+			ofstr << "5|1|22200|5\n";
+			ofstr << "6|20|33300|33\n";
+			ofstr << "8|10|44400|0\n";
+			ofstr << "9|1|55500|0\n";
+			ofstr << "10|1|22200|0\n";
+			ofstr << "11|27|44400|15\n";
+			ofstr << "12|10|33300|10\n";
+			ofstr << "13|10|11100|30\n";
+
+			ofstr.close();
+
+			// prepare Product table file with testing date
+			ofstr.open("textfiles\\product.txt", ios_base::trunc); // clear Product table
+
+			// Data for testing
+			ofstr << "11100|1|10 Pack Red Delicious|RedDel10Pk|4.00\n";
+			ofstr << "22200|1|20 Pack Navel Orange|Orange20Pk|5.99\n";
+			ofstr << "33300|3|Clover Tree 100g Flaked Tuna|ClTuna100g|1.29\n";
+			ofstr << "44400|4|Delicioso Frozen Pepperoni Pizza|DelPeppPizz|7.99\n";
+			ofstr << "55500|4|McCairn Frozen Fries 1kg|McFries1k|6.99\n";
+
+			ofstr.close();
+
+			// prepare Category table file with testing date
+			ofstr.open("textfiles\\category.txt", ios_base::trunc); // clear Category table
+
+			// Data for testing
+			ofstr << "1|Sweet and tangy|Fruits\n";
+			ofstr << "3|Preserved in a metal container|Canned food\n";
+			ofstr << "4|Cold and hard|Frozen food\n";
 		}
 
-		/// \brief Test if reports can convert the string "2012-12-25" to appropriate time_t
-		TEST_METHOD(TestReportsCanConvert2012_12_25ToDate)
+		/// \brief Test if convertStringToDate can convert the string "2012-12-25" to appropriate time_t
+		TEST_METHOD(TestReportsCanConvertString2012_12_25ToDate)
 		{
-			Logger::WriteMessage("TestReportsCanConvert2012_12_25ToDate");
+			Logger::WriteMessage("TestReportsCanConvertString2012_12_25ToDate");
 
 			string dateString = "2012-12-25"; // string of form YYYY-MM-DD
 
@@ -83,9 +139,9 @@ namespace TestInventory
 		}
 
 		/// \brief Test if reports can convert the string "2012-12-25" to appropriate time_t
-		TEST_METHOD(TestReportsCanConvert2012_07_22ToDate)
+		TEST_METHOD(TestReportsCanConvertString2012_07_22ToDate)
 		{
-			Logger::WriteMessage("TestReportsCanConvert2012_07_22ToDate");
+			Logger::WriteMessage("TestReportsCanConvertString2012_07_22ToDate");
 
 			string dateString = "2012-07-22"; // string of form YYYY-MM-DD
 
@@ -103,7 +159,7 @@ namespace TestInventory
 			Assert::AreEqual("2012-07-22", dateReturnedString);
 		}
 
-		/// \brief Test if reports can find single the invoice ID of a within a range of the same date
+		/// \brief Test if findIDsBetweenDates can find single the invoice ID of a within a range of the same date
 		TEST_METHOD(TestReportsFindSingleInvoiceIDSingleDate)
 		{
 			Logger::WriteMessage("TestReportsFindSingleInvoiceIDSingleDate");
@@ -161,14 +217,14 @@ namespace TestInventory
 			Assert::AreEqual("2", returnedVector[1].c_str());
 			Assert::AreEqual("3", returnedVector[2].c_str());
 			Assert::AreEqual("4", returnedVector[3].c_str());
-			Assert::AreEqual("5", returnedVector[4].c_str());
-			Assert::AreEqual("6", returnedVector[5].c_str());
+			Assert::AreEqual("6", returnedVector[4].c_str());
+			Assert::AreEqual("7", returnedVector[5].c_str());
 		}
 
-		/// \brief Test if reports throws a DoesNotExistException if nothing exists in the date range
-		TEST_METHOD(TestReportsThrowsDoesNotExistException)
+		/// \brief Test if findIDsBetweenDates throws a DoesNotExistException if nothing exists in the date range
+		TEST_METHOD(TestReportsFindIDsBtwDatesThrowsDoesNotExistException)
 		{
-			Logger::WriteMessage("TestReportsThrowsDoesNotExistException");
+			Logger::WriteMessage("TestReportsFindIDsBtwDatesThrowsDoesNotExistException");
 
 			// try finding within date range with no existing entries
 			try {
@@ -185,5 +241,96 @@ namespace TestInventory
 				Assert::Fail();
 			}
 		}
+
+		/// \brief Test if totalRevenueReport can report total revenue of only one sale with no discount
+		TEST_METHOD(TestReportsTotalRevenueOneSaleNoDiscount)
+		{
+			Logger::WriteMessage("TestReportsTotalRevenueOneSaleNoDiscount");
+
+			// receipt on 2012-09-15 has only one sale with no discount
+			string totalRevenueReturned = reports.totalRevenueReport("2012-09-15", "2012-09-15");
+
+			Logger::WriteMessage(totalRevenueReturned.c_str());
+
+			// check if revenue report is properly calculated and formatted
+			Assert::AreEqual("Fruits (ID:1) ----- $0.00\n"
+							"Canned food (ID:3) ----- $0.00\n"
+							"Frozen food (ID:4) ----- $79.90\n"
+							"TOTAL REVENUE ----- $79.90\n", totalRevenueReturned.c_str());
+		}
+
+		/// \brief Test if totalRevenueReport can report total revenue of only one Sale with discount
+		TEST_METHOD(TestReportsTotalRevenueOneSaleWithDiscount)
+		{
+			Logger::WriteMessage("TestReportsTotalRevenueOneSaleWithDiscount");
+
+			// receipt on 2012-11-23 has only one sale but with a discount
+			string totalRevenueReturned = reports.totalRevenueReport("2012-11-23", "2012-11-23");
+
+			Logger::WriteMessage(totalRevenueReturned.c_str());
+
+			// check if revenue report is properly calculated and formatted
+			Assert::AreEqual("Fruits (ID:1) ----- $0.00\n"
+							"Canned food (ID:3) ----- $11.61\n"
+							"Frozen food (ID:4) ----- $0.00\n"
+							"TOTAL REVENUE ----- $11.61\n", totalRevenueReturned.c_str());
+		}
+
+		/// \brief Test if totalRevenueReport can report total revenue of multiple sales on one receipt
+		TEST_METHOD(TestReportsTotalRevenueOneReceiptMultipleSales)
+		{
+
+		Logger::WriteMessage("TestReportsTotalRevenueOneReceiptMultiSales");
+
+			// receipt only on 2012-09-22 has multiple sales on one receipt
+			string totalRevenueReturned = reports.totalRevenueReport("2012-09-21", "2012-09-23");
+
+			Logger::WriteMessage(totalRevenueReturned.c_str());
+
+			// check if revenue report is properly calculated and formatted
+			Assert::AreEqual("Fruits (ID:1) ----- $5.99\n"
+							"Canned food (ID:3) ----- $0.00\n"
+							"Frozen food (ID:4) ----- $183.37\n"
+							"TOTAL REVENUE ----- $189.36\n", totalRevenueReturned.c_str());
+		}
+
+		/// \brief Test if totalRevenueReport can report total revenue of multiple sales on multiple receipts
+		TEST_METHOD(TestReportsTotalRevenueMultiReceiptsMultiSales)
+		{
+
+		Logger::WriteMessage("TestReportsTotalRevenueMultiReceiptsMultiales");
+
+			// 2012-07-22 to 2012-09-22 contains multiple receipts
+			string totalRevenueReturned = reports.totalRevenueReport("2012-07-22", "2012-09-22");
+
+			Logger::WriteMessage(totalRevenueReturned.c_str());
+
+			// check if revenue report is properly calculated and formatted
+			Assert::AreEqual("Fruits (ID:1) ----- $39.68\n"
+							"Canned food (ID:3) ----- $17.29\n"
+							"Frozen food (ID:4) ----- $270.26\n"
+							"TOTAL REVENUE ----- $327.23\n", totalRevenueReturned.c_str());
+		}
+
+		/// \brief Test if totalRevenuereport throws a DoesNotExistException if nothing exists in the date range 
+		TEST_METHOD(TestReportsTotalRevenueThrowsDoesNotExistException)
+		{
+			Logger::WriteMessage("TestReportsTotalRevenueThrowsDoesNotExistException");
+
+			// try finding within date range with no existing entries
+			try {
+				string returnedString = reports.totalRevenueReport("2040-01-01", "2040-12-12");
+				Logger::WriteMessage("No exception thrown");
+				Assert::Fail(); // fail if nothing is thrown
+			}
+			catch (DoesNotExistException e) { // pass test and log error if DoesNotExistException is thrown
+				Logger::WriteMessage(e.what()); 
+			}
+			catch (...) { // fail test if other type of exception is thrown
+				Logger::WriteMessage("Wrong type of exception");
+				Assert::Fail();
+			}
+		}
+
 	};
 }

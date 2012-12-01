@@ -391,6 +391,8 @@ void InvoiceItem::deleteRow(string valueToFind) {
 	totalQuantity << atoi(total_quantity.c_str()) - atoi(quantityOfDeleted.c_str());
 
 	summary->modifyRow(summary_product_id, "total_quantity", totalQuantity.str());
+
+	delete summary;
 }
 
 // default constructor initialize fileName
