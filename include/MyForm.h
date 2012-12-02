@@ -8,6 +8,8 @@
 #include "Summary.h"
 #include "Orders.h"
 #include "Sales.h"
+#include <sstream>
+#include <iterator>
 #include "Receipt.h"
 #include "SalesSummary.h"
 #include "ReportForm.h"
@@ -1050,6 +1052,8 @@ namespace InventoryManagement {
 			this->btnSalesModifyReceipt->TabIndex = 54;
 			this->btnSalesModifyReceipt->Text = L"Modify Date";
 			this->btnSalesModifyReceipt->UseVisualStyleBackColor = true;
+
+			this->btnSalesModifyReceipt->Click += gcnew System::EventHandler(this, &MyForm::btnSalesModifyReceipt_Click);
 			// 
 			// lblsalesProductList
 			// 
@@ -1105,6 +1109,8 @@ namespace InventoryManagement {
 			this->txtSalesProductDiscount->Name = L"txtSalesProductDiscount";
 			this->txtSalesProductDiscount->Size = System::Drawing::Size(100, 20);
 			this->txtSalesProductDiscount->TabIndex = 32;
+
+			this->txtSalesProductDiscount->TextChanged += gcnew System::EventHandler(this, &MyForm::txtSalesProductDiscount_TextChanged);
 			// 
 			// lblSalesProductDiscount
 			// 
@@ -1132,6 +1138,8 @@ namespace InventoryManagement {
 			this->cmbSalesReceiptSelect->Name = L"cmbSalesReceiptSelect";
 			this->cmbSalesReceiptSelect->Size = System::Drawing::Size(491, 21);
 			this->cmbSalesReceiptSelect->TabIndex = 29;
+			this->cmbSalesReceiptSelect->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbSalesReceiptSelect_SelectedIndexChanged);
+
 			// 
 			// btnSalesRemoveProduct
 			// 
@@ -1149,7 +1157,9 @@ namespace InventoryManagement {
 			this->lstSalesProductList->Location = System::Drawing::Point(153, 179);
 			this->lstSalesProductList->Name = L"lstSalesProductList";
 			this->lstSalesProductList->Size = System::Drawing::Size(344, 95);
-			this->lstSalesProductList->TabIndex = 27;
+
+			this->lstSalesProductList->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::lstSalesProductList_SelectedIndexChanged);this->lstSalesProductList->TabIndex = 27;
+
 			// 
 			// btnSalesAddProduct
 			// 
@@ -1167,6 +1177,8 @@ namespace InventoryManagement {
 			this->txtSalesProductQuantity->Name = L"txtSalesProductQuantity";
 			this->txtSalesProductQuantity->Size = System::Drawing::Size(100, 20);
 			this->txtSalesProductQuantity->TabIndex = 25;
+
+			this->txtSalesProductQuantity->TextChanged += gcnew System::EventHandler(this, &MyForm::txtSalesProductQuantity_TextChanged);
 			// 
 			// lblSaleProductQuantity
 			// 
@@ -1616,6 +1628,8 @@ namespace InventoryManagement {
 			this->cmbReportCategorySelect->Name = L"cmbReportCategorySelect";
 			this->cmbReportCategorySelect->Size = System::Drawing::Size(491, 21);
 			this->cmbReportCategorySelect->TabIndex = 21;
+
+			this->cmbReportCategorySelect->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbReportCategorySelect_SelectedIndexChanged);
 			// 
 			// lblReportCategorySelect
 			// 
@@ -1641,7 +1655,6 @@ namespace InventoryManagement {
 			this->dtReportEndDate->Name = L"dtReportEndDate";
 			this->dtReportEndDate->Size = System::Drawing::Size(154, 20);
 			this->dtReportEndDate->TabIndex = 6;
-			this->dtReportEndDate->ValueChanged += gcnew System::EventHandler(this, &MyForm::dtReportEndDate_ValueChanged);
 			// 
 			// lblReportStartDate
 			// 
@@ -1867,7 +1880,6 @@ namespace InventoryManagement {
 				 lblReportEndDate->Visible = false;
 				 dtReportEndDate->Visible = false;
 				 btnReportGenerate->Visible = false;
-				 dtReportStartDate->MaxDate = DateTime::Today;
 			 }
 
 			 /// \brief Changes the visibility of certain components for the category tab based on the user selected function
@@ -2272,6 +2284,11 @@ namespace InventoryManagement {
 					 cmbSalesReceiptSelect->Visible = false;
 					 lstSalesProductList->Enabled = true;
 					 btnSalesSearch->Visible = false;
+
+					 cmbSalesProductSelect->Enabled = true;
+					 txtSalesProductDiscount->Enabled = false;
+					 txtSalesProductQuantity->Enabled  = false;
+					 btnSalesAddProduct->Enabled = false;
 					 txtSalesProductDiscount->Text = "";
 					 txtSalesProductQuantity->Text = "";
 					 lblsalesProductList->Visible= true;
@@ -2282,12 +2299,12 @@ namespace InventoryManagement {
 					 // currentRow string
 					 System::String ^ currentRow;
 
-					 // vector to contain the category file contents
+					 // vector to contain the product file contents
 					 vector<string> productFile;
-					 // retrieve vector containing contents of category file
+					 // retrieve vector containing contents of product file
 					 productFile = returnFile("textFiles/product.txt");
 
-					 // insert contents of category file into combobox
+					 // insert contents of product file into combobox
 
 					 for(size_t i = 0; i < productFile.size(); i++)
 					 {
@@ -2307,7 +2324,6 @@ namespace InventoryManagement {
 					 lblSalesProductDiscount->Visible = true;
 					 txtSalesProductDiscount->Visible = true;
 					 txtSalesProductDiscount->Text= "";
-
 					 lblsalesProductList->Visible = true;
 					 btnSalesAddProduct->Visible = true;
 					 btnSalesModify->Visible = true;
@@ -2385,8 +2401,8 @@ namespace InventoryManagement {
 					 txtSalesProductDiscount->Text="";
 					 lblSalesReceiptSelect->Visible = true;;
 					 lblSalesReceiptSelect->Visible = true;;
-					 lblSalesProductSelect->Visible = true;;
-					 cmbSalesProductSelect->Visible = true;
+					 lblSalesProductSelect->Visible = false;;
+					 cmbSalesProductSelect->Visible = false;
 
 					 cmbSalesReceiptSelect->Visible = true;
 					 lblSaleProductQuantity->Visible = false;
@@ -3231,6 +3247,7 @@ namespace InventoryManagement {
 				 }
 
 			 }
+
 	private: System::Void txtSalesProductDiscount_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 
 				 // Enable AddProduct only if Product discount text is numeric and non-empty
@@ -3249,85 +3266,41 @@ namespace InventoryManagement {
 				 }
 			 }
 
-	private: System :: Void quantityCheck(){
-				 Table summary = new Summary();
+			 /// \brief Adds product, name, discountand quantity to the Product listbox when AddProduct button is clicked
+			 ///
+			 /// \post Sales is added to database if Modify is selected
+	private: System::Void btnSalesAddProduct_Click(System::Object^  sender, System::EventArgs^  e) {
+				 lstSalesProductList->Enabled = true;
+				 dtSalesReceiptDate->Enabled = true;
+				 btnSalesRemoveProduct->Enabled = true;
 
-				 // Integers to store delimiter positions
-				 int delimiter1, delimiter2, delimiter3, delimiter4;
-
-				 // strings to store returns of searches
-				 std::string qunatityReturned;
-				 // string to store current row in of search result of Orders
-				 std::string currentRow;
-
-				 System::String^ product_id;
-
-				 std::string qSold;
-				 // product_id to add to listbox
 				 System::String^ product = cmbSalesProductSelect->SelectedItem->ToString();
 
 				 // find positions of delimiters
 				 int delimiter7 = product->IndexOf("|");
 				 int delimiter8 = product->IndexOf("|", delimiter7 + 1);
-
+				 std::string qunatityReturned;
 				 // Get product_id, name, and quantity
-				 product_id = product->Substring(0, delimiter7-1);
-
+				 System::String^ product_id = product->Substring(0, delimiter7-1);
 				 std::string pid = marshal_as<std::string>(product_id);
+				 Table summary = new Summary();
 				 qunatityReturned = summary->search("product_id", pid);
+				 std::string qSold1;
 
-
-				 delimiter3 = qunatityReturned.find("|");
-				 delimiter4 = qunatityReturned.find("|", delimiter3+1);
-				 qSold = qunatityReturned.substr(delimiter3+1);
+				 int  delimiter5 = qunatityReturned.find("|");
+				 int  delimiter6 = qunatityReturned.find("|", delimiter5+1);
+				 qSold1 = qunatityReturned.substr(delimiter5+1);
 
 				 System::String^ quanSold; // quantity sold to add to listbox
-				 System::String^ discount;
-
-				 quanSold = txtSalesProductQuantity->Text;
-				 discount = txtSalesProductDiscount->Text;
-				 std::string qSTDStr = marshal_as<std::string>(quanSold);
-
-				 //convert strings to integers
-				 int stock = atoi(qSold.c_str());
-				 int sold = atoi(qSTDStr.c_str()); 
-
-				 if (stock < sold)
-				 {
-					 MessageBox::Show("Invalid quantity! ");
-					 quanSold = "";
-					 discount = "";
-
-				 } // end while for add to listbox
-
-				 stock = stock - sold;
-				 System::String^ test;
-				 test = System::Convert::ToString(stock);
-
-				 std::string strStock = marshal_as<std::string>(test);
-
-				 summary->modifyRow(pid, "total_quantity", strStock);
-				 delete summary;
-
-			 }
-
-			 /// \brief Adds product, name, discountand quantity to the Product listbox when AddProduct button is clicked
-			 ///
-			 /// \post Sales is added to database if Modify is selected
-	private: System::Void btnSalesAddProduct_Click(System::Object^  sender, System::EventArgs^  e) {
 
 				 // enable listbox, remove product, date, and create receipt
-				 lstSalesProductList->Enabled = true;
-				 dtSalesReceiptDate->Enabled = true;
-				 btnSalesRemoveProduct->Enabled = true;
 
-				 System::String^ product_id; // product_id to add to listbox
+
+				 //System::String^ product_id; // product_id to add to listbox
 				 System::String^ qSold; // quantity sold to add to listbox
 				 System::String^ product_name; // name to add to listbox
 				 System::String^ discount; //discount to add to listbox
 				 System::String^ quantityReturned;
-				 // store current combo box selection to product
-				 System::String^ product = cmbSalesProductSelect->SelectedItem->ToString();
 
 				 // find positions of delimiters
 				 int delimiter1 = product->IndexOf("|");
@@ -3336,93 +3309,115 @@ namespace InventoryManagement {
 				 int delimiter4 = product->IndexOf("|", delimiter3 + 1);
 
 				 // Get product_id, name, and quantity
-				 product_id = product->Substring(0, delimiter1-1);
+				 // product_id = product->Substring(0, delimiter1-1);
 				 product_name = product->Substring(delimiter3 + 2, delimiter4 - delimiter3 - 3);
+				 quanSold = txtSalesProductQuantity->Text;
+				 std::string qSTDStr = marshal_as<std::string>(quanSold);
 
-				 qSold = txtSalesProductQuantity->Text;
-				 quantityCheck();
-				 discount = txtSalesProductDiscount->Text;
-				 // Add product_id, name, discountand quantity to listbox if on Add function
-				 if (cmbSalesFunction->SelectedIndex == 0)
+				 //convert strings to integers
+				 int stock = atoi(qSold1.c_str());
+				 int sold = atoi(qSTDStr.c_str()); 
+				 if (stock < sold)
 				 {
-					 lstSalesProductList->Items->Add(product_id + " | " + qSold + " | "+ product_name + " | " + discount);
-					 btnSalesCreateReceipt->Enabled = true; // Enable creating invoice when Adding invoice
+					 MessageBox::Show("Invalid quantity! Please enter a valid number. ");
+					 txtSalesProductDiscount->Text="";
+					 txtSalesProductQuantity->Text="";
 				 }
+				 else{
+					 stock = stock - sold;
+					 System::String^ test;
+					 test = System::Convert::ToString(stock);
 
-				 // disable adding product and clear/disable quantity
-				 txtSalesProductQuantity->Enabled = false;
-				 txtSalesProductQuantity->Text = "";
-				 txtSalesProductDiscount->Enabled = false;
-				 txtSalesProductDiscount->Text = "";
-				 btnSalesAddProduct->Enabled = false;
+					 std::string strStock = marshal_as<std::string>(test);
 
-				 if (cmbSalesFunction->SelectedIndex == 1)
-				 {
-					 Table sales = new Sales();
-					 Table salesSummary = new SalesSummary();
-					 Table summary = new Summary ();
-					 // get receipt_id of selected invoice by converting selection to std::string
-					 // and then breaking it up with delimiters
-					 System::String^ receiptStr = cmbSalesReceiptSelect->SelectedItem->ToString();
-					 std::string receiptString = marshal_as<std::string>(receiptStr);
-					 delimiter1 = receiptString.find(":");
-					 delimiter2 = receiptString.find(":", delimiter1 + 1);
-					 std::string receipt_id = receiptString.substr(delimiter1 + 2, delimiter2 - delimiter1 - 9); 
+					 summary->modifyRow(pid, "total_quantity", strStock);
+					 delete summary;
 
-					 //Convert product_id and quantity, discount and receipt id to std::string
-					 std::string product_idString = marshal_as<std::string>(product_id);
-					 std::string quantityString = marshal_as<std::string>(qSold);
-
-					 std::string discountString = marshal_as<std::string>(discount);
-					 std::string salesID; // string to store sales of last row
-					 std::string searchResult; // string to store search of sales
-					 std::string currentRow; // string to store current row
-
-					 vector<string> addVector; // vector used to add to table
-
-					 // add new row to InvoiceItem
-					 addVector.push_back(quantityString); 
-					 quantityCheck();
-					 addVector.push_back(product_idString);					
-					 addVector.push_back(discountString);
-					 sales->add(addVector);
-					 addVector.clear();
-
-					 //** find the sales id of newly added product by getting last line of search **//
-					 //** for newly added product by breaking the searchResult down line by line         **//
-
-					 // first search for newly added product
-					 searchResult = sales->search("productID", product_idString);
-
-					 // get the first row of the search result
-					 delimiter1 = searchResult.find("\n");
-					 currentRow = searchResult.substr(0, delimiter1+1);
-
-					 // if the current row is not equal to the search result
-					 // keep breaking down searchResult line by line until they do
-					 // ie, currentRow is the last line of the search result
-					 while ( currentRow != searchResult){
-						 searchResult = searchResult.substr(delimiter1+1);
-						 delimiter1 = searchResult.find("\n");
-						 currentRow = searchResult.substr(0, delimiter1 + 1);
+					 discount = txtSalesProductDiscount->Text;
+					 quanSold = txtSalesProductQuantity->Text;
+					 // Add product_id, name, discountand quantity to listbox if on Add function
+					 if (cmbSalesFunction->SelectedIndex == 0)
+					 {
+						 lstSalesProductList->Items->Add(product_id + " | " + quanSold + " | "+ product_name + " | " + discount);
+						 btnSalesCreateReceipt->Enabled = true; // Enable creating invoice when Adding invoice
 					 }
 
-					 // get the latest sales
-					 delimiter1 = currentRow.find("|");
-					 salesID = currentRow.substr(0, delimiter1);
+					 // disable adding product and clear/disable quantity
+					 txtSalesProductQuantity->Enabled = false;
+					 txtSalesProductQuantity->Text = "";
+					 txtSalesProductDiscount->Enabled = false;
+					 txtSalesProductDiscount->Text = "";
+					 btnSalesAddProduct->Enabled = false;
 
-					 //** end search for newest sales **//
+					 if (cmbSalesFunction->SelectedIndex == 1)
+					 {
+						 Table sales = new Sales();
+						 Table salesSummary = new SalesSummary();
+						 Table summary = new Summary ();
+						 // get receipt_id of selected invoice by converting selection to std::string
+						 // and then breaking it up with delimiters
+						 System::String^ receiptStr = cmbSalesReceiptSelect->SelectedItem->ToString();
+						 std::string receiptString = marshal_as<std::string>(receiptStr);
+						 delimiter1 = receiptString.find(":");
+						 delimiter2 = receiptString.find(":", delimiter1 + 1);
+						 std::string receipt_id = receiptString.substr(delimiter1 + 2, delimiter2 - delimiter1 - 17); 
 
-					 // add new row to sales summary
-					 addVector.push_back(receipt_id);
-					 addVector.push_back(salesID);
-					 salesSummary->add(addVector);
+						 //Convert product_id and quantity, discount and receipt id to std::string
+						 std::string product_idString = marshal_as<std::string>(product_id);
+						 std::string quantityString = marshal_as<std::string>(quanSold);
 
-					 // add new sales to the Product List
-					 lstSalesProductList->Items->Add(gcnew String(salesID.c_str()) + 
-						 " | " + product_id + " | " + product_name +" | " + qSold + " | " + discount);
-					 delete salesSummary;
-					 delete sales;
+						 std::string discountString = marshal_as<std::string>(discount);
+						 std::string salesID; // string to store sales of last row
+						 std::string searchResult; // string to store search of sales
+						 std::string currentRow; // string to store current row
+
+						 vector<string> addVector; // vector used to add to table
+
+						 // add new row to InvoiceItem
+						 addVector.push_back(quantityString); 
+						 // quantityCheck();
+						 addVector.push_back(product_idString);					
+						 addVector.push_back(discountString);
+						 sales->add(addVector);
+						 addVector.clear();
+
+						 //** find the sales id of newly added product by getting last line of search **//
+						 //** for newly added product by breaking the searchResult down line by line         **//
+
+						 // first search for newly added product
+						 searchResult = sales->search("productID", product_idString);
+
+						 // get the first row of the search result
+						 delimiter1 = searchResult.find("\n");
+						 currentRow = searchResult.substr(0, delimiter1+1);
+
+						 // if the current row is not equal to the search result
+						 // keep breaking down searchResult line by line until they do
+						 // ie, currentRow is the last line of the search result
+						 while ( currentRow != searchResult){
+							 searchResult = searchResult.substr(delimiter1+1);
+							 delimiter1 = searchResult.find("\n");
+							 currentRow = searchResult.substr(0, delimiter1 + 1);
+						 }
+
+						 // get the latest sales
+						 delimiter1 = currentRow.find("|");
+						 salesID = currentRow.substr(0, delimiter1);
+
+						 //** end search for newest sales **//
+
+						 // add new row to sales summary
+						 addVector.push_back(receipt_id);
+						 addVector.push_back(salesID);
+						 salesSummary->add(addVector);
+
+						 // add new sales to the Product List
+						 lstSalesProductList->Items->Add(gcnew String(salesID.c_str()) + 
+							 " | " + product_id + " | " + product_name +" | " + quanSold + " | " + discount);
+
+						 delete salesSummary;
+						 delete sales;
+					 }
 				 }
 			 }
 
@@ -3499,7 +3494,7 @@ namespace InventoryManagement {
 				 // initiate product_id, discount and quantity
 				 product_id = productListItemSTD.substr(0, delimiter1 - 1);
 				 qSold = productListItemSTD.substr(delimiter1+1, delimiter2-delimiter1-1);
-				 discount = productListItemSTD.substr(delimiter3 + 2);
+				 discount = productListItemSTD.substr(delimiter3 + 1);
 				 // set up the addVector
 				 salesAddVector.push_back(qSold);
 
@@ -3568,8 +3563,8 @@ namespace InventoryManagement {
 					 // set up the addVector for summary
 					 converter << atoi(salesID.c_str()) + 1; //auto increment
 					 salesID = converter.str();
-					 salesSummaryAddVector.push_back(salesID);
 					 salesSummaryAddVector.push_back(receipt_id);
+					 salesSummaryAddVector.push_back(salesID);
 
 					 // add the new row to sales
 					 sales->add(salesAddVector);
@@ -3732,7 +3727,7 @@ namespace InventoryManagement {
 				 // make sure something is selected
 				 if (lstSalesProductList->SelectedIndex >= 0)
 				 {
-					 // if Modifying an invoice
+					 // if Modifying a receipt
 					 if (cmbSalesFunction->SelectedIndex == 1)
 					 {
 						 // Enable the product quantity textbox and button, and remove button
@@ -3741,7 +3736,7 @@ namespace InventoryManagement {
 
 
 						 btnSalesModify->Enabled = true;
-
+						 btnSalesRemoveProduct->Enabled = true;
 						 System::String^ sales; // store selected invoice item
 						 System::String^ product_id; // product id of selected invoice item
 						 System::String^ qSold; // quantity of selected sales
@@ -3764,11 +3759,13 @@ namespace InventoryManagement {
 						 // select the product in the product select combobox
 						 cmbSalesProductSelect->SelectedIndex = cmbSalesProductSelect->FindString(product_id);
 						 MessageBox::Show("Please select product# "+ gcnew String(product_id) + 
-							 " from the Product combo box. "  );
+							 " from the Product combo box if you would like to modify a product. "  );
 
 						 // change the text of the Product Quantity combobox to the selected quantity
 						 txtSalesProductQuantity->Text = qSold->Trim();
 						 txtSalesProductDiscount->Text = discount->Trim();
+						 btnSalesAddProduct->Enabled= false;
+						 // cmbSalesProductSelect->Enabled = true;
 					 } // end if selected function is modify
 				 } // end if a list item is currently selecte
 			 }
@@ -4884,25 +4881,203 @@ namespace InventoryManagement {
 					 btnReportGenerate->Visible = true;
 				 }
 			 }
+
+			 vector<string> IDs() {
+
+				 ReportsImpl reports;
+				 string searchResult, currentRow, productID;
+				 System::String^ strOutput;
+				 Table summary = new Summary();		
+				 int delimiter; // store position of delimiters
+				 vector<string> returnVector;
+				 string quantity = "0";
+
+				 searchResult = summary->search("total_quantity", quantity); 
+
+				 while (!searchResult.empty()){
+					 // get the first row of the search result
+					 delimiter = searchResult.find('\n');
+					 currentRow = searchResult.substr(0, delimiter +1 );
+
+					 delimiter = currentRow.find('|');
+					 productID = currentRow.substr(0, delimiter);
+
+					 returnVector.push_back(productID);
+					 delimiter = searchResult.find('\n');
+
+					 searchResult = searchResult.substr(delimiter + 1);
+					 currentRow = searchResult.substr(0, delimiter + 1);
+				 }  
+				 return returnVector;
+			 }
+
+			 vector <string> returnedIDs(){
+
+				 Table product = new Product();
+				 Table summary = new Summary();
+				 System::String^ category = cmbReportCategorySelect->SelectedItem->ToString();
+				 int delimiter1 = category->IndexOf("|");
+				 int delimiter2 = category->IndexOf("|", delimiter1 + 1);
+				 System::String^ category_id;
+				 System::String^ strRawOutput;
+				 std::string categoryID, strOutput, productID;
+				 std::string quantityReturned, ret;
+				 vector<string> vs;
+				 string currentRow;
+				 // Get product_id, name, and quantity
+				 category_id = category->Substring(0, delimiter1);
+
+				 std::string cat = marshal_as<std::string>(category_id);
+				 quantityReturned = product->search("category_id", cat);
+				 while (! quantityReturned.empty())
+				 {
+
+					 int  delimiter = quantityReturned.find('\n');
+					 currentRow = quantityReturned.substr(0, delimiter +1 );
+
+					 delimiter = currentRow.find('|');
+					 productID = currentRow.substr(0, delimiter);
+					 ret = summary->search("product_id", productID);
+					 vs.push_back(ret);
+					 delimiter = quantityReturned.find('\n');
+
+					 quantityReturned = quantityReturned.substr(delimiter + 1);
+					 currentRow = quantityReturned.substr(0, delimiter + 1);
+				 }
+
+				 return vs;
+			 }
+
 	private: System::Void btnReportGenerate_Click(System::Object^  sender, System::EventArgs^  e) {
 
-				 //Creates our new form
-				 ReportForm ^ reportForm = gcnew ReportForm;
 
+				 ReportForm ^ reportForm = gcnew ReportForm;
 				 // Pointer to ReportsInterface class to create reports
 				 Reports reports = new ReportsImpl();
-
 				 switch (cmbReportSelect->SelectedIndex)
 				 {
 				 case 0: //Out of stock report
-					 break;
+					 {
+						 ReportsImpl reports;
+						 Table summary = new Summary();
+						 string searchResult, currentRow;
+						 System::String^ strRawOutput;
+						 std::string str;
+						 int delimiter; 
+						 vector<string> productID;
+						 productID = IDs();
+						 std::stringstream ss;
+
+						 std::copy( productID.begin(),productID.end(),std::ostream_iterator< std::string >( ss, " \r\n" "\r\n"));
+
+						 str = ss.str();
+
+						 strRawOutput = gcnew String (str.c_str());
+
+						 reportForm->txtReport->Text = "Product ID(s) that are currently out of stock:""\r\n\r\n"+"Product ID \r\n"+ strRawOutput ;
+
+						 break;
+					 }
+
 				 case 1: //Current stock report
 					 break;
+
 				 case 2:  //Sales between date report
-					 break;
+					 {
+
+						 //Our ReportsImpl Class to find IDs between dates
+						 ReportsImpl ReportMaker;
+
+						 //Sales table to search for Sales information
+						 Table tblSales = new Sales();
+
+						 //String to hold our final output
+						 System::String ^ strOutput = "";
+
+						 //Grabs the dates to search by and formats them
+						 System::String ^ strStartDate = (dtReportStartDate->Value.Year.ToString() + "-" + dtReportStartDate->Value.Month.ToString() + "-" + dtReportStartDate->Value.Day.ToString());
+						 System::String ^ strEndDate = (dtReportEndDate->Value.Year.ToString() + "-" + dtReportEndDate->Value.Month.ToString() + "-" + dtReportEndDate->Value.Day.ToString());
+
+						 //Converts the dates into proper strings to use with classes
+						 string strSearchStart(marshal_as<std::string>(strStartDate));
+						 string strSearchEnd(marshal_as<std::string>(strEndDate));
+
+						 //Grabs the IDs of the Sales between given dates
+						 vector<string> SalesIDs = ReportMaker.findIDsBetweenDates(tblSales, strSearchStart, strSearchEnd);
+
+						 //Grabs the total row information of all IDs found between our dates
+						 string strRawOutput = ReportMaker.reportBetweenDates(tblSales, SalesIDs, "sales_id");
+
+						 //Format to a system string
+						 strOutput = gcnew String (strRawOutput.c_str());
+
+						 //Display our outputted data
+						 reportForm->txtReport->Text = strOutput;
+						 break;
+					 }
 				 case 3: //Returns between date report
+					 {
+						 //Our ReportsImpl Class to find IDs between dates
+						 ReportsImpl ReportMaker;
+
+						 //Sales table to search for Returns information
+						 Table tblReturns = new Returns();
+
+						 //String to hold our final output
+						 System::String ^ strOutput = "";
+
+						 //Grabs the dates to search by and formats them
+						 System::String ^ strStartDate = (dtReportStartDate->Value.Year.ToString() + "-" + dtReportStartDate->Value.Month.ToString() + "-" + dtReportStartDate->Value.Day.ToString());
+						 System::String ^ strEndDate = (dtReportEndDate->Value.Year.ToString() + "-" + dtReportEndDate->Value.Month.ToString() + "-" + dtReportEndDate->Value.Day.ToString());
+
+						 //Converts the dates into proper strings to use with classes
+						 string strSearchStart(marshal_as<std::string>(strStartDate));
+						 string strSearchEnd(marshal_as<std::string>(strEndDate));
+
+						 //Grabs the IDs of the Sales between given dates
+						 vector<string> ReturnsIDs = ReportMaker.findIDsBetweenDates(tblReturns, strSearchStart, strSearchEnd);
+
+						 //Grabs the total row information of all IDs found between our dates
+						 string strRawOutput = ReportMaker.reportBetweenDates(tblReturns, ReturnsIDs, "returns_id");
+
+						 //Format to a system string
+						 strOutput = gcnew String (strRawOutput.c_str());
+
+						 //Display our outputted data
+						 reportForm->txtReport->Text = strOutput;
+					 }
 					 break;
 				 case 4: //Invoice between date report
+					 {
+						 //Our ReportsImpl Class to find IDs between dates
+						 ReportsImpl ReportMaker;
+
+						 //Sales table to search for Sales information
+						 Table tblInvoice = new Invoice();
+
+						 //String to hold our final output
+						 System::String ^ strOutput = "";
+
+						 //Grabs the dates to search by and formats them
+						 System::String ^ strStartDate = (dtReportStartDate->Value.Year.ToString() + "-" + dtReportStartDate->Value.Month.ToString() + "-" + dtReportStartDate->Value.Day.ToString());
+						 System::String ^ strEndDate = (dtReportEndDate->Value.Year.ToString() + "-" + dtReportEndDate->Value.Month.ToString() + "-" + dtReportEndDate->Value.Day.ToString());
+
+						 //Converts the dates into proper strings to use with classes
+						 string strSearchStart(marshal_as<std::string>(strStartDate));
+						 string strSearchEnd(marshal_as<std::string>(strEndDate));
+
+						 //Grabs the IDs of the Sales between given dates
+						 vector<string> InvoiceIDs = ReportMaker.findIDsBetweenDates(tblInvoice, strSearchStart, strSearchEnd);
+
+						 //Grabs the total row information of all IDs found between our dates
+						 string strRawOutput = ReportMaker.reportBetweenDates(tblInvoice, InvoiceIDs, "invoice_id");
+
+						 //Format to a system string
+						 strOutput = gcnew String (strRawOutput.c_str());
+
+						 //Display our outputted data
+						 reportForm->txtReport->Text = strOutput;
+					 }
 					 break;
 				 case 5: //Top sellers report
 					 break;
@@ -4921,7 +5096,7 @@ namespace InventoryManagement {
 						 string strSearchEnd(marshal_as<std::string>(strEndDate));
 
 						 string totalRevenueReport; // string to store the total revenue report
-						 
+
 						 // if nothing exists in the date range error will be displayed in report form
 						 try {
 							 totalRevenueReport = reports->totalRevenueReport(strSearchStart, strSearchEnd);
@@ -4947,22 +5122,31 @@ namespace InventoryManagement {
 					 }
 				 case 7: 
 					 break;
+
 				 default:
 					 break;
 				 }
 
-				 delete reports;
 
 				 //Displays the new form
 				 reportForm->ShowDialog();
-
 			 }
 
 
-			 /// \brief set dtReportStartDate's max date to the currently selected end date
-	private: System::Void dtReportEndDate_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+	private: System::Void cmbReportCategorySelect_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 
-				 dtReportStartDate->MaxDate = dtReportEndDate->Value;
+				 ReportForm ^ reportForm = gcnew ReportForm;
+				 vector<string> output;
+				 output = returnedIDs();
+				 std::string str;
+				 System::String^ strRawOutput;
+				 std::stringstream ss;
+				 std::copy( output.begin(),output.end(),std::ostream_iterator< std::string >( ss, " \r\n" "\r\n"));
+				 str = ss.str();
+				 strRawOutput = gcnew String (str.c_str());
+				 reportForm->txtReport->Text =  "The current quantities of existing products: ""\r\n\r\n" +"Product ID | Quantity "+"\r\n"+strRawOutput ;
+
+				 reportForm->ShowDialog();
 			 }
-};
+	};
 }
