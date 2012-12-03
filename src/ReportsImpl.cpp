@@ -202,8 +202,11 @@ string ReportsImpl::topSellersReport(string selectedCategory, string startDate, 
 	{
 		try{
 			if(productVect[i].size() > 0) {
-				// finds the first delimiter position and assigns it to int delimiter
+				// finds the first two delimiters positions and assign them to int delimiter and delimiter2
 				delimiter = productVect[i].find('|');
+				delimiter2 = productVect[i].find('|', delimiter + 1);
+
+				productQuantity = productVect[i].substr(delimiter + 1, delimiter2 - delimiter - 1);
 
 				productID = productVect[i].substr(0, delimiter);
 
@@ -320,8 +323,9 @@ string ReportsImpl::topSellersReport(string selectedCategory, string startDate, 
 	// get substring containing the category name to be used in the report header line
 	string categoryName = categoryRow.substr(delimiter2 + 1);
 
-	// string to contain the retrieved row from the vector
+	// strings to contain the retrieved row from the vector
 	string currentProduct;
+	string currentProductStored;
 
 	// vector to store sorted products
 	vector<string> productsSorted;
@@ -335,12 +339,25 @@ string ReportsImpl::topSellersReport(string selectedCategory, string startDate, 
 	{
 		currentProduct = productsWithQuantities[x];
 		delimiter = currentProduct.find(':');
-		quantity = atoi(currentProduct.substr(delimiter).c_str());
+		quantity = atoi(currentProduct.substr(delimiter + 1).c_str());
 
 		if(productsSorted.size() == 0) {
 			productsSorted.push_back(currentProduct);
 		} else {
-
+			for(int i = 0; i < (int) productsSorted.size(); i++)
+			{
+				currentProductStored = productsSorted[i];
+				delimiter = currentProductStored.find(':');
+				quantityStored = atoi(currentProductStored.substr(delimiter + 1).c_str());
+				if(quantity > quantityStored) {
+					productsSorted.insert(productsSorted.begin() + i,productsWithQuantities[x]);
+					break;
+				}
+			}
+			if(quantity <= quantityStored)
+			{
+				productsSorted.push_back(productsWithQuantities[x]);
+			}
 		}
 
 	}
@@ -350,11 +367,11 @@ string ReportsImpl::topSellersReport(string selectedCategory, string startDate, 
 
 	// create header line for the Report
 	report = "Top Selling Products Report in " + categoryName + "\r\n--------------------------------------------------------------------------------------------------------------------------\r\n";
-	
+
 	// output the first ten products in the vector into the report string
-	for(int j = 0; j < (int) productsWithQuantities.size() && j < 10; j++)
+	for(int j = 0; j < (int) productsSorted.size() && j < 10; j++)
 	{
-		report += productsWithQuantities[j];
+		report += productsSorted[j];
 		report += "\r\n";
 	}
 
