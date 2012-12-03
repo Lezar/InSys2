@@ -42,6 +42,8 @@ public:
 	/// \return a string of all sales between the two given dates
 	string reportBetweenDates(Table table, vector<string> IDs, string strColToSearch);
 
+	string topSellersReport(string selectedCategory, string startDate, string endDate);
+
 
 	~ReportsImpl();
 };

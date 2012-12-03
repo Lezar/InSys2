@@ -14,6 +14,7 @@
 #include "Summary.h"
 
 #include <ctime>
+#include <sstream>
 
 /// \brief A class to create various reports on the Inventory Management database
 ///
@@ -32,6 +33,17 @@ public:
 	///         as well as total revenue.
 	/// \throw DoesNotExistException if nothing is found between startDate and endDate
 	virtual string totalRevenueReport(string startDate, string endDate) throw (DoesNotExistException) = 0;
+
+	/// \brief Reports the top sellers between two dates in a specified category
+	///
+	/// Finds the top selling products by quantity in the category selected between and including
+	/// two dates, startDate and endDate (selected by the user)
+	/// \param[in] selectedCategory is a string specifying the category chosen by the user
+	/// \param[in] startDate is a string of form "YYYY-MM-DD" representing the beginning of the time range
+	/// \param[in] endDate is a string of form "YYYY-MM-DD" representing the end of the time range
+	/// \return A string representing the whole report. It will display the (top 10) product ID's, 
+	///         product names, as well as quantity sold of each product.
+	virtual string topSellersReport(string selectedCategory, string startDate, string endDate) = 0;
 
 	/// \brief ReportsInterface destructor
 	virtual ~ReportsInterface() {};

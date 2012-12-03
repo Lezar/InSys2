@@ -1,4 +1,5 @@
 #include "Product.h"
+#include "Summary.h"
 
 void Product :: add(vector<string> addVector) throw(AlreadyExistsException)
 {
@@ -20,7 +21,7 @@ void Product :: add(vector<string> addVector) throw(AlreadyExistsException)
 	string productDescription = addVector[2];
 	string productName = addVector[3];
 	string productPrice = addVector[4];
-	
+
 	// open the product.txt file
 	productInFile.open(productTextFile);
 
@@ -72,6 +73,19 @@ void Product :: add(vector<string> addVector) throw(AlreadyExistsException)
 
 	// closes product.txt
 	productOutFile.close();
+
+	// declare an instance of the Summary class
+	Table summaryTable = new Summary();
+
+	// create vector for the entry to the summary table
+	vector<string> summaryVect;
+	summaryVect.push_back(productID);
+	summaryVect.push_back("0");
+
+	// add new product to the summary file
+	summaryTable->add(summaryVect);
+
+	delete summaryTable;
 }
 
 string Product :: search(string columnName, string valueToFind) throw(DoesNotExistException)
@@ -121,13 +135,13 @@ string Product :: search(string columnName, string valueToFind) throw(DoesNotExi
 
 			// finds the first delimiter position and assigns it to int delimiter
 			delimiter = rowReceive.find('|');
-			
+
 			// finds the second delimiter position and assigns it to int delimiter2
 			delimiter2 = rowReceive.find('|', delimiter+1);
-			
+
 			// finds the third delimiter position and assigns it to int delimiter3
 			delimiter3 = rowReceive.find('|', delimiter2+1);
-			
+
 			// finds the fourth delimiter position and assigns it to int delimiter4
 			delimiter4 = rowReceive.find('|', delimiter3+1);
 
@@ -157,7 +171,7 @@ string Product :: search(string columnName, string valueToFind) throw(DoesNotExi
 
 				resultFound = true;
 			}
-				
+
 			// checks if columnName (argument) is "category_id" and if category_id data of current row matches 
 			// valueToFind (argument)
 			else if(columnName == "category_id" && 
@@ -169,7 +183,7 @@ string Product :: search(string columnName, string valueToFind) throw(DoesNotExi
 
 				resultFound = true;
 			}
-				
+
 			// checks if columnName (argument) is "description" and if product description data of current row matches 
 			// valueToFind (argument)
 			else if(columnName == "description" && 
@@ -181,7 +195,7 @@ string Product :: search(string columnName, string valueToFind) throw(DoesNotExi
 
 				resultFound = true;
 			}
-				
+
 			// checks if columnName (argument) is "name" and if product name data of current row matches 
 			// valueToFind (argument)
 			else if(columnName == "name" && 
@@ -193,7 +207,7 @@ string Product :: search(string columnName, string valueToFind) throw(DoesNotExi
 
 				resultFound = true;
 			}
-				
+
 			// checks if columnName (argument) is "price" and if product price data of current row matches 
 			// valueToFind (argument)
 			else if(columnName == "price" && 
@@ -266,21 +280,21 @@ void Product :: deleteRow(string valueToFind)
 			}
 		}
 	}
-	
+
 	// closes category.txt
 	productInFile.close();
-	
+
 	// opens category.txt and eliminates all contents and prepares to write values from the vector to category.txt
 	productOutFile.open(productTextFile, ios_base::trunc);
-	
+
 	// iterates through catFileVect and places each string from the vector into category.txt
 	for(int i = 0; i < (int) prodFileVect.size(); i++)
 	{
 		if(prodFileVect[i].size() > 0)
 			// writes string from vector into category.txt
-			productOutFile<<prodFileVect[i]<<endl;
+				productOutFile<<prodFileVect[i]<<endl;
 	}
-	
+
 	// closes category.txt
 	productOutFile.close();
 }
@@ -289,10 +303,10 @@ void Product :: modifyRow(string valueToFind, string columnNameToModify, string 
 {
 	// string to contain the row data received from the file
 	string rowReceive;
-	
+
 	// string to contain the category_ID from a received row of data
 	string productID;
-	
+
 	//strings used to store the description and name values in a row
 	string categoryID, description, name, price;
 
@@ -322,13 +336,13 @@ void Product :: modifyRow(string valueToFind, string columnNameToModify, string 
 
 			// finds the first delimiter position and assigns it to int delimiter
 			delimiter = rowReceive.find('|');
-			
+
 			// finds the second delimiter position and assigns it to int delimiter2
 			delimiter2 = rowReceive.find('|', delimiter+1);
-			
+
 			// finds the second delimiter position and assigns it to int delimiter3
 			delimiter3 = rowReceive.find('|', delimiter2+1);
-			
+
 			// finds the second delimiter position and assigns it to int delimiter4
 			delimiter4 = rowReceive.find('|', delimiter3+1);
 
@@ -369,21 +383,21 @@ void Product :: modifyRow(string valueToFind, string columnNameToModify, string 
 			}
 		}
 	}
-	
+
 	// closes category.txt
 	productInFile.close();
-	
+
 	// opens category.txt and eliminates all contents and prepares to write values from the vector to category.txt
 	productOutFile.open(productTextFile, ios_base::trunc);
-	
+
 	// iterates through catFileVect and places each string from the vector into category.txt
 	for(int i = 0; i < (int) prodFileVect.size(); i++)
 	{
 		if(prodFileVect[i].size() > 0)
 			// writes string from vector into category.txt
-			productOutFile<<prodFileVect[i]<<endl;
+				productOutFile<<prodFileVect[i]<<endl;
 	}
-	
+
 	// closes category.txt
 	productOutFile.close();
 }

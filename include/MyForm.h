@@ -1157,7 +1157,7 @@ namespace InventoryManagement {
 			this->lstSalesProductList->Location = System::Drawing::Point(153, 179);
 			this->lstSalesProductList->Name = L"lstSalesProductList";
 			this->lstSalesProductList->Size = System::Drawing::Size(344, 95);
-
+			this->lstSalesProductList->TabIndex = 27;
 			this->lstSalesProductList->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::lstSalesProductList_SelectedIndexChanged);this->lstSalesProductList->TabIndex = 27;
 
 			// 
@@ -1628,8 +1628,6 @@ namespace InventoryManagement {
 			this->cmbReportCategorySelect->Name = L"cmbReportCategorySelect";
 			this->cmbReportCategorySelect->Size = System::Drawing::Size(491, 21);
 			this->cmbReportCategorySelect->TabIndex = 21;
-
-			this->cmbReportCategorySelect->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbReportCategorySelect_SelectedIndexChanged);
 			// 
 			// lblReportCategorySelect
 			// 
@@ -1655,6 +1653,8 @@ namespace InventoryManagement {
 			this->dtReportEndDate->Name = L"dtReportEndDate";
 			this->dtReportEndDate->Size = System::Drawing::Size(154, 20);
 			this->dtReportEndDate->TabIndex = 6;
+			this->dtReportEndDate->ValueChanged += gcnew System::EventHandler(this, &MyForm::dtReportEndDate_ValueChanged);
+
 			// 
 			// lblReportStartDate
 			// 
@@ -1671,6 +1671,7 @@ namespace InventoryManagement {
 			this->dtReportStartDate->Name = L"dtReportStartDate";
 			this->dtReportStartDate->Size = System::Drawing::Size(154, 20);
 			this->dtReportStartDate->TabIndex = 4;
+			dtReportStartDate->MaxDate = DateTime::Today;
 			// 
 			// lblReportDescription
 			// 
@@ -3768,7 +3769,7 @@ namespace InventoryManagement {
 						 btnSalesModify->Enabled=false;
 						 txtSalesProductDiscount->Enabled = false;
 						 txtSalesProductQuantity->Enabled = false;
-						
+
 					 } // end if selected function is modify
 				 } // end if a list item is currently selecte
 			 }
@@ -4528,7 +4529,7 @@ namespace InventoryManagement {
 
 
 				 //disable itself, invoice date, and creat invoice if there is nothing in the listbox
-				 if (lstInvoiceProductList->Items->Count == 0 &&
+				 if (lstInvoiceProductList->Items->Count != 0 &&
 					 cmbInvoiceFunction->SelectedIndex == 0) // Adding an invoice
 				 {
 					 // remove selected product
@@ -4885,7 +4886,9 @@ namespace InventoryManagement {
 				 }
 			 }
 
-			 vector<string> IDs() {
+			 /// \brief returns product ID's with no stock in Summary table
+			 /// \returns a vector of strings of all the product IDs with no stock in Summary table
+	private: vector<string> IDs() {
 
 				 ReportsImpl reports;
 				 string searchResult, currentRow, productID;
@@ -4914,7 +4917,9 @@ namespace InventoryManagement {
 				 return returnVector;
 			 }
 
-			 vector <string> returnedIDs(){
+			 /// \brief returns all product IDs of all products in the Summary table
+			 /// \returns a vector of strings of all product IDs of all products in the Summary table
+	private: vector <string> returnedIDs(){
 
 				 Table product = new Product();
 				 Table summary = new Summary();
@@ -4954,9 +4959,22 @@ namespace InventoryManagement {
 	private: System::Void btnReportGenerate_Click(System::Object^  sender, System::EventArgs^  e) {
 
 
+				 //Grabs the dates to search by and formats them
+				 System::String ^ strStartDate =  dtReportStartDate->Value.ToString("yyyy-MM-dd");
+				 System::String ^ strEndDate = dtReportEndDate->Value.ToString("yyyy-MM-dd");
+
+				 //Converts the dates into proper strings to use with classes
+				 string strSearchStart(marshal_as<std::string>(strStartDate));
+				 string strSearchEnd(marshal_as<std::string>(strEndDate));
+
+				 // Create a new report form
 				 ReportForm ^ reportForm = gcnew ReportForm;
 				 // Pointer to ReportsInterface class to create reports
 				 Reports reports = new ReportsImpl();
+
+				 //String to hold our final output
+				 System::String ^ strOutput = "";
+
 				 switch (cmbReportSelect->SelectedIndex)
 				 {
 				 case 0: //Out of stock report
@@ -4976,127 +4994,54 @@ namespace InventoryManagement {
 						 str = ss.str();
 
 						 strRawOutput = gcnew String (str.c_str());
-
-						 reportForm->txtReport->Text = "Product ID(s) that are currently out of stock:""\r\n\r\n"+"Product ID \r\n"+ strRawOutput ;
-
+						 strOutput = "Product ID(s) that are currently out of stock:""\r\n\r\n"+"Product ID \r\n"+ strRawOutput ;
+					 }
+				 case 1: //Current stock report
+					 {
+						 vector<string> output;
+						 output = returnedIDs();
+						 std::string str;
+						 System::String^ strRawOutput;
+						 std::stringstream ss;
+						 std::copy( output.begin(),output.end(),std::ostream_iterator< std::string >( ss, " \r\n" "\r\n"));
+						 str = ss.str();
+						 strRawOutput = gcnew String (str.c_str());
+						 reportForm->txtReport->Text =  "The current quantities of existing products: ""\r\n\r\n" +"Product ID | Quantity "+"\r\n"+strRawOutput ;
 						 break;
 					 }
-
-				 case 1: //Current stock report
-					 break;
-
 				 case 2:  //Sales between date report
 					 {
-
-						 //Our ReportsImpl Class to find IDs between dates
-						 ReportsImpl ReportMaker;
-
-						 //Sales table to search for Sales information
-						 Table tblSales = new Sales();
-
-						 //String to hold our final output
-						 System::String ^ strOutput = "";
-
-						 //Grabs the dates to search by and formats them
-						 System::String ^ strStartDate = (dtReportStartDate->Value.Year.ToString() + "-" + dtReportStartDate->Value.Month.ToString() + "-" + dtReportStartDate->Value.Day.ToString());
-						 System::String ^ strEndDate = (dtReportEndDate->Value.Year.ToString() + "-" + dtReportEndDate->Value.Month.ToString() + "-" + dtReportEndDate->Value.Day.ToString());
-
-						 //Converts the dates into proper strings to use with classes
-						 string strSearchStart(marshal_as<std::string>(strStartDate));
-						 string strSearchEnd(marshal_as<std::string>(strEndDate));
-
-						 //Grabs the IDs of the Sales between given dates
-						 vector<string> SalesIDs = ReportMaker.findIDsBetweenDates(tblSales, strSearchStart, strSearchEnd);
-
-						 //Grabs the total row information of all IDs found between our dates
-						 string strRawOutput = ReportMaker.reportBetweenDates(tblSales, SalesIDs, "sales_id");
-
-						 //Format to a system string
-						 strOutput = gcnew String (strRawOutput.c_str());
-
-						 //Display our outputted data
-						 reportForm->txtReport->Text = strOutput;
 						 break;
 					 }
 				 case 3: //Returns between date report
 					 {
-						 //Our ReportsImpl Class to find IDs between dates
-						 ReportsImpl ReportMaker;
-
-						 //Sales table to search for Returns information
-						 Table tblReturns = new Returns();
-
-						 //String to hold our final output
-						 System::String ^ strOutput = "";
-
-						 //Grabs the dates to search by and formats them
-						 System::String ^ strStartDate = (dtReportStartDate->Value.Year.ToString() + "-" + dtReportStartDate->Value.Month.ToString() + "-" + dtReportStartDate->Value.Day.ToString());
-						 System::String ^ strEndDate = (dtReportEndDate->Value.Year.ToString() + "-" + dtReportEndDate->Value.Month.ToString() + "-" + dtReportEndDate->Value.Day.ToString());
-
-						 //Converts the dates into proper strings to use with classes
-						 string strSearchStart(marshal_as<std::string>(strStartDate));
-						 string strSearchEnd(marshal_as<std::string>(strEndDate));
-
-						 //Grabs the IDs of the Sales between given dates
-						 vector<string> ReturnsIDs = ReportMaker.findIDsBetweenDates(tblReturns, strSearchStart, strSearchEnd);
-
-						 //Grabs the total row information of all IDs found between our dates
-						 string strRawOutput = ReportMaker.reportBetweenDates(tblReturns, ReturnsIDs, "returns_id");
-
-						 //Format to a system string
-						 strOutput = gcnew String (strRawOutput.c_str());
-
-						 //Display our outputted data
-						 reportForm->txtReport->Text = strOutput;
+						 break;
 					 }
-					 break;
 				 case 4: //Invoice between date report
 					 {
-						 //Our ReportsImpl Class to find IDs between dates
-						 ReportsImpl ReportMaker;
-
-						 //Sales table to search for Sales information
-						 Table tblInvoice = new Invoice();
-
-						 //String to hold our final output
-						 System::String ^ strOutput = "";
-
-						 //Grabs the dates to search by and formats them
-						 System::String ^ strStartDate = (dtReportStartDate->Value.Year.ToString() + "-" + dtReportStartDate->Value.Month.ToString() + "-" + dtReportStartDate->Value.Day.ToString());
-						 System::String ^ strEndDate = (dtReportEndDate->Value.Year.ToString() + "-" + dtReportEndDate->Value.Month.ToString() + "-" + dtReportEndDate->Value.Day.ToString());
-
-						 //Converts the dates into proper strings to use with classes
-						 string strSearchStart(marshal_as<std::string>(strStartDate));
-						 string strSearchEnd(marshal_as<std::string>(strEndDate));
-
-						 //Grabs the IDs of the Sales between given dates
-						 vector<string> InvoiceIDs = ReportMaker.findIDsBetweenDates(tblInvoice, strSearchStart, strSearchEnd);
-
-						 //Grabs the total row information of all IDs found between our dates
-						 string strRawOutput = ReportMaker.reportBetweenDates(tblInvoice, InvoiceIDs, "invoice_id");
-
-						 //Format to a system string
-						 strOutput = gcnew String (strRawOutput.c_str());
-
-						 //Display our outputted data
-						 reportForm->txtReport->Text = strOutput;
+						 break;
 					 }
-					 break;
 				 case 5: //Top sellers report
-					 break;
+					 {
+						 try {
+							 // get the category ID from the cmbReportCategorySelect and convert to std::string
+							 System::String^ reportCategory = cmbReportCategorySelect->Text->ToString();
+							 string reportCategorySelected(marshal_as<std::string>(reportCategory));
+
+							 int delimiter = reportCategorySelected.find('|');
+							 string reportCategoryID = reportCategorySelected.substr(0, delimiter);
+
+							 strOutput = gcnew String (reports->topSellersReport(reportCategoryID, strSearchStart, strSearchEnd).c_str());
+						 }
+						 catch (exception e) {
+							 strOutput = gcnew String (e.what());
+						 }
+						 break;
+					 }
 				 case 6: //Revenue report
 					 {
-						 //String to hold our final output
-						 System::String ^ strOutput = "";
+						 // string to hold total revenue report
 						 System::String ^ systemStringTotalRevenue;
-
-						 //Grabs the dates to search by and formats them
-						 System::String ^ strStartDate =  dtReportStartDate->Value.ToString("yyyy-MM-dd");
-						 System::String ^ strEndDate = dtReportEndDate->Value.ToString("yyyy-MM-dd");
-
-						 //Converts the dates into proper strings to use with classes
-						 string strSearchStart(marshal_as<std::string>(strStartDate));
-						 string strSearchEnd(marshal_as<std::string>(strEndDate));
 
 						 string totalRevenueReport; // string to store the total revenue report
 
@@ -5114,42 +5059,30 @@ namespace InventoryManagement {
 
 						 //Format to change report look
 						 systemStringTotalRevenue = systemStringTotalRevenue->Replace
-							                        ("TOTAL REVENUE", "------------------------------\r\nTOTAL REVENUE");
+							 ("TOTAL REVENUE", "------------------------------\r\nTOTAL REVENUE");
 
 						 // Ready output string for display
 						 strOutput += "Revenue earned from: " + strStartDate + " to " + strEndDate + "\r\n\r\n";
 						 strOutput += systemStringTotalRevenue;
-
-						 //Display our outputted data
-						 reportForm->txtReport->Text = strOutput;
+						 break;
 					 }
 				 case 7: 
 					 break;
-
 				 default:
 					 break;
 				 }
 
-				  delete reports;
+				 //Display our outputted data
+				 reportForm->txtReport->Text = strOutput;
+
+				 delete reports;
 				 //Displays the new form
 				 reportForm->ShowDialog();
 			 }
 
-
-	private: System::Void cmbReportCategorySelect_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-
-				 ReportForm ^ reportForm = gcnew ReportForm;
-				 vector<string> output;
-				 output = returnedIDs();
-				 std::string str;
-				 System::String^ strRawOutput;
-				 std::stringstream ss;
-				 std::copy( output.begin(),output.end(),std::ostream_iterator< std::string >( ss, " \r\n" "\r\n"));
-				 str = ss.str();
-				 strRawOutput = gcnew String (str.c_str());
-				 reportForm->txtReport->Text =  "The current quantities of existing products: ""\r\n\r\n" +"Product ID | Quantity "+"\r\n"+strRawOutput ;
-
-				 reportForm->ShowDialog();
+			 /// \brief set dtReportStartDate's max date to the currently selected end date
+	private: System::Void dtReportEndDate_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+				 dtReportStartDate->MaxDate = dtReportEndDate->Value;
 			 }
 	};
 }
