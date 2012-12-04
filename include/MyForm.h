@@ -4587,15 +4587,15 @@ namespace InventoryManagement {
 			 /// \post invoice item is deleted from database if modifying
 	private: System::Void btnInvoiceRemoveProduct_Click(System::Object^  sender, System::EventArgs^  e) {
 
-
-
-				 //disable itself, invoice date, and creat invoice if there is nothing in the listbox
-				 if (lstInvoiceProductList->Items->Count != 0 &&
-					 cmbInvoiceFunction->SelectedIndex == 0) // Adding an invoice
+				 // remove selected product when creating an invoice
+				 if (cmbInvoiceFunction->SelectedIndex == 0) // Adding an invoice
 				 {
-					 // remove selected product
 					 lstInvoiceProductList->Items->Remove(lstInvoiceProductList->SelectedItem); 
-
+				 }
+				 //disable itself, invoice date, and create invoice if last item was removed
+				 if (lstInvoiceProductList->Items->Count == 0 &&
+					 cmbInvoiceFunction->SelectedIndex == 0)
+				 {
 					 btnInvoiceRemoveProduct->Enabled = false;
 					 btnInvoiceCreateInvoice->Enabled = false;
 					 dtInvoiceDate->Enabled = false;

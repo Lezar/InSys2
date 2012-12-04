@@ -137,8 +137,8 @@ namespace TestInventory
 
 			vector<string> saleVector;
 			saleVector.push_back("2");
-			saleVector.push_back("80");
 			saleVector.push_back("5");
+			saleVector.push_back("80");
 			sale->add(saleVector);
 
 			salesReturned = sale->search("sales_id", "5");
