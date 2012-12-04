@@ -4,7 +4,7 @@
 void Product :: add(vector<string> addVector) throw(AlreadyExistsException)
 {
 	// list to retrieve all rows in the file, sort by product_id, then write back to the file
-	list<string> prodList;
+	vector<string> prodVect;
 
 	// string to contain the contents of a row received from the file
 	string rowReceive;
@@ -37,7 +37,7 @@ void Product :: add(vector<string> addVector) throw(AlreadyExistsException)
 
 			// adds current row to the list if it is not empty
 			if(rowReceive.size() != 0)
-				prodList.push_back(rowReceive);
+				prodVect.push_back(rowReceive);
 
 			// retrieves the category_ID as a substring of the entire row and sets it to the string categoryID
 			prodID = rowReceive.substr(0,rowReceive.find(delim));
@@ -54,21 +54,59 @@ void Product :: add(vector<string> addVector) throw(AlreadyExistsException)
 	productInFile.close();
 
 	// adds new product to list
-	prodList.push_back(productID + "|" + categoryID + "|" + productDescription + "|" + productName + "|" + productPrice);
+	prodVect.push_back(productID + "|" + categoryID + "|" + productDescription + "|" + productName + "|" + productPrice);
 
-	// sort the list
-	prodList.sort();
+	// vector to store the sorted products
+	vector<string> productsSortedVect;
+
+	// variable to store the current row of prodVect
+	string currentRow;
+
+	// variable to store the current row of productsSortedVect
+	string currentRowSorted;
+
+	// variable to store the productId from prodVect
+	int productVectID;
+
+	// variable to store the productID from productsSortedVect
+	int productIDSorted;
+
+	for (int i = 0; i < (int) prodVect.size(); i++)
+	{
+		if(productsSortedVect.size() == 0) {
+			productsSortedVect.push_back(prodVect[i]);
+		} else {
+			currentRow = prodVect[i];
+			delim = currentRow.find('|');
+			productVectID = atoi(currentRow.substr(0, delim).c_str());
+
+			for(int x = 0; x < (int) productsSortedVect.size(); x++)
+			{
+				currentRowSorted = productsSortedVect[x];
+				delim = currentRowSorted.find('|');
+				productIDSorted = atoi(currentRowSorted.substr(0, delim).c_str());
+
+				if(productVectID < productIDSorted)
+				{
+					productsSortedVect.insert(productsSortedVect.begin() + x, prodVect[i]);
+					break;
+				}
+			}
+			if(productVectID > productIDSorted)
+			{
+				productsSortedVect.push_back(prodVect[i]);
+			}
+		}
+	}
+
 
 	// opens product.txt for output
 	productOutFile.open(productTextFile, ios_base::trunc);
 
-	// iterator for prodList
-	list<string>::iterator it;
-
 	// output all strings in prodList to the file
-	for(it = prodList.begin(); it != prodList.end(); ++it)
+	for(int i = 0; i < productsSortedVect.size(); i++)
 	{
-		productOutFile<<*it<<endl;
+		productOutFile<<productsSortedVect[i]<<endl;
 	}
 
 	// closes product.txt
