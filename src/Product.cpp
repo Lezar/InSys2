@@ -225,7 +225,7 @@ string Product :: search(string columnName, string valueToFind) throw(DoesNotExi
 			// checks if columnName (argument) is "description" and if product description data of current row matches 
 			// valueToFind (argument)
 			else if(columnName == "description" && 
-				atoi(productDescription.c_str()) == atoi(valueToFind.c_str()))
+				productDescription == valueToFind)
 			{
 				// concatenates the row that matched the search arguments to the string returnString 
 				// along with a line break at the end
