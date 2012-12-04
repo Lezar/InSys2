@@ -1,0 +1,10 @@
+1|Fruits, vegetables, and various other fresh foods|Produce
+2|Freshly caught fish and sealife|Seafood
+3|Soft drinks, juice, water, energy drinks and much more to quench your thirst|Drinks
+4|Fresh and frozen meat of all kinds|Meat & Deli
+5|Chips, nuts, and many more delicious treats|Salty Snacks
+6|Cookies, chocolate bars, and sweet and sour snacks|Cookies & Candy
+7|Organically grown and produced products for the health-wise|Organic
+8|Bread, tortillas, buns, and many fine pasteries and cakes|Bakery
+9|Milk, eggs, yogurt and cheese among other great products|Dairy
+10|TV's, computers, laptops, video games, and many more exciting products|Electronics

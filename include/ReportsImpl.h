@@ -2,6 +2,7 @@
 #define REPORTSIMPL_H
 
 #include "ReportsInterface.h"
+#include <iomanip>
 
 /// \brief Implementation of ReportsInterface
 ///
@@ -19,7 +20,7 @@ public:
 	/// \return a time_t object representing the date of the converted date string
 	time_t convertStringToDate(string dateString);
 
-	/// \brief finds all the sales/invoice/return id's between and including two dates
+	/// \brief finds all the receipts/invoice/return id's between and including two dates
 	///
 	/// \pre The table is set in a way that the first column is the ID (primary key), 
 	///      the date is in the form YYYY-MM-DD, and all other entries are integers  
@@ -30,7 +31,7 @@ public:
 	/// \return a string vector where each element an ID whose date is within the range
 	vector<string> findIDsBetweenDates (Table table, string startDate, string endDate) throw (DoesNotExistException);
 
-	string totalRevenueReport(string startDate, string endDate);
+	string totalRevenueReport(string startDate, string endDate) throw (DoesNotExistException);
 
 	/// \brief returns all rows found between two dates using our findIDsBetweenDates function for given table
 	///
@@ -39,7 +40,9 @@ public:
 	/// \param[in] IDs is a vector of IDs found by our findIDsBetweenDates function
 	/// \param[in] strColToSearch is the column name of the table that holds the ID
 	/// \return a string of all sales between the two given dates
-	string reportBetweenDates(Table table, vector<string> IDs, string strColToSearch);
+	string reportBetweenDates(Table tblTableToReport, string startDate, string endDate, string strColToSearch) throw (DoesNotExistException);
+
+	string topSellersReport(string selectedCategory, string startDate, string endDate);
 
 
 	~ReportsImpl();

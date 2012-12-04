@@ -1,0 +1,63 @@
+10001|2|Freshly caught salmon|Salmon|8.99
+10002|2|Freshly caught crab|Crab|12.99
+10003|2|Freshly caught crab, the king of the tank|King Crab|18.99
+10004|2|Freshly caught shrimp|Shrimp|6.99
+10005|2|Freshly caught tuna|Tuna|7.99
+10006|2|Freshly caught mackerel|Mackerel|8.99
+10007|2|THIS ISNT REAL|Shark Fin|99.00
+10008|3|2L bottle of classic coke|Coca-Cola|2.99
+10009|3|2L bottle of sprite|Sprite|2.99
+10010|3|IT'S GOT BITE!|Barq's Rootbeer|2.99
+10011|3|2L bottle of classic pepsi|Pepsi|2.99
+10012|3|1L bottle of water|Water|1.99
+10013|3|2L bottle of iced tea|Iced Tea|2.99
+10091|2|Isn't that just shrimp?|Tiger Prawns|9.99
+10092|2|PUMP UP THE BASS|Bass|12.99
+10093|2|Sounds appetizing|Flounder|14.99
+10094|2|Why not own a pet|Goldfish|2.99
+10095|2|The most delicious of all the tuna|Fatty Tuna|49.99
+10099|2|This is illegal, don't try at home|Dolphin|999.99
+20001|1|Tall and green|Romaine Lettuce|0.99
+20002|1|Round and Crisp|Iceburg Lettuce|0.99
+20003|1|Sour|Lemons|0.59
+20004|1|Green and sour|Limes|0.59
+20005|1|Big round and juicy|Watermelon|4.59
+20006|1|Red and delicious|Apples|0.69
+20007|1|Brown and hearty|Potatoes|0.69
+20008|1|Long and tasty|Green Onions|0.49
+20009|1|Red and eye-watery|Red Onion|0.89
+20010|1|White and eye-watery|White Onion|0.89
+20011|1|Plump and squashy|Squash|2.99
+20012|1|Bag of 10 Oranges|Oranges|5.99
+20013|1|Box of 750g grapes|Grapes|4.99
+20014|1|Great to eat or carve|Pumpkin|4.99
+20015|1|They look RADDISHING|Raddish|1.99
+20016|1|I have no idea what this is|Pumpernickel|2.99
+20017|1|GOOD FOR YOU|Kale|1.99
+40001|5|Old lays classic ketchup potato chips|Old Lays Ketchup Potato Chips|3.99
+40002|5|Old lays classic regular potato chips|Old Lays Regular Potato Chips|3.99
+40003|5|Deliciously roasted and slightly salty cashews|Can of Roasted Cashews|6.99
+50001|6|The original oreos cookies|Oreos Original|4.99
+50002|6|YOU MAKE GOOOOOOD COOKIES!|Mr. Christie's Chocolate Chip|4.99
+50003|6|Classic Mr.Big chocolate bar|Mr. Big|0.99
+60001|7|Organic potatoes and seasoning|Organic Potato Chips Ketchup Flavoured|4.99
+60004|7|What don't they make organic nowadays?|Organic Coffee|7.99
+100006|2|Is this even a thing?|King Shrimp|34.00
+300001|4|Freshly cut tbone steak|Tbone steak|12.99
+300002|4|Freshly cut deli ham|Ham|6.99
+300004|4|Freshly cut deli pork|Pork|7.99
+300005|4|Fresh links of sausage|Sausage|8.99
+300006|4|Package of 10 frozen fish sticks|Frozen fish sticks|7.99
+300007|4|Freshly cut bologna from the deli|Bologna|4.99
+700001|8|Bread, white|No Name White Bread|1.99
+700002|8|Tortillas, white|White Tortillas|2.99
+700003|8|Bread, brown|Brown Bread|1.99
+700004|8|Cake, black and foresty|Black Forest Cake|7.99
+800001|9|4L 1%|1% Milk|3.99
+800002|9|4L 2% Milk|2% Milk|2.99
+800003|9|4L skim milk|4L Skim Milk|3.99
+800004|9|MMMMMMmmm|Strawberry Yogurt|3.99
+900001|10|LOOK AT THAT PICTURE!|Samsung 60" LED TV|1699.99
+900002|10|BUILT HARD, PLAY HARD.|Custom Built Gaming PC|2599.99
+900003|10|Great performance in all areas|Lenovo Y580 Laptop|899.99
+900004|10|Another halo?|Halo 4|59.99
