@@ -2,6 +2,13 @@
 #include "DoesNotExistException.h"
 #include "AlreadyExistsException.h"
 
+
+
+/// \brief Add function to insert data into the category text file
+/// 
+/// \param[in] addVector is a vector of strings for the data to be entered
+/// \return returns a string to notify the user whether the add was successful or not
+/// \throw AlreadyExistsException when trying to add a primary key that already exists
 void SalesSummary :: add(vector<string> addVector)throw (AlreadyExistsException)
 {
 	string rowReceive;
@@ -12,8 +19,8 @@ void SalesSummary :: add(vector<string> addVector)throw (AlreadyExistsException)
 	char delim = '|';
 
 	// assigns string the vector values
-	string receiptID = addVector[0];
-	string salesID = addVector[1];
+	string  receiptID= addVector[0];
+	string  salesID =addVector[1];
 
 	// opens salesSummary.txt
 	ssInFile.open(salesSummaryTextFile);
@@ -45,6 +52,14 @@ void SalesSummary :: add(vector<string> addVector)throw (AlreadyExistsException)
 
 }
 
+/// \brief Search function to find a specific row of data and return it as a string
+///
+/// \param[in] columnName identifies the name of the column to be searched
+/// \param[in] valueToFind identifies the value to be searched for in the column
+/// \return a string which contains a concatenation of all values in the row found in the database table
+///         if multiple values exist, return all rows with that value, where
+///         each row is separated by a new line
+/// \throw DoesNotExistException when trying to find a row that doesn't exist
 string SalesSummary :: search(string columnName, string valueToFind) throw (DoesNotExistException)
 {
 	bool resultFound = false;
@@ -57,7 +72,7 @@ string SalesSummary :: search(string columnName, string valueToFind) throw (Does
 	int delimiter2;
 	char delim = '|';
 
-	try{
+	
 	// opens salesSummary.txt
 	ssInFile.open(salesSummaryTextFile);
 
@@ -91,39 +106,34 @@ string SalesSummary :: search(string columnName, string valueToFind) throw (Does
 		
 			if(columnName == "salesID" && 
 				salesID == valueToFind)				
-				returnString += rowReceive + "\n";
-				resultFound = true;
+				returnString = rowReceive + "\n";
+			
 			// checks if value to find is equal to the receiptID
 			 if(columnName == "receiptID" &&
 				receiptID == valueToFind)
 				returnString += rowReceive + "\n";
-				resultFound = true;
-				// return the whole table
+			 // return the whole table
 			if(columnName == "all")
 				returnString += rowReceive + "\n";
+				
 		}
 	}
 	// closes the file
 	ssInFile.close();
 
 	// ensures if the return value is less than the minimun value
-	if(!resultFound)
-		throw DoesNotExistException("Summary does not exist");
+	if(returnString == "")
+		throw DoesNotExistException(valueToFind + " does not exist in column: " + columnName); 
+
 	return returnString;
-
-	} catch (DoesNotExistException e)
-
-	{
-	return e.what();
-	}
 }
 
 void SalesSummary :: modifyRow( string valueToFind, string columnNameToModify, string valueOfModify){}
 
 void SalesSummary :: deleteRow( string valueToFind) {}
 
-// Initializes sales summary text file
-SalesSummary::SalesSummary() { salesSummaryTextFile = "textFiles/salesSummary.txt"; }
+/// Initializes sales summary text file
+SalesSummary::SalesSummary() { salesSummaryTextFile = "textFiles\\salesSummary.txt"; }
 
-// Destructor
+///Destructor
 SalesSummary::~SalesSummary(){}

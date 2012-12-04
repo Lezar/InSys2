@@ -35,7 +35,6 @@ public:
 	/// \brief Add function to insert data into the table of the database
 	/// 
 	/// \param[in] addVector is a vector of strings for the data to be entered
-	/// \return returns a string to notify the user whether the add was successful or not
 	/// \throw AlreadyExistsException when trying to add a primary key that already exists
 	virtual void add(vector<string> addVector) throw(AlreadyExistsException) = 0;
 

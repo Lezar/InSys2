@@ -70,7 +70,12 @@ void Returns :: add(vector<string> addVector)
 	returnsOutFile.open(returnsTextFile, ios_base::app);
 
 	// writes to returns.txt the new rows data (returnID, sales_id, quantity_returned, date returned)
-	returnsOutFile<<"" + returnsID + delim + sales_id + delim + quantity_returned + delim + date_returned + "\n";
+
+	string returnsInfo = "" + returnsID + delim + sales_id + delim + quantity_returned + delim + date_returned + "\n";
+
+	//Deletes any spaces in the string
+
+	returnsOutFile<< returnsInfo;
 
 	returnsOutFile.close();
 }
