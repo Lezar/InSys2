@@ -2826,8 +2826,12 @@ namespace InventoryManagement {
 						 MessageBox::Show("Invalid characters - please change the product ID", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
 					 } else if(txtProductName->Text->Contains("|")) {
 						 MessageBox::Show("| is a reserved character - Please change the product name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+					 } else if(txtProductName->Text->Length == 0) {
+						 MessageBox::Show("Product must have a name - Please add a name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
 					 } else if(txtProductDescription->Text->Contains("|")) {
 						 MessageBox::Show("| is a reserved character - Please change the product description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+					 } else if(txtProductDescription->Text->Length == 0) {
+						 MessageBox::Show("Product must have a description - Please add a description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
 					 } else if(!regex_search(targetProductPrice, match, rgxPrice)) {
 						 MessageBox::Show("Invalid characters - please change the product price", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
 					 } else {
