@@ -1671,7 +1671,6 @@ namespace InventoryManagement {
 			this->dtReportStartDate->Name = L"dtReportStartDate";
 			this->dtReportStartDate->Size = System::Drawing::Size(154, 20);
 			this->dtReportStartDate->TabIndex = 4;
-			dtReportStartDate->MaxDate = DateTime::Today;
 			// 
 			// lblReportDescription
 			// 
@@ -1881,6 +1880,7 @@ namespace InventoryManagement {
 				 lblReportEndDate->Visible = false;
 				 dtReportEndDate->Visible = false;
 				 btnReportGenerate->Visible = false;
+				dtReportStartDate->MaxDate = DateTime::Today;
 			 }
 
 			 /// \brief Changes the visibility of certain components for the category tab based on the user selected function
@@ -2682,9 +2682,13 @@ namespace InventoryManagement {
 	private: System::Void btnCategoryAdd_Click(System::Object^  sender, System::EventArgs^  e) {
 				 if(txtCategoryName->Text->Contains("|")){
 					 MessageBox::Show("| is a reserved character - Please change the category name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if (txtCategoryName->Text->Length == 0) {
+					 MessageBox::Show("Category name required - Please enter a category name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
 				 } else if (txtCategoryDescription->Text->Contains("|")) {
 					 MessageBox::Show("| is a reserved character - Please change the category description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
-				 } else {
+				 } else if (txtCategoryDescription->Text->Length == 0) {
+					 MessageBox::Show("Category description required - Please enter a category description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 }else {
 					 // create instance of Category()
 					 Table cat = new Category();
 
