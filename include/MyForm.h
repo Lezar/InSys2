@@ -1671,7 +1671,6 @@ namespace InventoryManagement {
 			this->dtReportStartDate->Name = L"dtReportStartDate";
 			this->dtReportStartDate->Size = System::Drawing::Size(154, 20);
 			this->dtReportStartDate->TabIndex = 4;
-			dtReportStartDate->MaxDate = DateTime::Today;
 			// 
 			// lblReportDescription
 			// 
@@ -1881,6 +1880,7 @@ namespace InventoryManagement {
 				 lblReportEndDate->Visible = false;
 				 dtReportEndDate->Visible = false;
 				 btnReportGenerate->Visible = false;
+				 dtReportStartDate->MaxDate = DateTime::Today;
 			 }
 
 			 /// \brief Changes the visibility of certain components for the category tab based on the user selected function
@@ -2682,8 +2682,12 @@ namespace InventoryManagement {
 	private: System::Void btnCategoryAdd_Click(System::Object^  sender, System::EventArgs^  e) {
 				 if(txtCategoryName->Text->Contains("|")){
 					 MessageBox::Show("| is a reserved character - Please change the category name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if (txtCategoryName->Text->Length == 0) {
+					 MessageBox::Show("Category requires name - Please enter a category name", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
 				 } else if (txtCategoryDescription->Text->Contains("|")) {
 					 MessageBox::Show("| is a reserved character - Please change the category description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
+				 } else if (txtCategoryDescription->Text->Length == 0) {
+					 MessageBox::Show("Category requires description - Please enter a category description", "InSys", MessageBoxButtons::OK,MessageBoxIcon::Error);
 				 } else {
 					 // create instance of Category()
 					 Table cat = new Category();
@@ -3262,12 +3266,12 @@ namespace InventoryManagement {
 					 txtSalesProductDiscount->Text != "")
 				 {
 					 if (System::Text::RegularExpressions::Regex::IsMatch
-					 (txtSalesProductQuantity->Text, "^[0-9]*$") &&
-					 txtSalesProductQuantity->Text != "")
-				 {
-					 btnSalesAddProduct->Enabled = true;
-					 btnSalesModify->Enabled = true;
-				 }
+						 (txtSalesProductQuantity->Text, "^[0-9]*$") &&
+						 txtSalesProductQuantity->Text != "")
+					 {
+						 btnSalesAddProduct->Enabled = true;
+						 btnSalesModify->Enabled = true;
+					 }
 				 }
 				 else
 				 {
@@ -3607,43 +3611,43 @@ namespace InventoryManagement {
 				 //disable itself,  date, and creat receipt if there is nothing in the listbox
 				 if (lstSalesProductList->Items->Count != 0 && cmbSalesFunction->SelectedIndex == 0) // Adding an receipt
 				 {
-					  System::String^ product = lstSalesProductList->SelectedItem->ToString();
+					 System::String^ product = lstSalesProductList->SelectedItem->ToString();
 
-				 // find positions of delimiters
-				 int delimiter7 = product->IndexOf("|");
-				 int delimiter8 = product->IndexOf("|", delimiter7 + 1);
-				 
-				 int delimiter9= product->IndexOf("|", delimiter8+ 1);
-				 std::string quantityReturned;
-				 // Get product_id, name, and quantity
-				 System::String^ product_id = product->Substring(0, delimiter7-1);
-				 std::string pid = marshal_as<std::string>(product_id);
+					 // find positions of delimiters
+					 int delimiter7 = product->IndexOf("|");
+					 int delimiter8 = product->IndexOf("|", delimiter7 + 1);
 
-				 
-				 System::String^ qSold = product->Substring(delimiter7+1, delimiter8-delimiter7-1);
-				 Table summary = new Summary();
-				 
-				 quantityReturned = summary->search("product_id", pid);
-				 
-				 System::String^ quantity = gcnew String (quantityReturned.c_str());
-				 
+					 int delimiter9= product->IndexOf("|", delimiter8+ 1);
+					 std::string quantityReturned;
+					 // Get product_id, name, and quantity
+					 System::String^ product_id = product->Substring(0, delimiter7-1);
+					 std::string pid = marshal_as<std::string>(product_id);
 
-				 int  delimiter5 = quantityReturned.find("|");
-				 int  delimiter6 = quantityReturned.find("|", delimiter5+1);
 
-				 System::String^ quanSold = quantity->Substring(delimiter5+1); // quantity sold to add to listbox
+					 System::String^ qSold = product->Substring(delimiter7+1, delimiter8-delimiter7-1);
+					 Table summary = new Summary();
 
-		
+					 quantityReturned = summary->search("product_id", pid);
 
-				 
-				 std::string qSTDString = marshal_as<std::string>(qSold);
-				
-				 std::string qSTDStr = marshal_as<std::string>(quanSold);
+					 System::String^ quantity = gcnew String (quantityReturned.c_str());
 
-				 //convert strings to integers
-				 int stock = atoi(qSTDStr.c_str());
-				 int sold = atoi(qSTDString.c_str()); 
-				 
+
+					 int  delimiter5 = quantityReturned.find("|");
+					 int  delimiter6 = quantityReturned.find("|", delimiter5+1);
+
+					 System::String^ quanSold = quantity->Substring(delimiter5+1); // quantity sold to add to listbox
+
+
+
+
+					 std::string qSTDString = marshal_as<std::string>(qSold);
+
+					 std::string qSTDStr = marshal_as<std::string>(quanSold);
+
+					 //convert strings to integers
+					 int stock = atoi(qSTDStr.c_str());
+					 int sold = atoi(qSTDString.c_str()); 
+
 					 stock = stock + sold;
 					 System::String^ test;
 					 test = System::Convert::ToString(stock);
@@ -3652,7 +3656,7 @@ namespace InventoryManagement {
 
 					 summary->modifyRow(pid, "total_quantity", strStock);
 					 delete summary;
-					 
+
 					 // remove selected product
 					 lstSalesProductList->Items->Remove(lstSalesProductList->SelectedItem); 
 					 btnSalesRemoveProduct->Enabled = true;
@@ -5056,8 +5060,8 @@ namespace InventoryManagement {
 					 }
 				 case 1: //Current stock report
 					 {
-						  System::String^ reportCategory = cmbReportCategorySelect->Text->ToString();
-							 string reportCategorySelected(marshal_as<std::string>(reportCategory));
+						 System::String^ reportCategory = cmbReportCategorySelect->Text->ToString();
+						 string reportCategorySelected(marshal_as<std::string>(reportCategory));
 						 vector<string> output;
 						 output = returnedIDs();
 						 std::string str;
