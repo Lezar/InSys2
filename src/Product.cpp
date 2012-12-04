@@ -104,7 +104,7 @@ void Product :: add(vector<string> addVector) throw(AlreadyExistsException)
 	productOutFile.open(productTextFile, ios_base::trunc);
 
 	// output all strings in prodList to the file
-	for(int i = 0; i < productsSortedVect.size(); i++)
+	for(int i = 0; i < (int) productsSortedVect.size(); i++)
 	{
 		productOutFile<<productsSortedVect[i]<<endl;
 	}

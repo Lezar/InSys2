@@ -589,7 +589,7 @@ string ReportsImpl::topSellersReport(string selectedCategory, string startDate, 
 string ReportsImpl::reportBetweenDates(Table table, vector<string> IDs, string strColToSearch)
 {
 	string strSalesFound = "";
-	for (int i = 0; i < IDs.size(); i++)
+	for (int i = 0; i < (int) IDs.size(); i++)
 	{
 		strSalesFound += table->search(strColToSearch, IDs[i]) + "\r\n";
 	}
