@@ -114,6 +114,11 @@ string Sales :: search(string columnName, string valueToFind)throw (DoesNotExist
 			// assigns the string with the next line in the file
 			getline(salesInFile, rowReceive);
 
+			// break when an empty string is assigned to rowReceive
+			// which occurss if there are no more valid entries in the table
+			if (rowReceive.empty())
+				break;
+
 			// assigns the first delimiter position
 			delimiter = rowReceive.find('|');
 
@@ -163,6 +168,11 @@ string Sales :: search(string columnName, string valueToFind)throw (DoesNotExist
 			{
 				returnString += rowReceive + "\n";
 				
+			}
+			// return the whole table
+			else if(columnName == "all")
+			{
+				returnString += rowReceive + "\n";
 			}
 		}
 	}
