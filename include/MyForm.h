@@ -3222,17 +3222,21 @@ namespace InventoryManagement {
 				 txtSalesProductDiscount->Enabled = true;
 				 btnSalesRemoveProduct->Enabled = true; // enable remove button
 
-				 // Enable add product only if input of Quantity text is numerical
+				 // Enable add product only if input of Quantity text is numerical, non zero, and non empty
 				 if (System::Text::RegularExpressions::Regex::IsMatch
 					 (txtSalesProductQuantity->Text, "^[0-9]*$") &&
+					 !System::Text::RegularExpressions::Regex::IsMatch
+					 (txtSalesProductQuantity->Text, "^[0]*$") &&
 					 txtSalesProductQuantity->Text != "")
 					 btnSalesAddProduct->Enabled = true;
 				 else
 					 btnSalesAddProduct->Enabled = false;
 
+				 // enabled add product only if input of product discount is two digits and not 00
 				 if (System::Text::RegularExpressions::Regex::IsMatch
-					 (txtSalesProductDiscount->Text, "^([1-9][0-9]{0,1}|100)$") &&
-					 txtSalesProductDiscount->Text != "")
+					 (txtSalesProductDiscount->Text, "^([0-9][0-9]{0,1}|100)$") &&
+					 txtSalesProductDiscount->Text != "" &&
+					 txtSalesProductDiscount->Text != "00")
 					 btnSalesAddProduct->Enabled = true;
 				 else
 					 btnSalesAddProduct->Enabled = false;
@@ -3241,13 +3245,22 @@ namespace InventoryManagement {
 			 /// \brief Ensures that AddProduct and modify Invoice button is disabled if user input is not numeric
 	private: System::Void txtSalesProductQuantity_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 
-				 // Enable AddProduct only if ProductQuantity text is numeric and non-empty
+				 // Enable AddProduct only if ProductQuantity text is numeric and non-empty and non-zero
 				 if (System::Text::RegularExpressions::Regex::IsMatch
 					 (txtSalesProductQuantity->Text, "^[0-9]*$") &&
+					 !System::Text::RegularExpressions::Regex::IsMatch
+					 (txtSalesProductQuantity->Text, "^[0]*$") &&
 					 txtSalesProductQuantity->Text != "")
 				 {
-					 btnSalesAddProduct->Enabled = false;
-					 btnSalesModify->Enabled = true;
+					 // check if sales product discount is two digits and not 00
+					 if (System::Text::RegularExpressions::Regex::IsMatch
+						 (txtSalesProductDiscount->Text, "^([0-9][0-9]{0,1}|100)$") &&
+						 txtSalesProductDiscount->Text != ""  &&
+						 txtSalesProductDiscount->Text != "00") 
+					 {
+						 btnSalesAddProduct->Enabled = true;
+						 btnSalesModify->Enabled = true;
+					 }
 				 }
 				 else
 				 {
@@ -3259,14 +3272,18 @@ namespace InventoryManagement {
 
 	private: System::Void txtSalesProductDiscount_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 
-				 // Enable AddProduct only if Product discount text is numeric and non-empty
+				 // Enable AddProduct only if Product discount text is two digits and not 00
 
 				 if (System::Text::RegularExpressions::Regex::IsMatch
-					 (txtSalesProductDiscount->Text, "^([1-9][0-9]{0,1}|100)$") &&
-					 txtSalesProductDiscount->Text != "")
+					 (txtSalesProductDiscount->Text, "^([0-9][0-9]{0,1}|100)$") &&
+					 txtSalesProductDiscount->Text != ""  &&
+					 txtSalesProductDiscount->Text != "00")
 				 {
+					 // check if sales product quantity is a string of digits and non-zero and non-empty
 					 if (System::Text::RegularExpressions::Regex::IsMatch
 						 (txtSalesProductQuantity->Text, "^[0-9]*$") &&
+						 !System::Text::RegularExpressions::Regex::IsMatch
+						 (txtSalesProductQuantity->Text, "^[0]*$") &&
 						 txtSalesProductQuantity->Text != "")
 					 {
 						 btnSalesAddProduct->Enabled = true;
@@ -3508,8 +3525,8 @@ namespace InventoryManagement {
 				 delimiter3 = productListItemSTD.find('|', delimiter2+1);
 				 // initiate product_id, discount and quantity
 				 product_id = productListItemSTD.substr(0, delimiter1 - 1);
-				 qSold = productListItemSTD.substr(delimiter1+1, delimiter2-delimiter1-1);
-				 discount = productListItemSTD.substr(delimiter3 + 1);
+				 qSold = productListItemSTD.substr(delimiter1+2, delimiter2-delimiter1-3);
+				 discount = productListItemSTD.substr(delimiter3 + 2);
 				 // set up the addVector
 				 salesAddVector.push_back(qSold);
 
