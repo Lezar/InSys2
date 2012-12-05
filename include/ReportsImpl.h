@@ -40,7 +40,8 @@ public:
 	/// \param[in] IDs is a vector of IDs found by our findIDsBetweenDates function
 	/// \param[in] strColToSearch is the column name of the table that holds the ID
 	/// \return a string of all sales between the two given dates
-	string reportBetweenDates(Table table, vector<string> IDs, string strColToSearch);
+	/// \throw DoesNotExistException if nothing exists between those dates
+	string reportBetweenDates(Table tblTableToReport, string startDate, string endDate, string strColToSearch) throw (DoesNotExistException);
 
 	string topSellersReport(string selectedCategory, string startDate, string endDate);
 

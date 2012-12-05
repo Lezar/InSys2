@@ -45,6 +45,17 @@ public:
 	///         product names, as well as quantity sold of each product.
 	virtual string topSellersReport(string selectedCategory, string startDate, string endDate) = 0;
 
+	/// \brief returns all rows found between two dates using our findIDsBetweenDates function for given table
+	///
+	/// \pre wrote before findIDsBetweenDates
+	/// \param[in] table is a Table for the required search
+	/// \param[in] IDs is a vector of IDs found by our findIDsBetweenDates function
+	/// \param[in] strColToSearch is the column name of the table that holds the ID
+	/// \return a string of all sales between the two given dates
+	/// \throw DoesNotExistException if nothing exists between those dates
+	virtual string reportBetweenDates(Table tblTableToReport, string startDate, string endDate, string strColToSearch) 
+		throw (DoesNotExistException) = 0;
+
 	/// \brief ReportsInterface destructor
 	virtual ~ReportsInterface() {};
 };

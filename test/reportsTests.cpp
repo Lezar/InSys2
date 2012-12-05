@@ -165,7 +165,9 @@ namespace TestInventory
 			Logger::WriteMessage("TestReportsFindSingleInvoiceIDSingleDate");
 
 			// find the invoice ID between and including 2012-07-22 and 2012-07-22
-			vector<string> returnedVector = reports.findIDsBetweenDates(new Invoice(), "2012-07-22", "2012-07-22");
+			Table invoice = new Invoice();
+			vector<string> returnedVector = reports.findIDsBetweenDates(invoice, "2012-07-22", "2012-07-22");
+			delete invoice;
 
 			vector<string>::iterator it; // iterator for returnedVector
 
@@ -184,7 +186,9 @@ namespace TestInventory
 			Logger::WriteMessage("TestReportsFindSingleReturnsIDBetweenDates");
 
 			// find the single Returns ID between and including 2012-11-01 and 2012-11-20
-			vector<string> returnedVector = reports.findIDsBetweenDates(new Returns(), "2012-11-01", "2012-11-20");
+			Table returns = new Returns();
+			vector<string> returnedVector = reports.findIDsBetweenDates(returns, "2012-11-01", "2012-11-20");
+			delete returns;
 
 			vector<string>::iterator it; // iterator for returnedVector
 
@@ -202,8 +206,12 @@ namespace TestInventory
 		{
 			Logger::WriteMessage("TestReportsFindMultipleReceiptIDBetweenDates");
 
+			
+
 			// find all Receipt ID's between and including 2009-01-01 and 2015-12-12
-			vector<string> returnedVector = reports.findIDsBetweenDates(new Receipt(), "2009-01-01", "2015-12-12");
+			Table receipt = new Receipt();
+			vector<string> returnedVector = reports.findIDsBetweenDates(receipt, "2009-01-01", "2015-12-12");
+			delete receipt;
 
 			vector<string>::iterator it; // iterator for returnedVector
 
@@ -226,10 +234,13 @@ namespace TestInventory
 		{
 			Logger::WriteMessage("TestReportsFindIDsBtwDatesThrowsDoesNotExistException");
 
+			Table invoice = new Invoice();
+
 			// try finding within date range with no existing entries
 			try {
+				
 				vector<string> returnedVector = 
-					reports.findIDsBetweenDates(new Invoice(), "2040-01-01", "2040-12-12");
+					reports.findIDsBetweenDates(invoice, "2040-01-01", "2040-12-12");
 				Logger::WriteMessage("No exception thrown");
 				Assert::Fail(); // fail if nothing is thrown
 			}
@@ -240,6 +251,8 @@ namespace TestInventory
 				Logger::WriteMessage("Wrong type of exception");
 				Assert::Fail();
 			}
+
+			delete invoice;
 		}
 
 		/// \brief Test if totalRevenueReport can report total revenue of only one sale with no discount

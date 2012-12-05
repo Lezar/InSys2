@@ -123,7 +123,7 @@ string SalesSummary :: search(string columnName, string valueToFind) throw (Does
 
 	// ensures if the return value is less than the minimun value
 	if(returnString == "")
-		throw DoesNotExistException(valueToFind + " does not exist in column: " + columnName); 
+		throw DoesNotExistException(valueToFind + " SalesSummary does not exist in column: " + columnName); 
 
 	return returnString;
 }

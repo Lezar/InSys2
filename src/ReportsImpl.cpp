@@ -88,8 +88,6 @@ vector<string> ReportsImpl::findIDsBetweenDates (Table table, string startDate, 
 
 		}
 
-		delete table;
-
 		// throw DoesNotExistException if there are no entries within date range
 		if (returnVector.size() == 0)
 			throw DoesNotExistException("Nothing found between " + startDate + " and " + endDate + ".");
@@ -142,13 +140,18 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 
 	int totalRevenue = 0; // the sum of all the revenue of all the categories
 
+	Table receipt = new Receipt(); // receipt class to search all ID's
+
 	// throw DoesNotExistException with more specific message if there are
 	// no entries between startDate and endDate
 	try {
 		// store all Receipt ID's in IDVector
-		IDVector = findIDsBetweenDates(new Receipt(), startDate, endDate);
+		IDVector = findIDsBetweenDates(receipt, startDate, endDate);
+		delete receipt;
+
 	}
 	catch (DoesNotExistException e) {
+		delete receipt;
 		throw DoesNotExistException("There are no sales between " + startDate + " and " + endDate + ".");
 	}
 
@@ -309,8 +312,18 @@ string ReportsImpl::topSellersReport(string selectedCategory, string startDate, 
 	// vector to hold all the receipt ID's from between the start and end dates
 	vector<string> receiptIDVect;
 
-	// the vector returned by the findIDsBetweenDates function
-	receiptIDVect = findIDsBetweenDates(new Receipt(), startDate, endDate);
+	// find all receipt id's between start and end dates
+	Table receipt = new Receipt();
+	try {
+		// the vector returned by the findIDsBetweenDates function
+		receiptIDVect = findIDsBetweenDates(receipt, startDate, endDate);
+		delete receipt;
+	}
+	catch (DoesNotExistException e) {
+		delete receipt;
+		throw DoesNotExistException("There are no sales between " + startDate + " and " + endDate + ".");
+	}
+
 
 	Table salesSummaryTable = new SalesSummary();
 
@@ -586,14 +599,28 @@ string ReportsImpl::topSellersReport(string selectedCategory, string startDate, 
 	return report;
 }
 
-string ReportsImpl::reportBetweenDates(Table table, vector<string> IDs, string strColToSearch)
+string ReportsImpl::reportBetweenDates(Table tblTableToReport, string startDate, string endDate, string strColToSearch)
 {
-	string strSalesFound = "";
-	for (int i = 0; i < (int) IDs.size(); i++)
+	string strReportsFound = "";
+	vector<string> IDs;
+
+	try
 	{
-		strSalesFound += table->search(strColToSearch, IDs[i]) + "\r\n";
+		IDs = findIDsBetweenDates(tblTableToReport, startDate, endDate);
+
+		for (int i = 0; i < IDs.size(); i++)
+		{
+
+			strReportsFound += tblTableToReport->search(strColToSearch, IDs[i]) + "\r\n";
+		}
 	}
-	return strSalesFound;
+	catch (DoesNotExistException e) {
+		throw DoesNotExistException("There are no " + strColToSearch.substr(0, strColToSearch.length() - 3) + " between " + startDate + " and " + endDate + ".");
+	}
+
+
+
+	return strReportsFound;
 }
 
 ReportsImpl::~ReportsImpl() {};

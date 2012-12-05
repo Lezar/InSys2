@@ -3187,7 +3187,7 @@ namespace InventoryManagement {
 					 txtSalesProductDiscount->Enabled = true;
 					 btnSalesRemoveProduct->Enabled = true;
 					 // Integers to store delimiter positions
-					 int delimiter1, delimiter2, delimiter3, delimiter4;
+					 int delimiter3, delimiter4;
 
 					 // strings to store returns of searches
 					 std::string qunatityReturned;
@@ -3329,10 +3329,8 @@ namespace InventoryManagement {
 
 
 				 //System::String^ product_id; // product_id to add to listbox
-				 System::String^ qSold; // quantity sold to add to listbox
 				 System::String^ product_name; // name to add to listbox
 				 System::String^ discount; //discount to add to listbox
-				 System::String^ quantityReturned;
 
 				 // find positions of delimiters
 				 int delimiter1 = product->IndexOf("|");
@@ -4970,7 +4968,6 @@ namespace InventoryManagement {
 
 				 ReportsImpl reports;
 				 string searchResult, currentRow, productID;
-				 System::String^ strOutput;
 				 Table summary = new Summary();		
 				 int delimiter; // store position of delimiters
 				 vector<string> returnVector;
@@ -5005,7 +5002,6 @@ namespace InventoryManagement {
 				 int delimiter1 = category->IndexOf("|");
 				 int delimiter2 = category->IndexOf("|", delimiter1 + 1);
 				 System::String^ category_id;
-				 System::String^ strRawOutput;
 				 std::string categoryID, strOutput, productID;
 				 std::string quantityReturned, ret;
 				 vector<string> vs;
@@ -5062,7 +5058,6 @@ namespace InventoryManagement {
 						 string searchResult, currentRow;
 						 System::String^ strRawOutput;
 						 std::string str;
-						 int delimiter; 
 						 vector<string> productID;
 						 productID = IDs();
 						 std::stringstream ss;
@@ -5092,10 +5087,46 @@ namespace InventoryManagement {
 					 }
 				 case 2:  //Sales between date report
 					 {
+						 //Creates our table
+						 Table tblSales = new Receipt();
+
+						 try {
+							 //Searches for all sales between the 2 dates selected and stores into a string
+							 string strSalesReport = reports->reportBetweenDates(tblSales, strSearchStart, strSearchEnd, "receipt_id");
+
+							 //Convert to a system string to display
+							 System::String^ strSalesReportRAW;
+							 strSalesReportRAW = gcnew String (strSalesReport.c_str());
+							 strOutput = strSalesReportRAW;
+						 }
+						 catch (DoesNotExistException e) {
+							 strOutput = gcnew String (e.what());
+						 }
+
+						 delete tblSales;
+
 						 break;
 					 }
 				 case 3: //Returns between date report
 					 {
+						 //Creates our table
+						 Table tblReturns = new Returns();
+
+						 try {
+							 //Searches for all sales between the 2 dates selected and stores into a string
+							 string strReturnsReport = reports->reportBetweenDates(tblReturns, strSearchStart, strSearchEnd, "returns_id");
+
+							 //Convert to a system string to display
+							 System::String^ strReturnsReportRAW;
+							 strReturnsReportRAW = gcnew String (strReturnsReport.c_str());
+							 strOutput = strReturnsReportRAW;
+						 }
+						 catch (DoesNotExistException e) {
+							 strOutput = gcnew String (e.what());
+						 }
+
+						 delete tblReturns;
+
 						 break;
 					 }
 				 case 4: //Invoice between date report
@@ -5114,7 +5145,7 @@ namespace InventoryManagement {
 
 							 strOutput = gcnew String (reports->topSellersReport(reportCategoryID, strSearchStart, strSearchEnd).c_str());
 						 }
-						 catch (exception e) {
+						 catch (DoesNotExistException e) {
 							 strOutput = gcnew String (e.what());
 						 }
 						 break;
@@ -5143,7 +5174,8 @@ namespace InventoryManagement {
 							 ("TOTAL REVENUE", "------------------------------\r\nTOTAL REVENUE");
 
 						 // Ready output string for display
-						 strOutput += "Revenue earned from: " + strStartDate + " to " + strEndDate + "\r\n\r\n";
+						 strOutput += "Revenue earned from: " + strStartDate + " to " + strEndDate + "\r\n";
+						 strOutput += "for each Category and also the total revenue\r\n\r\n";
 						 strOutput += systemStringTotalRevenue;
 						 break;
 					 }
