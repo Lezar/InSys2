@@ -5094,10 +5094,22 @@ namespace InventoryManagement {
 							 //Searches for all sales between the 2 dates selected and stores into a string
 							 string strSalesReport = reports->reportBetweenDates(tblSales, strSearchStart, strSearchEnd, "receipt_id");
 
+
+							 //Adds a little information for the user on the report and then adds all results to strOutput
+							 strOutput += "Sales found between: " + strStartDate + " to " + strEndDate + "\r\n\r\n";
+							 strOutput += "Sales ID \t Date of Sale\r\n";
+							 strOutput += "--------------------------------------------------------\r\n";
+
+							 //Formats our output data a little for user friendliness
+							 while (strSalesReport.find('|') != string::npos)
+							 {
+								 strSalesReport.replace(strSalesReport.find('|'), 1, " \t ");
+							 }
+
 							 //Convert to a system string to display
 							 System::String^ strSalesReportRAW;
 							 strSalesReportRAW = gcnew String (strSalesReport.c_str());
-							 strOutput = strSalesReportRAW;
+							 strOutput += strSalesReportRAW;
 						 }
 						 catch (DoesNotExistException e) {
 							 strOutput = gcnew String (e.what());
@@ -5113,13 +5125,25 @@ namespace InventoryManagement {
 						 Table tblReturns = new Returns();
 
 						 try {
-							 //Searches for all sales between the 2 dates selected and stores into a string
+							 //Searches for all returns between the 2 dates selected and stores into a string
 							 string strReturnsReport = reports->reportBetweenDates(tblReturns, strSearchStart, strSearchEnd, "returns_id");
+
+							 
+							 //Adds a little information for the user on the report and then adds all results to strOutput
+							 strOutput += "Returns found between: " + strStartDate + " to " + strEndDate + "\r\n\r\n";
+							 strOutput += "Return ID \t Sales ID \t\t Quantity Returned \t Date Returned\r\n";
+							 strOutput += "--------------------------------------------------------------------------------------------------------------------------------------------\r\n";
+							 
+							  //Formats our output data a little for user friendliness
+							 while (strReturnsReport.find('|') != string::npos)
+							 {
+								 strReturnsReport.replace(strReturnsReport.find('|'), 1, " \t\t ");
+							 }
 
 							 //Convert to a system string to display
 							 System::String^ strReturnsReportRAW;
 							 strReturnsReportRAW = gcnew String (strReturnsReport.c_str());
-							 strOutput = strReturnsReportRAW;
+							 strOutput += strReturnsReportRAW;
 						 }
 						 catch (DoesNotExistException e) {
 							 strOutput = gcnew String (e.what());
@@ -5131,6 +5155,35 @@ namespace InventoryManagement {
 					 }
 				 case 4: //Invoice between date report
 					 {
+						 //Creates our table
+						 Table tblInvoice = new Invoice();
+
+						 try {
+							 //Searches for all Invoices between the 2 dates selected and stores into a string
+							 string strInvoiceReport = reports->reportBetweenDates(tblInvoice, strSearchStart, strSearchEnd, "invoice_id");
+
+
+							 //Adds a little information for the user on the report and then adds all results to strOutput
+							 strOutput += "Invoices found between: " + strStartDate + " to " + strEndDate + "\r\n\r\n";
+							 strOutput += "Invoice ID \t Date Invoiced\r\n";
+							 strOutput += "-----------------------------------------------------------\r\n";
+							 
+							  //Formats our output data a little for user friendliness
+							 while (strInvoiceReport.find('|') != string::npos)
+							 {
+								 strInvoiceReport.replace(strInvoiceReport.find('|'), 1, " \t\t ");
+							 }
+
+							 //Convert to a system string to display
+							 System::String^ strInvoiceReportRAW;
+							 strInvoiceReportRAW = gcnew String (strInvoiceReport.c_str());
+							 strOutput += strInvoiceReportRAW;
+						 }
+						 catch (DoesNotExistException e) {
+							 strOutput = gcnew String (e.what());
+						 }
+
+						 delete tblInvoice;
 						 break;
 					 }
 				 case 5: //Top sellers report
