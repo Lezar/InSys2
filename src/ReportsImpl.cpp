@@ -112,7 +112,7 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 	Table sales = new Sales();
 
 	vector<string> IDVector; //vector to store all ID's
-	vector<int> categoryRevenueVector; //vector to store the revenue for each category
+	vector<__int64> categoryRevenueVector; //vector to store the revenue for each category
 	vector<string> categoryIDVector; //vector to store all the category ID's
 	vector<string> categoryNameVector; // vector to store all the category names
 
@@ -130,7 +130,7 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 	string priceBeforeDecimal, priceAfterDecimal;
 
 	// int values of column names
-	int quantityInt, discountInt, priceInt;
+	__int64 quantityInt, discountInt, priceInt;
 
 	// positions of delimiters
 	int delimiter1, delimiter2, delimiter3, delimiter4;
@@ -138,7 +138,7 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 	// stringstream to convert int to string
 	stringstream converter;
 
-	int totalRevenue = 0; // the sum of all the revenue of all the categories
+	__int64 totalRevenue = 0; // the sum of all the revenue of all the categories
 
 	Table receipt = new Receipt(); // receipt class to search all ID's
 
@@ -273,8 +273,8 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 		{
 			if (category_id == categoryIDVector[i])
 			{
-				categoryRevenueVector[i] += priceInt * quantityInt * (100 - discountInt);
-				totalRevenue += priceInt * quantityInt * (100 - discountInt);
+				categoryRevenueVector[i] += priceInt * quantityInt * (100 - discountInt) * 10 + 5;
+				totalRevenue += priceInt * quantityInt * (100 - discountInt) * 10 + 5;
 			}
 		}
 
@@ -297,7 +297,7 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 	for (int i = 0; i < (int) categoryIDVector.size(); i++)
 	{
 		converter.str("");
-		converter << fixed << setprecision(2) << categoryRevenueVector[i] / 10000.0;
+		converter << fixed << setprecision(2) << categoryRevenueVector[i] / 100000.0;
 
 		ssCat.str("");
 		ssRev.str("");
@@ -317,7 +317,7 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 	stringstream ssRevTotal;
 	// Prepare the total revenue for the report
 	converter.str("");
-	converter << fixed << setprecision(2) << totalRevenue / 10000.0;
+	converter << fixed << setprecision(2) << totalRevenue / 100000.0;
 
 	revenueTotal = "$" + converter.str();
 	ssRevTotal << setw(50) << revenueTotal;

@@ -266,10 +266,10 @@ namespace TestInventory
 			Logger::WriteMessage(totalRevenueReturned.c_str());
 
 			// check if revenue report is properly calculated and formatted
-			Assert::AreEqual("Fruits (ID:1) ----- $0.00\n"
-							"Canned food (ID:3) ----- $0.00\n"
-							"Frozen food (ID:4) ----- $79.90\n"
-							"TOTAL REVENUE ----- $79.90\n", totalRevenueReturned.c_str());
+			Assert::AreEqual("Fruits (ID:1)                           	          $0.00\n"
+							 "Canned food (ID:3)                      	          $0.00\n"
+							 "Frozen food (ID:4)                      	         $79.90\n"
+							 "TOTAL REVENUE                                            $79.90\n", totalRevenueReturned.c_str());
 		}
 
 		/// \brief Test if totalRevenueReport can report total revenue of only one Sale with discount
@@ -283,10 +283,10 @@ namespace TestInventory
 			Logger::WriteMessage(totalRevenueReturned.c_str());
 
 			// check if revenue report is properly calculated and formatted
-			Assert::AreEqual("Fruits (ID:1) ----- $0.00\n"
-							"Canned food (ID:3) ----- $11.61\n"
-							"Frozen food (ID:4) ----- $0.00\n"
-							"TOTAL REVENUE ----- $11.61\n", totalRevenueReturned.c_str());
+			Assert::AreEqual("Fruits (ID:1)                           	          $0.00\n"
+							 "Canned food (ID:3)                      	         $11.61\n"
+							 "Frozen food (ID:4)                      	          $0.00\n"
+							 "TOTAL REVENUE                                            $11.61\n", totalRevenueReturned.c_str());
 		}
 
 		/// \brief Test if totalRevenueReport can report total revenue of multiple sales on one receipt
@@ -301,10 +301,10 @@ namespace TestInventory
 			Logger::WriteMessage(totalRevenueReturned.c_str());
 
 			// check if revenue report is properly calculated and formatted
-			Assert::AreEqual("Fruits (ID:1) ----- $5.99\n"
-							"Canned food (ID:3) ----- $0.00\n"
-							"Frozen food (ID:4) ----- $183.37\n"
-							"TOTAL REVENUE ----- $189.36\n", totalRevenueReturned.c_str());
+			Assert::AreEqual("Fruits (ID:1)                           	          $5.99\n"
+							 "Canned food (ID:3)                      	          $0.00\n"
+							 "Frozen food (ID:4)                      	        $183.37\n"
+							 "TOTAL REVENUE                                           $189.36\n", totalRevenueReturned.c_str());
 		}
 
 		/// \brief Test if totalRevenueReport can report total revenue of multiple sales on multiple receipts
@@ -319,10 +319,10 @@ namespace TestInventory
 			Logger::WriteMessage(totalRevenueReturned.c_str());
 
 			// check if revenue report is properly calculated and formatted
-			Assert::AreEqual("Fruits (ID:1) ----- $39.68\n"
-							"Canned food (ID:3) ----- $17.29\n"
-							"Frozen food (ID:4) ----- $270.26\n"
-							"TOTAL REVENUE ----- $327.23\n", totalRevenueReturned.c_str());
+			Assert::AreEqual("Fruits (ID:1)                           	         $39.68\n"
+							 "Canned food (ID:3)                      	         $17.29\n"
+							 "Frozen food (ID:4)                      	        $270.26\n"
+							 "TOTAL REVENUE                                           $327.23\n", totalRevenueReturned.c_str());
 		}
 
 		/// \brief Test if totalRevenuereport throws a DoesNotExistException if nothing exists in the date range 
