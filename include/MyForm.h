@@ -622,7 +622,7 @@ namespace InventoryManagement {
 			this->txtCategorySearchResults->Multiline = true;
 			this->txtCategorySearchResults->Name = L"txtCategorySearchResults";
 			this->txtCategorySearchResults->ReadOnly = true;
-			this->txtCategorySearchResults->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
+			this->txtCategorySearchResults->ScrollBars = System::Windows::Forms::ScrollBars::Both;
 			this->txtCategorySearchResults->Size = System::Drawing::Size(490, 141);
 			this->txtCategorySearchResults->TabIndex = 16;
 			this->txtCategorySearchResults->TabStop = false;
@@ -814,7 +814,7 @@ namespace InventoryManagement {
 			this->txtProductSearchResults->Multiline = true;
 			this->txtProductSearchResults->Name = L"txtProductSearchResults";
 			this->txtProductSearchResults->ReadOnly = true;
-			this->txtProductSearchResults->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
+			this->txtProductSearchResults->ScrollBars = System::Windows::Forms::ScrollBars::Both;
 			this->txtProductSearchResults->Size = System::Drawing::Size(490, 225);
 			this->txtProductSearchResults->TabIndex = 30;
 			this->txtProductSearchResults->TabStop = false;
@@ -3947,6 +3947,8 @@ namespace InventoryManagement {
 				 lblSearchBy->Text = cmbReturnFunction->Text->ToString() + " By:";
 				 lblSearchValue->Text = cmbReturnFunction->Text->ToString() + " Value:";
 
+				 txtQuantityReturned->Text = "";
+
 				 switch (cmbReturnFunction->SelectedIndex)
 				 {
 				 case 0: //Add
@@ -5456,6 +5458,7 @@ namespace InventoryManagement {
 				 lstSalesProductList->Visible = false;
 				 btnSalesRemoveProduct->Visible = false;
 				 dtSalesReceiptDate->Visible = false;
+				 dtSalesReceiptDate->MaxDate = DateTime::Today;
 				 dtSalesReceiptDate->Value = DateTime::Today;
 				 btnSalesCreateReceipt->Visible = false;
 				 btnSalesModify->Visible = false;
@@ -5475,6 +5478,7 @@ namespace InventoryManagement {
 				 lstInvoiceProductList->Visible = false;
 				 btnInvoiceRemoveProduct->Visible = false;
 				 dtInvoiceDate->Visible = false;
+				 dtInvoiceDate->MaxDate = DateTime::Today;
 				 dtInvoiceDate->Value = DateTime::Today;
 				 btnInvoiceCreateInvoice->Visible = false;
 				 btnInvoiceModify->Visible = false;
@@ -5494,6 +5498,7 @@ namespace InventoryManagement {
 				 lblQuantityReturned->Visible = false;
 				 txtQuantityReturned->Visible = false;
 				 dateReturned->Visible = false;
+				 dateReturned->MaxDate = DateTime::Today;
 				 dateReturned->Value = DateTime::Today;
 				 btnFunction->Visible = false;
 				 txtSearchReturns->Visible = false;
@@ -5514,6 +5519,8 @@ namespace InventoryManagement {
 				 lblReportEndDate->Visible = false;
 				 dtReportEndDate->Visible = false;
 				 btnReportGenerate->Visible = false;
+				 dtReportStartDate->MaxDate = DateTime::Today;
+				 dtReportEndDate->MaxDate = DateTime::Today;
 				 dtReportStartDate->Value = DateTime::Today;
 				 dtReportEndDate->Value = DateTime::Today;
 			 }
