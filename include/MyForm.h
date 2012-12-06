@@ -1052,7 +1052,6 @@ namespace InventoryManagement {
 			this->btnSalesModifyReceipt->TabIndex = 54;
 			this->btnSalesModifyReceipt->Text = L"Modify Date";
 			this->btnSalesModifyReceipt->UseVisualStyleBackColor = true;
-
 			this->btnSalesModifyReceipt->Click += gcnew System::EventHandler(this, &MyForm::btnSalesModifyReceipt_Click);
 			// 
 			// lblsalesProductList
@@ -1109,7 +1108,6 @@ namespace InventoryManagement {
 			this->txtSalesProductDiscount->Name = L"txtSalesProductDiscount";
 			this->txtSalesProductDiscount->Size = System::Drawing::Size(100, 20);
 			this->txtSalesProductDiscount->TabIndex = 32;
-
 			this->txtSalesProductDiscount->TextChanged += gcnew System::EventHandler(this, &MyForm::txtSalesProductDiscount_TextChanged);
 			// 
 			// lblSalesProductDiscount
@@ -1139,7 +1137,6 @@ namespace InventoryManagement {
 			this->cmbSalesReceiptSelect->Size = System::Drawing::Size(491, 21);
 			this->cmbSalesReceiptSelect->TabIndex = 29;
 			this->cmbSalesReceiptSelect->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbSalesReceiptSelect_SelectedIndexChanged);
-
 			// 
 			// btnSalesRemoveProduct
 			// 
@@ -1158,8 +1155,7 @@ namespace InventoryManagement {
 			this->lstSalesProductList->Name = L"lstSalesProductList";
 			this->lstSalesProductList->Size = System::Drawing::Size(344, 95);
 			this->lstSalesProductList->TabIndex = 27;
-			this->lstSalesProductList->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::lstSalesProductList_SelectedIndexChanged);this->lstSalesProductList->TabIndex = 27;
-
+			this->lstSalesProductList->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::lstSalesProductList_SelectedIndexChanged);
 			// 
 			// btnSalesAddProduct
 			// 
@@ -1177,7 +1173,6 @@ namespace InventoryManagement {
 			this->txtSalesProductQuantity->Name = L"txtSalesProductQuantity";
 			this->txtSalesProductQuantity->Size = System::Drawing::Size(100, 20);
 			this->txtSalesProductQuantity->TabIndex = 25;
-
 			this->txtSalesProductQuantity->TextChanged += gcnew System::EventHandler(this, &MyForm::txtSalesProductQuantity_TextChanged);
 			// 
 			// lblSaleProductQuantity
@@ -1493,11 +1488,11 @@ namespace InventoryManagement {
 			// dateReturned
 			// 
 			this->dateReturned->Location = System::Drawing::Point(10, 230);
-			this->dateReturned->MaxDate = System::DateTime(2999, 12, 31, 0, 0, 0, 0);
 			this->dateReturned->MinDate = System::DateTime(1901, 1, 1, 0, 0, 0, 0);
 			this->dateReturned->Name = L"dateReturned";
 			this->dateReturned->Size = System::Drawing::Size(200, 20);
 			this->dateReturned->TabIndex = 80;
+			this->dateReturned->Value = System::DateTime(2012, 12, 5, 0, 0, 0, 0);
 			this->dateReturned->Visible = false;
 			// 
 			// btnFunction
@@ -1654,7 +1649,6 @@ namespace InventoryManagement {
 			this->dtReportEndDate->Size = System::Drawing::Size(154, 20);
 			this->dtReportEndDate->TabIndex = 6;
 			this->dtReportEndDate->ValueChanged += gcnew System::EventHandler(this, &MyForm::dtReportEndDate_ValueChanged);
-
 			// 
 			// lblReportStartDate
 			// 
@@ -1851,6 +1845,10 @@ namespace InventoryManagement {
 				 btnSalesModify->Visible = false;
 				 cmbSalesProductSelect->Visible= false;
 				 btnSalesSearch->Visible = false;
+
+				 // Returns
+
+				 dateReturned->MaxDate = DateTime::Today;
 
 				 // Invoice: all components (except Function label and combobox selector) set to invisible
 				 lblInvoiceSelect->Visible = false;
@@ -3962,6 +3960,7 @@ namespace InventoryManagement {
 					 txtQuantityReturned->Enabled = true;
 					 btnFunction->Enabled = true;
 					 dateReturned->Enabled = true;
+					 
 
 					 PopulateSalesID();
 					 //PopulateReturnID();
@@ -4066,7 +4065,7 @@ namespace InventoryManagement {
 			 /// - 2 for date_returned
 	private: System::Void cmbSearchBy_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 
-				 if (cmbReturnFunction->SelectedIndex != 3)
+				 if (cmbReturnFunction->SelectedIndex != 3 && cmbReturnFunction->SelectedIndex != 1)
 				 {
 					 btnFunction->Visible = true;
 
@@ -4115,114 +4114,189 @@ namespace InventoryManagement {
 	private: System::Void btnFunction_Click(System::Object^  sender, System::EventArgs^  e) {
 				 if (btnFunction->Text == "Add Return")
 				 {
-					 //Create our return table
-					 Table ret = new Returns();
+					 //Make sure our data is correct
+					 if (System::Text::RegularExpressions::Regex::IsMatch(txtQuantityReturned->Text, "^[0-9]*$") && txtQuantityReturned->Text != "" && System::Text::RegularExpressions::Regex::IsMatch(txtSearchValue->Text, "^[0]*") && cmbSale->SelectedIndex != -1)
+					 {
 
-					 //System strings to grab the data from our form
-					 System::String ^ strAddSalesID = cmbSale->SelectedItem->ToString();
-					 System::String ^ strAddQuantityReceived = txtQuantityReturned->Text->ToString();
-					 System::String ^ strAddDateReceived = (dateReturned->Value.Year.ToString() + "/" + dateReturned->Value.Month.ToString() + "/" + dateReturned->Value.Day.ToString());
+						 //Create our return table
+						 Table ret = new Returns();
 
-					 //Convert to std::string in order to use our class functions
-					 string SalesID(marshal_as<std::string>(strAddSalesID));
-					 string QuantityReturned(marshal_as<std::string>(strAddQuantityReceived));
-					 string DateReceived(marshal_as<std::string>(strAddDateReceived));
+						 //System strings to grab the data from our form
+						 System::String ^ strAddSalesID = cmbSale->SelectedItem->ToString();
+						 System::String ^ strAddQuantityReceived = txtQuantityReturned->Text->ToString();
+						 System::String ^ strAddDateReceived = (dateReturned->Value.Year.ToString() + "-" + dateReturned->Value.Month.ToString() + "-" + dateReturned->Value.Day.ToString());
 
-					 //Selects just the sales ID
-					 SalesID = SalesID.substr(0, SalesID.find('|'));
+						 //Convert to std::string in order to use our class functions
+						 string SalesID(marshal_as<std::string>(strAddSalesID));
+						 string QuantityReturned(marshal_as<std::string>(strAddQuantityReceived));
+						 string DateReceived(marshal_as<std::string>(strAddDateReceived));
 
-					 //Creates our vector with the data to add
-					 vector<string> vecReturn;
-					 vecReturn.push_back(SalesID);
-					 vecReturn.push_back(QuantityReturned);
-					 vecReturn.push_back(DateReceived);
+						 //Selects just the sales ID
+						 SalesID = SalesID.substr(0, SalesID.find('|'));
 
-					 //Adds the vector
-					 ret->add(vecReturn);
+						 //Creates our vector with the data to add
+						 vector<string> vecReturn;
+						 vecReturn.push_back(SalesID);
+						 vecReturn.push_back(QuantityReturned);
+						 vecReturn.push_back(DateReceived);
 
-					 cmbReturnFunction->SelectedIndex = -1;
+						 //Adds the vector
+						 ret->add(vecReturn);
+
+						 cmbReturnFunction->SelectedIndex = -1;
+					 }
+					 else
+					 {
+						 //Somewhere in the form the data entered is flawed
+						 MessageBox::Show("Data entered has errors!"); 
+					 }
 				 }
 				 else if (btnFunction->Text == "Modify Return")
 				 {
-					 //Create our return table
-					 Table ret = new Returns();
-
-					 //System strings to grab the data from our form
-					 System::String ^ strModifyReturnsID = cmbReturns->SelectedItem->ToString();
-					 System::String ^ strModifyColumn = cmbSearchBy->SelectedItem->ToString();
-					 System::String ^ strModifyDate = (dateReturned->Value.Year.ToString() + "/" + dateReturned->Value.Month.ToString() + "/" + dateReturned->Value.Day.ToString());
-					 System::String ^ strModifyValue = txtSearchValue->Text->ToString();
-
-					 //Convert to std::string in order to use our class functions
-					 string ReturnsID(marshal_as<std::string>(strModifyReturnsID));
-					 string ModifyColumn(marshal_as<std::string>(strModifyColumn));
-					 string DateToModify(marshal_as<std::string>(strModifyDate));
-					 string ModifyValue(marshal_as<std::string>(strModifyValue));
-
-
-
-					 switch (cmbSearchBy->SelectedIndex)
+					 //Some error check based on cmbSearchBy (sales_id, quantity, date)
+					 if (cmbSearchBy->SelectedIndex != -1)
 					 {
-					 case 0:
-					 case 1:
-						 ret->modifyRow(ReturnsID, ModifyColumn, ModifyValue);
-						 break;
-					 case 2:
-						 ret->modifyRow(ReturnsID, ModifyColumn, DateToModify);
-						 break;
-					 default:
-						 break;
+						 //Create our return table
+						 Table ret = new Returns();
+
+						 //System strings to grab the data from our form
+						 System::String ^ strModifyReturnsID = cmbReturns->SelectedItem->ToString();
+						 System::String ^ strModifyColumn = cmbSearchBy->SelectedItem->ToString();
+						 System::String ^ strModifyDate = (dateReturned->Value.Year.ToString() + "-" + dateReturned->Value.Month.ToString() + "-" + dateReturned->Value.Day.ToString());
+						 System::String ^ strModifyValue = txtSearchValue->Text->ToString();
+
+						 //Convert to std::string in order to use our class functions
+						 string ReturnsID(marshal_as<std::string>(strModifyReturnsID));
+						 string ModifyColumn(marshal_as<std::string>(strModifyColumn));
+						 string DateToModify(marshal_as<std::string>(strModifyDate));
+						 string ModifyValue(marshal_as<std::string>(strModifyValue));
+
+
+
+						 switch (cmbSearchBy->SelectedIndex)
+						 {
+						 case 0:
+							 //Accept any integers 0-9
+							 if (System::Text::RegularExpressions::Regex::IsMatch(txtSearchValue->Text, "^[0-9]*$") && txtSearchValue->Text != "")
+							 {
+								 ret->modifyRow(ReturnsID, ModifyColumn, ModifyValue);
+								 cmbReturnFunction->SelectedIndex = -1;
+								 txtSearchValue->Text = "";
+							 }
+							 else
+							 {
+								 //Somewhere in the form the data entered is flawed
+								 MessageBox::Show("The sales_id you entered has errors!"); 
+							 }
+						 case 1:
+							 if (System::Text::RegularExpressions::Regex::IsMatch(txtSearchValue->Text, "^[0-9]*$") && txtSearchValue->Text != ""  &&  System::Text::RegularExpressions::Regex::IsMatch(txtSearchValue->Text, "^[0]*"))
+							 {
+								 ret->modifyRow(ReturnsID, ModifyColumn, ModifyValue);
+								 cmbReturnFunction->SelectedIndex = -1;
+								 txtSearchValue->Text = "";
+							 }
+							 else
+							 {
+								 //Somewhere in the form the data entered is flawed
+								 MessageBox::Show("The quantity you entered has errors!"); 
+							 }
+							 break;
+						 case 2:
+							 if (true)
+							 {
+								 ret->modifyRow(ReturnsID, ModifyColumn, DateToModify);
+								 cmbReturnFunction->SelectedIndex = -1;
+								 txtSearchValue->Text = "";
+							 }
+							 else
+							 {
+								 //Somewhere in the form the data entered is flawed
+								 MessageBox::Show("Date entered is in the future!"); 
+							 }
+
+							 break;
+						 default:
+							 break;
+						 }
+
 					 }
-					 cmbReturnFunction->SelectedIndex = -1;
+					 else
+					 {
+						 //Somewhere in the form the data entered is flawed
+						 MessageBox::Show("Data entered has errors!"); 
+					 }
 				 }
 				 else if (btnFunction->Text == "Delete Return")
 				 {
-					 //Create our return table
-					 Table ret = new Returns();
+					 if (cmbReturns->SelectedIndex != -1)
+					 {
+						 //Create our return table
+						 Table ret = new Returns();
 
-					 //System strings to grab the data from our form
-					 System::String ^ strDeleteReturnsID = cmbReturns->SelectedItem->ToString();
+						 //System strings to grab the data from our form
+						 System::String ^ strDeleteReturnsID = cmbReturns->SelectedItem->ToString();
 
-					 //Convert to std::string in order to use our class functions
-					 string ReturnsID(marshal_as<std::string>(strDeleteReturnsID));
+						 //Convert to std::string in order to use our class functions
+						 string ReturnsID(marshal_as<std::string>(strDeleteReturnsID));
 
-					 //Selects just the returns ID
-					 ReturnsID = ReturnsID.substr(0, ReturnsID.find('|'));
+						 //Selects just the returns ID
+						 ReturnsID = ReturnsID.substr(0, ReturnsID.find('|'));
 
-					 //Deletes our row
-					 ret->deleteRow(ReturnsID);
+						 //Deletes our row
+						 ret->deleteRow(ReturnsID);
 
-					 cmbReturnFunction->SelectedIndex = -1;
+						 cmbReturnFunction->SelectedIndex = -1;
+					 }
+					 else
+					 {
+						 //Somewhere in the form the data entered is flawed
+						 MessageBox::Show("Please choose a valid return to delete"); 
+					 }
 
 				 }
 				 else if (btnFunction->Text == "Search Return")
 				 {
-					 //Create our return table
-					 Table ret = new Returns();
+					 if (txtSearchValue->Text != "" || cmbSearchBy->SelectedIndex == 2)
+					 {
+						 //Create our return table
+						 Table ret = new Returns();
 
-					 //Convert to system::String
-					 System::String ^ strSearchBy = cmbSearchBy->Text->ToString();
-					 System::String ^ strSearchFor = txtSearchValue->Text->ToString();
-					 System::String ^ strSearchDate = (dateReturned->Value.Year.ToString() + "/" + dateReturned->Value.Month.ToString() + "/" + dateReturned->Value.Day.ToString());
+						 //Convert to system::String
+						 System::String ^ strSearchBy = cmbSearchBy->Text->ToString();
+						 System::String ^ strSearchFor = txtSearchValue->Text->ToString();
+						 System::String ^ strSearchDate = (dateReturned->Value.Year.ToString() + "-" + dateReturned->Value.Month.ToString() + "-" + dateReturned->Value.Day.ToString());
 
-					 string strSearchReturn;
-					 //Convert to std::string
-					 string Column(marshal_as<std::string>(strSearchBy));
-					 string Value(marshal_as<std::string>(strSearchFor));
-					 string DateToSearch(marshal_as<std::string>(strSearchDate));
+						 string strSearchReturn;
+						 //Convert to std::string
+						 string Column(marshal_as<std::string>(strSearchBy));
+						 string Value(marshal_as<std::string>(strSearchFor));
+						 string DateToSearch(marshal_as<std::string>(strSearchDate));
 
-					 //Searches our text file depending on what we are searching by
-					 if (cmbSearchBy->SelectedIndex == 2)
-					 {// Search by date
-						 strSearchReturn = ret->search(Column, DateToSearch);
+						 //Searches our text file depending on what we are searching by
+						 if (cmbSearchBy->SelectedIndex == 2)
+						 {// Search by date
+							 strSearchReturn = ret->search(Column, DateToSearch);
+						 }
+						 else
+						 {//Search by quantity or sales_id
+							 strSearchReturn = ret->search(Column, Value);
+						 }
+						 //Our search result
+						 System::String ^ strSearchValue = gcnew String (strSearchReturn.c_str());
+
+
+						 //Add some column names to better show what results are found
+						 txtSearchReturns->Text = "Returns ID | Sales ID | Quantity Returned | Date Returned\r\n";
+
+
+						 //Add our results to a text box to display
+						 txtSearchReturns->Text += strSearchValue;
 					 }
 					 else
-					 {//Search by quantity or sales_id
-						 strSearchReturn = ret->search(Column, Value);
+					 {
+						 //Somewhere in the form the data entered is flawed
+						 MessageBox::Show("Data entered has errors!"); 
 					 }
-					 //Our search result
-					 System::String ^ strSearchValue = gcnew String (strSearchReturn.c_str());
-					 txtSearchReturns->Text = strSearchValue;
 				 }
 				 else
 				 {
@@ -5128,13 +5202,13 @@ namespace InventoryManagement {
 							 //Searches for all returns between the 2 dates selected and stores into a string
 							 string strReturnsReport = reports->reportBetweenDates(tblReturns, strSearchStart, strSearchEnd, "returns_id");
 
-							 
+
 							 //Adds a little information for the user on the report and then adds all results to strOutput
 							 strOutput += "Returns found between: " + strStartDate + " to " + strEndDate + "\r\n\r\n";
 							 strOutput += "Return ID \t Sales ID \t\t Quantity Returned \t Date Returned\r\n";
 							 strOutput += "--------------------------------------------------------------------------------------------------------------------------------------------\r\n";
-							 
-							  //Formats our output data a little for user friendliness
+
+							 //Formats our output data a little for user friendliness
 							 while (strReturnsReport.find('|') != string::npos)
 							 {
 								 strReturnsReport.replace(strReturnsReport.find('|'), 1, " \t\t ");
@@ -5167,8 +5241,8 @@ namespace InventoryManagement {
 							 strOutput += "Invoices found between: " + strStartDate + " to " + strEndDate + "\r\n\r\n";
 							 strOutput += "Invoice ID \t Date Invoiced\r\n";
 							 strOutput += "-----------------------------------------------------------\r\n";
-							 
-							  //Formats our output data a little for user friendliness
+
+							 //Formats our output data a little for user friendliness
 							 while (strInvoiceReport.find('|') != string::npos)
 							 {
 								 strInvoiceReport.replace(strInvoiceReport.find('|'), 1, " \t\t ");
