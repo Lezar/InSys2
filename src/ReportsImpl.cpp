@@ -303,11 +303,11 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 		ssRev.str("");
 
 		categoryInfo = categoryNameVector[i] + " (ID:" + categoryIDVector[i] + ")";
-		ssCat << setw(40) << setiosflags(ios_base::left) << categoryInfo;
+		ssCat << setw(30) << setiosflags(ios_base::left) << categoryInfo;
 		categoryInfo = ssCat.str();
 
 		revenue = "$" + converter.str();
-		ssRev << setw(15) << setiosflags(ios_base::right) << revenue;
+		ssRev << setw(12) << setiosflags(ios_base::right) << revenue;
 		revenue = ssRev.str();
 
 		revenueReport += categoryInfo + "\t" + revenue + "\n";
@@ -320,7 +320,7 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 	converter << fixed << setprecision(2) << totalRevenue / 100000.0;
 
 	revenueTotal = "$" + converter.str();
-	ssRevTotal << setw(50) << revenueTotal;
+	ssRevTotal << setw(31) << revenueTotal;
 	revenueTotal = ssRevTotal.str();
 
 	revenueReport += "TOTAL REVENUE" + revenueTotal + "\n";
@@ -475,7 +475,7 @@ string ReportsImpl::topSellersReport(string selectedCategory, string startDate, 
 
 			stringstream ss;
 
-			ss << setw(40) << setfill(' ') << setiosflags(ios_base::left) << productName;
+			ss << setw(30) << setfill(' ') << setiosflags(ios_base::left) << productName;
 
 			productName = ss.str();
 

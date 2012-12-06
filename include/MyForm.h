@@ -750,6 +750,7 @@ namespace InventoryManagement {
 			// txtCategoryName
 			// 
 			this->txtCategoryName->Location = System::Drawing::Point(7, 137);
+			this->txtCategoryName->MaxLength = 25;
 			this->txtCategoryName->Name = L"txtCategoryName";
 			this->txtCategoryName->Size = System::Drawing::Size(490, 20);
 			this->txtCategoryName->TabIndex = 2;
@@ -877,6 +878,7 @@ namespace InventoryManagement {
 			// txtProdID
 			// 
 			this->txtProdID->Location = System::Drawing::Point(6, 126);
+			this->txtProdID->MaxLength = 25;
 			this->txtProdID->Name = L"txtProdID";
 			this->txtProdID->Size = System::Drawing::Size(100, 20);
 			this->txtProdID->TabIndex = 5;
@@ -976,6 +978,7 @@ namespace InventoryManagement {
 			// txtProductName
 			// 
 			this->txtProductName->Location = System::Drawing::Point(6, 231);
+			this->txtProductName->MaxLength = 25;
 			this->txtProductName->Name = L"txtProductName";
 			this->txtProductName->Size = System::Drawing::Size(490, 20);
 			this->txtProductName->TabIndex = 7;
@@ -5141,10 +5144,9 @@ namespace InventoryManagement {
 
 					 stringstream ss;
 
-					 ss << setw(60) << setfill(' ') << setiosflags(ios_base::left) << productInfo;
+					 ss << setw(40) << setfill(' ') << setiosflags(ios_base::left) << productInfo;
 
 					 product_name = ss.str();
-					 product_name += "\t";
 					 product_name += productQuantity;
 
 					 vs.push_back(product_name);
@@ -5222,9 +5224,9 @@ namespace InventoryManagement {
 								 str = ss.str();
 								 strRawOutput = gcnew String (str.c_str());
 								 strOutput =  "The current quantities of existing products \r\n_________________________________________________________"
-									 "\r\n\r\n" +"Product Name - Product ID \t\t\t Quantity "+"\r\n\r\n"+strRawOutput;
+									 "\r\n\r\n" +"Product Name - Product ID\t\tQuantity "+"\r\n\r\n"+strRawOutput;
 							 } else{
-								 MessageBox::Show("No Category Selected");
+								 strOutput = "No Category Selected";
 							 }
 						 } catch(DoesNotExistException e){
 							 strOutput = gcnew String (e.what());
