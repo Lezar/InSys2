@@ -587,6 +587,7 @@ namespace InventoryManagement {
 			this->tbInventorySystem->SelectedIndex = 0;
 			this->tbInventorySystem->Size = System::Drawing::Size(511, 497);
 			this->tbInventorySystem->TabIndex = 0;
+			this->tbInventorySystem->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::tbInventorySystem_SelectedIndexChanged);
 			// 
 			// tpCategory
 			// 
@@ -624,6 +625,7 @@ namespace InventoryManagement {
 			this->txtCategorySearchResults->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
 			this->txtCategorySearchResults->Size = System::Drawing::Size(490, 141);
 			this->txtCategorySearchResults->TabIndex = 16;
+			this->txtCategorySearchResults->TabStop = false;
 			// 
 			// btnCategorySearch
 			// 
@@ -814,6 +816,7 @@ namespace InventoryManagement {
 			this->txtProductSearchResults->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
 			this->txtProductSearchResults->Size = System::Drawing::Size(490, 225);
 			this->txtProductSearchResults->TabIndex = 30;
+			this->txtProductSearchResults->TabStop = false;
 			// 
 			// btnProductSearch
 			// 
@@ -849,7 +852,7 @@ namespace InventoryManagement {
 			this->cmbProductSearch->Location = System::Drawing::Point(7, 75);
 			this->cmbProductSearch->Name = L"cmbProductSearch";
 			this->cmbProductSearch->Size = System::Drawing::Size(114, 21);
-			this->cmbProductSearch->TabIndex = 26;
+			this->cmbProductSearch->TabIndex = 2;
 			this->cmbProductSearch->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbProductSearch_SelectedIndexChanged);
 			// 
 			// lblProductSearchBy
@@ -866,7 +869,7 @@ namespace InventoryManagement {
 			this->btnProductDelete->Location = System::Drawing::Point(7, 112);
 			this->btnProductDelete->Name = L"btnProductDelete";
 			this->btnProductDelete->Size = System::Drawing::Size(75, 23);
-			this->btnProductDelete->TabIndex = 24;
+			this->btnProductDelete->TabIndex = 4;
 			this->btnProductDelete->Text = L"Delete";
 			this->btnProductDelete->UseVisualStyleBackColor = true;
 			this->btnProductDelete->Click += gcnew System::EventHandler(this, &MyForm::btnProductDelete_Click);
@@ -876,7 +879,7 @@ namespace InventoryManagement {
 			this->txtProdID->Location = System::Drawing::Point(6, 126);
 			this->txtProdID->Name = L"txtProdID";
 			this->txtProdID->Size = System::Drawing::Size(100, 20);
-			this->txtProdID->TabIndex = 23;
+			this->txtProdID->TabIndex = 5;
 			// 
 			// lblProductID
 			// 
@@ -903,7 +906,7 @@ namespace InventoryManagement {
 			this->cmbProductCategorySelect->Location = System::Drawing::Point(6, 177);
 			this->cmbProductCategorySelect->Name = L"cmbProductCategorySelect";
 			this->cmbProductCategorySelect->Size = System::Drawing::Size(491, 21);
-			this->cmbProductCategorySelect->TabIndex = 20;
+			this->cmbProductCategorySelect->TabIndex = 6;
 			this->cmbProductCategorySelect->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbProductCategorySelect_SelectedIndexChanged);
 			// 
 			// btnProductModify
@@ -932,7 +935,7 @@ namespace InventoryManagement {
 			this->txtProductPrice->MaxLength = 8;
 			this->txtProductPrice->Name = L"txtProductPrice";
 			this->txtProductPrice->Size = System::Drawing::Size(100, 20);
-			this->txtProductPrice->TabIndex = 17;
+			this->txtProductPrice->TabIndex = 10;
 			// 
 			// lblProductPrice
 			// 
@@ -959,7 +962,7 @@ namespace InventoryManagement {
 			this->txtProductDescription->Multiline = true;
 			this->txtProductDescription->Name = L"txtProductDescription";
 			this->txtProductDescription->Size = System::Drawing::Size(490, 48);
-			this->txtProductDescription->TabIndex = 14;
+			this->txtProductDescription->TabIndex = 8;
 			// 
 			// lblProductName
 			// 
@@ -975,7 +978,7 @@ namespace InventoryManagement {
 			this->txtProductName->Location = System::Drawing::Point(6, 231);
 			this->txtProductName->Name = L"txtProductName";
 			this->txtProductName->Size = System::Drawing::Size(490, 20);
-			this->txtProductName->TabIndex = 12;
+			this->txtProductName->TabIndex = 7;
 			// 
 			// lblProductSelect
 			// 
@@ -993,7 +996,7 @@ namespace InventoryManagement {
 			this->cmbProductSelect->Location = System::Drawing::Point(6, 75);
 			this->cmbProductSelect->Name = L"cmbProductSelect";
 			this->cmbProductSelect->Size = System::Drawing::Size(491, 21);
-			this->cmbProductSelect->TabIndex = 10;
+			this->cmbProductSelect->TabIndex = 3;
 			this->cmbProductSelect->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbProductSelect_SelectedIndexChanged);
 			// 
 			// lblProductFunction
@@ -1012,7 +1015,7 @@ namespace InventoryManagement {
 			this->cmbProductFunction->Location = System::Drawing::Point(7, 27);
 			this->cmbProductFunction->Name = L"cmbProductFunction";
 			this->cmbProductFunction->Size = System::Drawing::Size(114, 21);
-			this->cmbProductFunction->TabIndex = 8;
+			this->cmbProductFunction->TabIndex = 1;
 			this->cmbProductFunction->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbProductFunction_SelectedIndexChanged);
 			// 
 			// tpSales
@@ -1052,7 +1055,6 @@ namespace InventoryManagement {
 			this->btnSalesModifyReceipt->TabIndex = 54;
 			this->btnSalesModifyReceipt->Text = L"Modify Date";
 			this->btnSalesModifyReceipt->UseVisualStyleBackColor = true;
-
 			this->btnSalesModifyReceipt->Click += gcnew System::EventHandler(this, &MyForm::btnSalesModifyReceipt_Click);
 			// 
 			// lblsalesProductList
@@ -1109,7 +1111,6 @@ namespace InventoryManagement {
 			this->txtSalesProductDiscount->Name = L"txtSalesProductDiscount";
 			this->txtSalesProductDiscount->Size = System::Drawing::Size(100, 20);
 			this->txtSalesProductDiscount->TabIndex = 32;
-
 			this->txtSalesProductDiscount->TextChanged += gcnew System::EventHandler(this, &MyForm::txtSalesProductDiscount_TextChanged);
 			// 
 			// lblSalesProductDiscount
@@ -1139,7 +1140,6 @@ namespace InventoryManagement {
 			this->cmbSalesReceiptSelect->Size = System::Drawing::Size(491, 21);
 			this->cmbSalesReceiptSelect->TabIndex = 29;
 			this->cmbSalesReceiptSelect->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbSalesReceiptSelect_SelectedIndexChanged);
-
 			// 
 			// btnSalesRemoveProduct
 			// 
@@ -1158,8 +1158,7 @@ namespace InventoryManagement {
 			this->lstSalesProductList->Name = L"lstSalesProductList";
 			this->lstSalesProductList->Size = System::Drawing::Size(344, 95);
 			this->lstSalesProductList->TabIndex = 27;
-			this->lstSalesProductList->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::lstSalesProductList_SelectedIndexChanged);this->lstSalesProductList->TabIndex = 27;
-
+			this->lstSalesProductList->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::lstSalesProductList_SelectedIndexChanged);
 			// 
 			// btnSalesAddProduct
 			// 
@@ -1177,7 +1176,6 @@ namespace InventoryManagement {
 			this->txtSalesProductQuantity->Name = L"txtSalesProductQuantity";
 			this->txtSalesProductQuantity->Size = System::Drawing::Size(100, 20);
 			this->txtSalesProductQuantity->TabIndex = 25;
-
 			this->txtSalesProductQuantity->TextChanged += gcnew System::EventHandler(this, &MyForm::txtSalesProductQuantity_TextChanged);
 			// 
 			// lblSaleProductQuantity
@@ -1516,9 +1514,9 @@ namespace InventoryManagement {
 			this->lblReturns->AutoSize = true;
 			this->lblReturns->Location = System::Drawing::Point(7, 57);
 			this->lblReturns->Name = L"lblReturns";
-			this->lblReturns->Size = System::Drawing::Size(47, 13);
+			this->lblReturns->Size = System::Drawing::Size(327, 13);
 			this->lblReturns->TabIndex = 78;
-			this->lblReturns->Text = L"Returns:";
+			this->lblReturns->Text = L"Returns (Returns ID | Sales ID | Quantity Returned | Date Returned):";
 			this->lblReturns->Visible = false;
 			// 
 			// cmbReturns
@@ -1654,7 +1652,6 @@ namespace InventoryManagement {
 			this->dtReportEndDate->Size = System::Drawing::Size(154, 20);
 			this->dtReportEndDate->TabIndex = 6;
 			this->dtReportEndDate->ValueChanged += gcnew System::EventHandler(this, &MyForm::dtReportEndDate_ValueChanged);
-
 			// 
 			// lblReportStartDate
 			// 
@@ -1689,6 +1686,7 @@ namespace InventoryManagement {
 			this->txtReportDescription->ReadOnly = true;
 			this->txtReportDescription->Size = System::Drawing::Size(276, 73);
 			this->txtReportDescription->TabIndex = 2;
+			this->txtReportDescription->TabStop = false;
 			// 
 			// cmbReportSelect
 			// 
@@ -2795,9 +2793,11 @@ namespace InventoryManagement {
 					 }
 					 delete cat;
 
+					 string label = "Category ID | Category Description | Category Name\r\n\r\n";
+					 System::String^ labelstr = gcnew String(label.c_str());
 					 System::String^ results = gcnew String (resultOfSearch.c_str());
 
-					 txtCategorySearchResults->Text = results;
+					 txtCategorySearchResults->Text = labelstr + results;
 
 				 } catch (DoesNotExistException e)
 				 {
@@ -2940,9 +2940,11 @@ namespace InventoryManagement {
 					 }
 					 delete prod;
 
+					 string label = "Product ID | Category ID | Product Description | Product Name | Product Price\r\n\r\n";
+					 System::String^ labelstr = gcnew String(label.c_str());
 					 System::String^ results = gcnew String (resultOfSearch.c_str());
 
-					 txtProductSearchResults->Text = results;
+					 txtProductSearchResults->Text = labelstr + results;
 
 				 } catch (DoesNotExistException e)
 				 {
@@ -4288,9 +4290,8 @@ namespace InventoryManagement {
 						 //Our search result
 						 System::String ^ strSearchValue = gcnew String (strSearchReturn.c_str());
 
-
 						 //Add some column names to better show what results are found
-						 txtSearchReturns->Text = "Returns ID | Sales ID | Quantity Returned | Date Returned\r\n";
+						 txtSearchReturns->Text = "Returns ID | Sales ID | Quantity Returned | Date Returned\r\n\r\n";
 
 
 						 //Add our results to a text box to display
@@ -4343,6 +4344,7 @@ namespace InventoryManagement {
 	private: void PopulateReturnID()
 			 {
 				 cmbReturns->Items->Clear();
+				 
 				 /// \brief input stream for reading to the returns file
 				 ifstream returnsInFile;
 
@@ -5391,6 +5393,127 @@ namespace InventoryManagement {
 			 /// \brief set dtReportStartDate's max date to the currently selected end date
 	private: System::Void dtReportEndDate_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 				 dtReportStartDate->MaxDate = dtReportEndDate->Value;
+			 }
+	private: System::Void tbInventorySystem_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+
+				 // reset category tab
+				 cmbCategoryFunction->SelectedIndex = -1;
+				 lblCategoryName->Visible = false;
+				 txtCategoryName->Visible = false;
+				 lblCategoryDescription->Visible = false;
+				 txtCategoryDescription->Visible = false;
+				 btnCategoryAdd->Visible = false;
+				 btnCategoryModify->Visible = false;
+				 btnCategoryDelete->Visible = false;
+				 lblCategorySelect->Visible = false;
+				 cmbCategorySelect->Visible = false;
+				 lblCategorySearchBy->Visible = false;
+				 cmbCategorySearchBy->Visible = false;
+				 lblCategorySearchInfo->Visible = false;
+				 txtCategorySearch->Visible = false;
+				 btnCategorySearch->Visible = false;
+				 txtCategorySearchResults->Visible = false;
+
+				 // reset product tab
+				 cmbProductFunction->SelectedIndex = -1;
+				 lblProductSelect->Visible = false;
+				 cmbProductSelect->Visible = false;
+				 lblProductID->Visible = false;
+				 txtProdID->Visible = false;
+				 lblProductCategory->Visible = false;
+				 cmbProductCategorySelect->Visible = false;
+				 lblProductName->Visible = false;
+				 txtProductName->Visible = false;
+				 lblProductDescription->Visible = false;
+				 txtProductDescription->Visible = false;
+				 lblProductPrice->Visible = false;
+				 txtProductPrice->Visible = false;
+				 btnProductAdd->Visible = false;
+				 btnProductModify->Visible = false;
+				 btnProductDelete->Visible = false;
+				 lblProductSearchBy->Visible = false;
+				 cmbProductSearch->Visible = false;
+				 lblProductSearchInfo->Visible = false;
+				 txtProductSearch->Visible = false;
+				 btnProductSearch->Visible = false;
+				 txtProductSearchResults->Visible = false;
+
+				 // reset sales tab
+				 cmbSalesFunction->SelectedIndex = -1;
+				 lblSalesReceiptSelect->Visible = false;
+				 cmbSalesReceiptSelect->Visible = false;
+				 lblSalesProductSelect->Visible = false;
+				 cmbSalesProductSelect->Visible = false;
+				 lblSaleProductQuantity->Visible = false;
+				 txtSalesProductQuantity->Visible = false;
+				 lblSalesProductDiscount->Visible = false;
+				 txtSalesProductDiscount->Visible = false;
+				 btnSalesAddProduct->Visible = false;
+				 btnSalesModifyReceipt->Visible = false;
+				 lblsalesProductList->Visible = false;
+				 lstSalesProductList->Visible = false;
+				 btnSalesRemoveProduct->Visible = false;
+				 dtSalesReceiptDate->Visible = false;
+				 dtSalesReceiptDate->Value = DateTime::Today;
+				 btnSalesCreateReceipt->Visible = false;
+				 btnSalesModify->Visible = false;
+				 cmbSalesProductSelect->Visible= false;
+				 btnSalesSearch->Visible = false;
+
+				 // reset invoices tab
+				 cmbInvoiceFunction->SelectedIndex = -1;
+				 lblInvoiceSelect->Visible = false;
+				 cmbInvoiceSelect->Visible = false;
+				 lblInvoiceProductSelect->Visible = false;
+				 cmbInvoiceProductSelect->Visible = false;
+				 lblInvoiceProductQuantity->Visible = false;
+				 txtInvoiceProductQuantity->Visible = false;
+				 btnInvoiceAddProduct->Visible = false;
+				 lblInvoiceProductList->Visible = false;
+				 lstInvoiceProductList->Visible = false;
+				 btnInvoiceRemoveProduct->Visible = false;
+				 dtInvoiceDate->Visible = false;
+				 dtInvoiceDate->Value = DateTime::Today;
+				 btnInvoiceCreateInvoice->Visible = false;
+				 btnInvoiceModify->Visible = false;
+				 btnInvoiceSearch->Visible = false;
+				 btnInvoiceModifyInvoiceItem->Visible = false;
+
+				 // reset returns tab
+				 cmbReturnFunction->SelectedIndex = -1;
+				 lblSearchBy->Visible = false;
+				 lblSearchValue->Visible = false;
+				 cmbSearchBy->Visible = false;
+				 txtSearchValue->Visible = false;
+				 lblReturns->Visible = false;
+				 cmbReturns->Visible = false;
+				 lblSale->Visible = false;
+				 cmbSale->Visible = false;
+				 lblQuantityReturned->Visible = false;
+				 txtQuantityReturned->Visible = false;
+				 dateReturned->Visible = false;
+				 dateReturned->Value = DateTime::Today;
+				 btnFunction->Visible = false;
+				 txtSearchReturns->Visible = false;
+				 cmbReturns->Enabled = false;
+				 cmbSale->Enabled = false;
+				 txtQuantityReturned->Enabled = false;
+				 btnFunction->Enabled = false;
+				 dateReturned->Enabled = false;
+
+				 // reset reports tab
+				 cmbReportSelect->SelectedIndex = -1;
+				 lblReportCategorySelect->Visible = false;
+				 cmbReportCategorySelect->Visible = false;
+				 lblReportDescription->Visible = false;
+				 txtReportDescription->Visible = false;
+				 lblReportStartDate->Visible = false;
+				 dtReportStartDate->Visible = false;
+				 lblReportEndDate->Visible = false;
+				 dtReportEndDate->Visible = false;
+				 btnReportGenerate->Visible = false;
+				 dtReportStartDate->Value = DateTime::Today;
+				 dtReportEndDate->Value = DateTime::Today;
 			 }
 	};
 }
