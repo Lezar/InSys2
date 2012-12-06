@@ -287,18 +287,43 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 
 	// *** end adding all sales to total and category revenues
 
+	// strings to store information for formatting
+	string categoryInfo;
+	string revenue;
+	stringstream ssCat;
+	stringstream ssRev;
+
 	// Prepare and formate each category and their revenues and add to the revenueReport
 	for (int i = 0; i < (int) categoryIDVector.size(); i++)
 	{
 		converter.str("");
 		converter << fixed << setprecision(2) << categoryRevenueVector[i] / 10000.0;
-		revenueReport += categoryNameVector[i] + " (ID:" + categoryIDVector[i] + ") ----- $" + converter.str() + "\n";
+
+		ssCat.str("");
+		ssRev.str("");
+
+		categoryInfo = categoryNameVector[i] + " (ID:" + categoryIDVector[i] + ")";
+		ssCat << setw(40) << setiosflags(ios_base::left) << categoryInfo;
+		categoryInfo = ssCat.str();
+
+		revenue = "$" + converter.str();
+		ssRev << setw(15) << setiosflags(ios_base::right) << revenue;
+		revenue = ssRev.str();
+
+		revenueReport += categoryInfo + "\t" + revenue + "\n";
 	}
 
+	string revenueTotal;
+	stringstream ssRevTotal;
 	// Prepare the total revenue for the report
 	converter.str("");
 	converter << fixed << setprecision(2) << totalRevenue / 10000.0;
-	revenueReport += "TOTAL REVENUE ----- $" + converter.str() + "\n";
+
+	revenueTotal = "$" + converter.str();
+	ssRevTotal << setw(50) << revenueTotal;
+	revenueTotal = ssRevTotal.str();
+
+	revenueReport += "TOTAL REVENUE" + revenueTotal + "\n";
 
 	delete category;
 	delete product;
@@ -448,12 +473,18 @@ string ReportsImpl::topSellersReport(string selectedCategory, string startDate, 
 			// retrieves the product name from the row data and assigns it to productName
 			productName = resultOfSearch.substr(delimiter3+1,delimiter4-delimiter3-1);
 
+			stringstream ss;
+
+			ss << setw(40) << setfill(' ') << setiosflags(ios_base::left) << productName;
+
+			productName = ss.str();
+
 			// retrieves the product category from the row data and assigns it to productCategory
 			productCategory = resultOfSearch.substr(delimiter+1,delimiter2-delimiter-1);
 
 			if(productCategory == selectedCategory)
 			{
-				productsInCategoryVect.push_back(productID + " - " + productName + "\tQuantity Sold: " + productQuantity);
+				productsInCategoryVect.push_back(productID + "  -  " + productName + "Quantity Sold:" + productQuantity);
 			}
 
 		} catch (DoesNotExistException e){ break; }
@@ -586,7 +617,7 @@ string ReportsImpl::topSellersReport(string selectedCategory, string startDate, 
 	string report;
 
 	// create header line for the Report
-	report = "Top Selling Products Report in " + categoryName + "\r\n--------------------------------------------------------------------------------------------------------------------------\r\n";
+	report = "Top Selling Products Report in " + categoryName + "\r\n-------------------------------------------------------------------------------------\r\n";
 
 	// output the first ten products in the vector into the report string
 	for(int j = 0; j < (int) productsSorted.size() && j < 10; j++)

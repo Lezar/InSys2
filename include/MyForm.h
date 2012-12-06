@@ -1052,6 +1052,7 @@ namespace InventoryManagement {
 			this->btnSalesModifyReceipt->TabIndex = 54;
 			this->btnSalesModifyReceipt->Text = L"Modify Date";
 			this->btnSalesModifyReceipt->UseVisualStyleBackColor = true;
+
 			this->btnSalesModifyReceipt->Click += gcnew System::EventHandler(this, &MyForm::btnSalesModifyReceipt_Click);
 			// 
 			// lblsalesProductList
@@ -1108,6 +1109,7 @@ namespace InventoryManagement {
 			this->txtSalesProductDiscount->Name = L"txtSalesProductDiscount";
 			this->txtSalesProductDiscount->Size = System::Drawing::Size(100, 20);
 			this->txtSalesProductDiscount->TabIndex = 32;
+
 			this->txtSalesProductDiscount->TextChanged += gcnew System::EventHandler(this, &MyForm::txtSalesProductDiscount_TextChanged);
 			// 
 			// lblSalesProductDiscount
@@ -1137,6 +1139,7 @@ namespace InventoryManagement {
 			this->cmbSalesReceiptSelect->Size = System::Drawing::Size(491, 21);
 			this->cmbSalesReceiptSelect->TabIndex = 29;
 			this->cmbSalesReceiptSelect->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::cmbSalesReceiptSelect_SelectedIndexChanged);
+
 			// 
 			// btnSalesRemoveProduct
 			// 
@@ -1155,7 +1158,8 @@ namespace InventoryManagement {
 			this->lstSalesProductList->Name = L"lstSalesProductList";
 			this->lstSalesProductList->Size = System::Drawing::Size(344, 95);
 			this->lstSalesProductList->TabIndex = 27;
-			this->lstSalesProductList->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::lstSalesProductList_SelectedIndexChanged);
+			this->lstSalesProductList->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::lstSalesProductList_SelectedIndexChanged);this->lstSalesProductList->TabIndex = 27;
+
 			// 
 			// btnSalesAddProduct
 			// 
@@ -1173,6 +1177,7 @@ namespace InventoryManagement {
 			this->txtSalesProductQuantity->Name = L"txtSalesProductQuantity";
 			this->txtSalesProductQuantity->Size = System::Drawing::Size(100, 20);
 			this->txtSalesProductQuantity->TabIndex = 25;
+
 			this->txtSalesProductQuantity->TextChanged += gcnew System::EventHandler(this, &MyForm::txtSalesProductQuantity_TextChanged);
 			// 
 			// lblSaleProductQuantity
@@ -1488,11 +1493,11 @@ namespace InventoryManagement {
 			// dateReturned
 			// 
 			this->dateReturned->Location = System::Drawing::Point(10, 230);
+			this->dateReturned->MaxDate = System::DateTime(2999, 12, 31, 0, 0, 0, 0);
 			this->dateReturned->MinDate = System::DateTime(1901, 1, 1, 0, 0, 0, 0);
 			this->dateReturned->Name = L"dateReturned";
 			this->dateReturned->Size = System::Drawing::Size(200, 20);
 			this->dateReturned->TabIndex = 80;
-			this->dateReturned->Value = System::DateTime(2012, 12, 5, 0, 0, 0, 0);
 			this->dateReturned->Visible = false;
 			// 
 			// btnFunction
@@ -1649,6 +1654,7 @@ namespace InventoryManagement {
 			this->dtReportEndDate->Size = System::Drawing::Size(154, 20);
 			this->dtReportEndDate->TabIndex = 6;
 			this->dtReportEndDate->ValueChanged += gcnew System::EventHandler(this, &MyForm::dtReportEndDate_ValueChanged);
+
 			// 
 			// lblReportStartDate
 			// 
@@ -1846,10 +1852,6 @@ namespace InventoryManagement {
 				 cmbSalesProductSelect->Visible= false;
 				 btnSalesSearch->Visible = false;
 
-				 // Returns
-
-				 dateReturned->MaxDate = DateTime::Today;
-
 				 // Invoice: all components (except Function label and combobox selector) set to invisible
 				 lblInvoiceSelect->Visible = false;
 				 cmbInvoiceSelect->Visible = false;
@@ -1879,6 +1881,8 @@ namespace InventoryManagement {
 				 dtReportEndDate->Visible = false;
 				 btnReportGenerate->Visible = false;
 				 dtReportStartDate->MaxDate = DateTime::Today;
+
+				 dateReturned->MaxDate = DateTime::Today;
 			 }
 
 			 /// \brief Changes the visibility of certain components for the category tab based on the user selected function
@@ -3960,7 +3964,7 @@ namespace InventoryManagement {
 					 txtQuantityReturned->Enabled = true;
 					 btnFunction->Enabled = true;
 					 dateReturned->Enabled = true;
-					 
+
 
 					 PopulateSalesID();
 					 //PopulateReturnID();
@@ -5041,11 +5045,14 @@ namespace InventoryManagement {
 	private: vector<string> IDs() {
 
 				 ReportsImpl reports;
-				 string searchResult, currentRow, productID;
-				 Table summary = new Summary();		
+				 string searchResult, currentRow, productID, productReturned;
+				 Table summary = new Summary();
+				 Table product = new Product();
 				 int delimiter; // store position of delimiters
+				 int delimiter1, delimiter2, delimiter3, delimiter4;
 				 vector<string> returnVector;
 				 string quantity = "0";
+				 string product_name;
 
 				 searchResult = summary->search("total_quantity", quantity); 
 
@@ -5057,12 +5064,28 @@ namespace InventoryManagement {
 					 delimiter = currentRow.find('|');
 					 productID = currentRow.substr(0, delimiter);
 
-					 returnVector.push_back(productID);
+					 productReturned = product->search("product_id", productID);
+
+					 //find product name
+					 delimiter1 = productReturned.find("|");
+					 delimiter2 = productReturned.find("|", delimiter1 + 1);
+					 delimiter3 = productReturned.find("|", delimiter2 + 1);
+					 delimiter4 = productReturned.find("|", delimiter3 + 1);
+
+					 product_name = productReturned.substr(delimiter3 + 1, delimiter4 - delimiter3 - 1);
+
+					 product_name += " - ";
+					 product_name += productID;
+
+					 returnVector.push_back(product_name);
 					 delimiter = searchResult.find('\n');
 
 					 searchResult = searchResult.substr(delimiter + 1);
 					 currentRow = searchResult.substr(0, delimiter + 1);
 				 }  
+
+				 delete product;
+				 delete summary;
 				 return returnVector;
 			 }
 
@@ -5075,9 +5098,11 @@ namespace InventoryManagement {
 				 System::String^ category = cmbReportCategorySelect->SelectedItem->ToString();
 				 int delimiter1 = category->IndexOf("|");
 				 int delimiter2 = category->IndexOf("|", delimiter1 + 1);
+				 int delimiter3, delimiter4;
+				 string product_name;
 				 System::String^ category_id;
 				 std::string categoryID, strOutput, productID;
-				 std::string quantityReturned, ret;
+				 std::string quantityReturned, ret, productReturned;
 				 vector<string> vs;
 				 string currentRow;
 				 // Get product_id, name, and quantity
@@ -5094,13 +5119,40 @@ namespace InventoryManagement {
 					 delimiter = currentRow.find('|');
 					 productID = currentRow.substr(0, delimiter);
 					 ret = summary->search("product_id", productID);
-					 vs.push_back(ret);
+
+					 delimiter1 = ret.find('|');
+
+					 string productIDsummary = ret.substr(0,delimiter1);
+					 string productQuantity = ret.substr(delimiter1+1);
+
+					 productReturned = product->search("product_id", productID);
+
+					 //find product name
+					 delimiter1 = productReturned.find("|");
+					 delimiter2 = productReturned.find("|", delimiter1 + 1);
+					 delimiter3 = productReturned.find("|", delimiter2 + 1);
+					 delimiter4 = productReturned.find("|", delimiter3 + 1);
+
+					 product_name = productReturned.substr(delimiter3 + 1, delimiter4 - delimiter3 - 1);
+
+					 string productInfo = product_name + " - " + productIDsummary;
+
+					 stringstream ss;
+
+					 ss << setw(60) << setfill(' ') << setiosflags(ios_base::left) << productInfo;
+
+					 product_name = ss.str();
+					 product_name += "\t";
+					 product_name += productQuantity;
+
+					 vs.push_back(product_name);
 					 delimiter = quantityReturned.find('\n');
 
 					 quantityReturned = quantityReturned.substr(delimiter + 1);
 					 currentRow = quantityReturned.substr(0, delimiter + 1);
 				 }
-
+				 delete product;
+				 delete summary;
 				 return vs;
 			 }
 
@@ -5127,36 +5179,54 @@ namespace InventoryManagement {
 				 {
 				 case 0: //Out of stock report
 					 {
-						 ReportsImpl reports;
-						 Table summary = new Summary();
-						 string searchResult, currentRow;
-						 System::String^ strRawOutput;
-						 std::string str;
-						 vector<string> productID;
-						 productID = IDs();
-						 std::stringstream ss;
+						 try{
+							 ReportsImpl reports;
+							 Table summary = new Summary();
+							 string searchResult, currentRow;
+							 System::String^ strRawOutput;
+							 std::string str;
+							 vector<string> productID;
+							 productID = IDs();
+							 std::stringstream ss;
 
-						 std::copy( productID.begin(),productID.end(),std::ostream_iterator< std::string >( ss, " \r\n" "\r\n"));
+							 std::copy( productID.begin(),productID.end(),std::ostream_iterator< std::string >( ss,"\r\n"));
 
-						 str = ss.str();
+							 str = ss.str();
 
-						 strRawOutput = gcnew String (str.c_str());
-						 strOutput = "Product ID(s) that are currently out of stock:""\r\n\r\n"+"Product ID \r\n"+ strRawOutput ;
+							 strRawOutput = gcnew String (str.c_str());
+							 strOutput = "Product ID(s) that are currently out of stock\r\n_______________________________________________"
+								 "\r\n\r\n" + "Product Name - Product ID \r\n\r\n" + strRawOutput;
+						 } catch(DoesNotExistException e) {
+							 strOutput = gcnew String (e.what());
+						 }
 						 break;
 					 }
 				 case 1: //Current stock report
 					 {
-						 System::String^ reportCategory = cmbReportCategorySelect->Text->ToString();
-						 string reportCategorySelected(marshal_as<std::string>(reportCategory));
-						 vector<string> output;
-						 output = returnedIDs();
-						 std::string str;
-						 System::String^ strRawOutput;
-						 std::stringstream ss;
-						 std::copy( output.begin(),output.end(),std::ostream_iterator< std::string >( ss, " \r\n" "\r\n"));
-						 str = ss.str();
-						 strRawOutput = gcnew String (str.c_str());
-						 strOutput =  "The current quantities of existing products: ""\r\n\r\n" +"Product ID | Quantity "+"\r\n"+strRawOutput ;
+						 try{
+
+							 System::String^ reportCategory = cmbReportCategorySelect->Text->ToString();
+
+							 std::string cat = marshal_as<std::string>(reportCategory);
+							 if(reportCategory != "")
+							 {
+								 string reportCategorySelected(marshal_as<std::string>(reportCategory));
+								 vector<string> output;
+								 output = returnedIDs();
+								 std::string str;
+								 System::String^ strRawOutput;
+								 std::stringstream ss;
+								 std::copy( output.begin(),output.end(),std::ostream_iterator< std::string >( ss,"\r\n"));
+								 str = ss.str();
+								 strRawOutput = gcnew String (str.c_str());
+								 strOutput =  "The current quantities of existing products \r\n_________________________________________________________"
+									 "\r\n\r\n" +"Product Name - Product ID \t\t\t Quantity "+"\r\n\r\n"+strRawOutput;
+							 } else{
+								 MessageBox::Show("No Category Selected");
+							 }
+						 } catch(DoesNotExistException e){
+							 strOutput = gcnew String (e.what());
+						 }
 						 break;
 					 }
 				 case 2:  //Sales between date report
@@ -5172,12 +5242,12 @@ namespace InventoryManagement {
 							 //Adds a little information for the user on the report and then adds all results to strOutput
 							 strOutput += "Sales found between: " + strStartDate + " to " + strEndDate + "\r\n\r\n";
 							 strOutput += "Sales ID \t Date of Sale\r\n";
-							 strOutput += "--------------------------------------------------------\r\n";
+							 strOutput += "----------------------------\r\n";
 
 							 //Formats our output data a little for user friendliness
 							 while (strSalesReport.find('|') != string::npos)
 							 {
-								 strSalesReport.replace(strSalesReport.find('|'), 1, " \t ");
+								 strSalesReport.replace(strSalesReport.find('|'), 1, " \t\t ");
 							 }
 
 							 //Convert to a system string to display
@@ -5205,8 +5275,8 @@ namespace InventoryManagement {
 
 							 //Adds a little information for the user on the report and then adds all results to strOutput
 							 strOutput += "Returns found between: " + strStartDate + " to " + strEndDate + "\r\n\r\n";
-							 strOutput += "Return ID \t Sales ID \t\t Quantity Returned \t Date Returned\r\n";
-							 strOutput += "--------------------------------------------------------------------------------------------------------------------------------------------\r\n";
+							 strOutput += "Return ID    Sales ID    Quantity Returned     Date Returned\r\n";
+							 strOutput += "--------------------------------------------------------------\r\n";
 
 							 //Formats our output data a little for user friendliness
 							 while (strReturnsReport.find('|') != string::npos)
@@ -5298,7 +5368,7 @@ namespace InventoryManagement {
 
 						 //Format to change report look
 						 systemStringTotalRevenue = systemStringTotalRevenue->Replace
-							 ("TOTAL REVENUE", "------------------------------\r\nTOTAL REVENUE");
+							 ("TOTAL REVENUE", "----------------------------------------------------------------\r\nTOTAL REVENUE");
 
 						 // Ready output string for display
 						 strOutput += "Revenue earned from: " + strStartDate + " to " + strEndDate + "\r\n";
@@ -5306,8 +5376,6 @@ namespace InventoryManagement {
 						 strOutput += systemStringTotalRevenue;
 						 break;
 					 }
-				 case 7: 
-					 break;
 				 default:
 					 break;
 				 }

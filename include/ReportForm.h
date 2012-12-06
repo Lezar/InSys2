@@ -57,10 +57,13 @@ namespace InventoryManagement {
 			// 
 			// txtReport
 			// 
+			this->txtReport->Font = (gcnew System::Drawing::Font(L"Courier New", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
 			this->txtReport->Location = System::Drawing::Point(13, 13);
 			this->txtReport->Multiline = true;
 			this->txtReport->Name = L"txtReport";
 			this->txtReport->ReadOnly = true;
+			this->txtReport->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
 			this->txtReport->Size = System::Drawing::Size(709, 397);
 			this->txtReport->TabIndex = 0;
 			this->txtReport->TabStop = false;
