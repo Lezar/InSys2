@@ -4115,7 +4115,7 @@ namespace InventoryManagement {
 				 if (btnFunction->Text == "Add Return")
 				 {
 					 //Make sure our data is correct
-					 if (System::Text::RegularExpressions::Regex::IsMatch(txtQuantityReturned->Text, "^[0-9]*$") && txtQuantityReturned->Text != "" && System::Text::RegularExpressions::Regex::IsMatch(txtSearchValue->Text, "^[0]*") && cmbSale->SelectedIndex != -1)
+					 if (System::Text::RegularExpressions::Regex::IsMatch(txtQuantityReturned->Text, "^[0-9]*$") && txtQuantityReturned->Text != "" && !System::Text::RegularExpressions::Regex::IsMatch(txtSearchValue->Text, "^[0]*$") && cmbSale->SelectedIndex != -1)
 					 {
 
 						 //Create our return table
@@ -4189,7 +4189,7 @@ namespace InventoryManagement {
 								 MessageBox::Show("The sales_id you entered has errors!"); 
 							 }
 						 case 1:
-							 if (System::Text::RegularExpressions::Regex::IsMatch(txtSearchValue->Text, "^[0-9]*$") && txtSearchValue->Text != ""  &&  System::Text::RegularExpressions::Regex::IsMatch(txtSearchValue->Text, "^[0]*"))
+							 if (System::Text::RegularExpressions::Regex::IsMatch(txtSearchValue->Text, "^[0-9]*$") && txtSearchValue->Text != ""  &&  !System::Text::RegularExpressions::Regex::IsMatch(txtSearchValue->Text, "^[0]*$"))
 							 {
 								 ret->modifyRow(ReturnsID, ModifyColumn, ModifyValue);
 								 cmbReturnFunction->SelectedIndex = -1;
