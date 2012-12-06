@@ -4126,7 +4126,7 @@ namespace InventoryManagement {
 				 if (btnFunction->Text == "Add Return")
 				 {
 					 //Make sure our data is correct
-					 if (System::Text::RegularExpressions::Regex::IsMatch(txtQuantityReturned->Text, "^[0-9]*$") && txtQuantityReturned->Text != "" && !System::Text::RegularExpressions::Regex::IsMatch(txtSearchValue->Text, "^[0]*$") && cmbSale->SelectedIndex != -1)
+					 if (System::Text::RegularExpressions::Regex::IsMatch(txtQuantityReturned->Text, "^[0-9]*$") && txtQuantityReturned->Text != "" && !System::Text::RegularExpressions::Regex::IsMatch(txtQuantityReturned->Text, "^[0]*$") && cmbSale->SelectedIndex != -1)
 					 {
 
 						 //Create our return table
