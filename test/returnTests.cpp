@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "../InventoryManagement/Returns.h"
+#include "Returns.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace std;

@@ -8,12 +8,12 @@
 #include "Summary.h"
 #include "Orders.h"
 #include "Sales.h"
-#include <sstream>
-#include <iterator>
 #include "Receipt.h"
 #include "SalesSummary.h"
 #include "ReportForm.h"
 #include "ReportsImpl.h"
+#include <sstream>
+#include <iterator>
 #include <msclr/marshal.h>
 #include <msclr/marshal_cppstd.h>
 #include <regex>
@@ -37,7 +37,7 @@ namespace InventoryManagement {
 	/// - Using TableInterface concrete classes to manage and interact with the database
 	/// - Creating a GUI for the user to interact with
 	/// - Error checking to prevent the user from inputting invalid information
-	/// - 
+	/// - Displaying reports reports in a separate form
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
 	public:
@@ -193,6 +193,9 @@ namespace InventoryManagement {
 				 delete product;
 			 }
 
+			 /// \brief populates lstSalesProductList with the selected receipts's items
+			 ///
+			 /// \pre valid Receipt is currently selected
 	private: void populateSalesProductList() {
 
 				 // clear Product List
@@ -3186,6 +3189,7 @@ namespace InventoryManagement {
 				 }
 			 }
 
+			 /// \brief enables quantity and discont textboxes, and error checks for proper input in those textboxes
 	private: System::Void cmbSalesProductSelect_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 				 if (cmbSalesFunction->SelectedIndex == 0 )
 				 {
@@ -3249,7 +3253,7 @@ namespace InventoryManagement {
 					 btnSalesAddProduct->Enabled = false;
 			 }
 
-			 /// \brief Ensures that AddProduct and modify Invoice button is disabled if user input is not numeric
+			 /// \brief Ensures that AddProduct and modify Sales button is disabled if quantity input is not numeric, empty, or 0's
 	private: System::Void txtSalesProductQuantity_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 
 				 // Enable AddProduct only if ProductQuantity text is numeric and non-empty and non-zero
@@ -3277,6 +3281,7 @@ namespace InventoryManagement {
 
 			 }
 
+			 /// \brief Ensures that AddProduct and modify Sales button is disabled if discount input is not numeric, empty or 00
 	private: System::Void txtSalesProductDiscount_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 
 				 // Enable AddProduct only if Product discount text is two digits and not 00
@@ -4828,7 +4833,6 @@ namespace InventoryManagement {
 
 			 }
 
-
 			 /// \brief selects the product and fills the quantity text box with product and quantity of selected invoice item
 	private: System::Void lstInvoiceProductList_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 
@@ -5162,6 +5166,9 @@ namespace InventoryManagement {
 				 return vs;
 			 }
 
+			 /// \brief generate reports depending on which report type is selected
+			 ///
+			 /// Brings up new form, ReportForm, to display reports
 	private: System::Void btnReportGenerate_Click(System::Object^  sender, System::EventArgs^  e) {
 
 
@@ -5398,6 +5405,8 @@ namespace InventoryManagement {
 	private: System::Void dtReportEndDate_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 				 dtReportStartDate->MaxDate = dtReportEndDate->Value;
 			 }
+
+			 /// \brief resets each tab when that tab is selected
 	private: System::Void tbInventorySystem_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 
 				 // reset category tab

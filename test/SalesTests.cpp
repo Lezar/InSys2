@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "../InventoryManagement/Sales.h"
+#include "Sales.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace std;

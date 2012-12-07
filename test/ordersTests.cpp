@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "../InventoryManagement/Orders.h"
+#include "Orders.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

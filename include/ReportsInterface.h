@@ -19,7 +19,9 @@
 /// \brief A class to create various reports on the Inventory Management database
 ///
 /// Responsibilities include:
-/// - Reporting the total revenue and revenue earned by each catagory in the database
+/// - Reporting the total revenue between dates and revenue earned by each catagory in the database
+/// - Reporting top sellers in a category between dates
+/// - Reporting sales, invoices, and returns between dates
 class ReportsInterface {
 public:
 
@@ -48,8 +50,9 @@ public:
 	/// \brief returns all rows found between two dates using our findIDsBetweenDates function for given table
 	///
 	/// \pre wrote before findIDsBetweenDates
-	/// \param[in] table is a Table for the required search
-	/// \param[in] IDs is a vector of IDs found by our findIDsBetweenDates function
+	/// \param[in] tblTableToReport is a Table for the required search
+	/// \param[in] startDate is a string of form "YYYY-MM-DD" representing the beginning of the time range
+	/// \param[in] endDate is a string of form "YYYY-MM-DD" representing the end of the time range
 	/// \param[in] strColToSearch is the column name of the table that holds the ID
 	/// \return a string of all sales between the two given dates
 	/// \throw DoesNotExistException if nothing exists between those dates

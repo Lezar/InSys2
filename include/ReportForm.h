@@ -9,9 +9,11 @@ namespace InventoryManagement {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	/// <summary>
-	/// Summary for ReportForm
-	/// </summary>
+	/// \brief Windows Form class to display reports
+	///
+	/// Responsibilities include:
+	/// - Displaying reports
+	/// - Exiting displayed reports
 	public ref class ReportForm : public System::Windows::Forms::Form
 	{
 	public:
@@ -93,6 +95,8 @@ namespace InventoryManagement {
 
 		}
 #pragma endregion
+
+		/// \brief closes the report form when Done button is clicked
 	private: System::Void btnReportDone_Click(System::Object^  sender, System::EventArgs^  e) {
 				 this->Close();
 			 }

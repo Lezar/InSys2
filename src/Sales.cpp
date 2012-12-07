@@ -4,11 +4,11 @@
 
 
 
-/// \brief Add function to insert data into the category text file
-/// 
-/// \param[in] addVector is a vector of strings for the data to be entered
-/// \return returns a string to notify the user whether the add was successful or not
-/// \throw AlreadyExistsException when trying to add a primary key that already exists
+// brief Add function to insert data into the category text file
+//
+// param[in] addVector is a vector of strings for the data to be entered
+// return returns a string to notify the user whether the add was successful or not
+// throw AlreadyExistsException when trying to add a primary key that already exists
 void Sales :: add(vector<string> addVector)throw(AlreadyExistsException)
 {
 	string rowReceive;
@@ -77,14 +77,14 @@ void Sales :: add(vector<string> addVector)throw(AlreadyExistsException)
 	}
 }
 
-/// \brief Search function to find a specific row of data and return it as a string
-///
-/// \param[in] columnName identifies the name of the column to be searched
-/// \param[in] valueToFind identifies the value to be searched for in the column
-/// \return a string which contains a concatenation of all values in the row found in the database table
-///         if multiple values exist, return all rows with that value, where
-///         each row is separated by a new line
-/// \throw DoesNotExistException when trying to find a row that doesn't exist
+// brief Search function to find a specific row of data and return it as a string
+// 
+// param[in] columnName identifies the name of the column to be searched
+// param[in] valueToFind identifies the value to be searched for in the column
+// return a string which contains a concatenation of all values in the row found in the database table
+//         if multiple values exist, return all rows with that value, where
+//         each row is separated by a new line
+// throw DoesNotExistException when trying to find a row that doesn't exist
 string Sales :: search(string columnName, string valueToFind)throw (DoesNotExistException)
 {
 	bool resultFound = false;
@@ -189,15 +189,14 @@ string Sales :: search(string columnName, string valueToFind)throw (DoesNotExist
 	}
 
 
-/// \brief Modify function to change the data in a given row
-///
-/// Modification will be done by finding a matching value by searching for valueToFind
-/// in the primary key column of the table
-/// \pre Row exists. This will be checked by the main program beforehand
-/// \param[in] valueToFind identifies the value to be searched for in the primary key
-/// \param[in] columnNameToModify identifies the column to change data for
-/// \prama[in] valueOfModify provides the new data for the desired column
-
+// brief Modify function to change the data in a given row
+// 
+// Modification will be done by finding a matching value by searching for valueToFind
+// in the primary key column of the table
+// pre Row exists. This will be checked by the main program beforehand
+// param[in] valueToFind identifies the value to be searched for in the primary key
+// param[in] columnNameToModify identifies the column to change data for
+// prama[in] valueOfModify provides the new data for the desired column
 void Sales :: modifyRow(string valueToFind, string columnNameToModify, string valueOfModify)
 {
 	string rowReceive;
@@ -278,12 +277,12 @@ void Sales :: modifyRow(string valueToFind, string columnNameToModify, string va
 
 }
 
-/// \brief DeleteRow function to find a specific row of data and remove it from the file
-///
-/// Deletion will by done by finding the a matching value by searching for valueToFind
-/// in the primary key column of the table 
-/// \pre Row exists. This will be checked by the main program beforehand
-/// \param[in] valueToFind identifies the value to be searched for in the primary key column
+// brief DeleteRow function to find a specific row of data and remove it from the file
+//
+// Deletion will by done by finding the a matching value by searching for valueToFind
+// in the primary key column of the table 
+// pre Row exists. This will be checked by the main program beforehand
+// param[in] valueToFind identifies the value to be searched for in the primary key column
 void Sales :: deleteRow(string valueToFind)
 {
 	// vector to store values except the one to be deleted

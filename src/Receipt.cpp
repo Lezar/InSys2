@@ -2,8 +2,7 @@
 #include "DoesNotExistException.h"
 #include "AlreadyExistsException.h"
 
-
-/// Add function to insert data into the receipt text file
+// Add function to insert data into the receipt text file
 void Receipt::add(vector<string> addVector) throw(AlreadyExistsException) {
 
 	ifstream inputfile; // ifstream to be used to read receipt.txt

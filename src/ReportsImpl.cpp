@@ -190,14 +190,14 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 		currentRow = searchResult.substr(0, delimiter1 + 1);
 	} // end while loop of finding all category name and ID's
 
-	/// *** end of storing category names and ID's into vectors
+	// *** end of storing category names and ID's into vectors
 
 	// find all the rows in SalesSummary that correspond to the receipt ID's in IDVector
 	// and concatenate them into salesSummaryResults
 	for (int i = 0; i < (int) IDVector.size(); i++)
 		salesSummaryResults += salesSummary->search("receiptID", IDVector[i]);
 
-	/// *** find all the sales of the receipt and concatenate the results to string allSalesResults
+	// *** find all the sales of the receipt and concatenate the results to string allSalesResults
 
 	// get the first row of the search result in salesSummary
 	delimiter1 = salesSummaryResults.find('\n');
@@ -221,9 +221,9 @@ string ReportsImpl::totalRevenueReport(string startDate, string endDate) throw (
 		currentRow = salesSummaryResults.substr(0, delimiter1 + 1);
 	} // end while to break down salesSummaryResults
 
-	/// *** end finding all the sales items
+	// *** end finding all the sales items
 
-	/// *** Add all the sales items to category and total revenue
+	// *** Add all the sales items to category and total revenue
 
 
 	// get the first row of the all the sales results
@@ -639,7 +639,7 @@ string ReportsImpl::reportBetweenDates(Table tblTableToReport, string startDate,
 	{
 		IDs = findIDsBetweenDates(tblTableToReport, startDate, endDate);
 
-		for (int i = 0; i < IDs.size(); i++)
+		for (int i = 0; i < (int) IDs.size(); i++)
 		{
 
 			strReportsFound += tblTableToReport->search(strColToSearch, IDs[i]) + "\r\n";

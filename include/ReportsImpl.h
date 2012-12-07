@@ -8,7 +8,10 @@
 ///
 /// Responsibilities include:
 /// - Convert string to time_t object
-/// - Reporting the total revenue and revenue earned by each catagory in the database
+/// - Retrieving a vector of ID's between dates
+/// - Reporting the total revenue betwee dates and revenue earned by each catagory in the database
+/// - Reporting top sellers in a category between dates
+/// - Reporting sales, invoices, and returns between dates
 class ReportsImpl : public ReportsInterface {
 
 public:
@@ -16,7 +19,7 @@ public:
 	/// \brief converts a String of the form YYYY-MM-DD to time_t
 	///
 	/// \pre string is always of the form YYYY-MM-DD
-	/// \param[in] date is a string of the form YYYY-MM-DD
+	/// \param[in] dateString is a string of the form YYYY-MM-DD
 	/// \return a time_t object representing the date of the converted date string
 	time_t convertStringToDate(string dateString);
 
@@ -33,14 +36,6 @@ public:
 
 	string totalRevenueReport(string startDate, string endDate) throw (DoesNotExistException);
 
-	/// \brief returns all rows found between two dates using our findIDsBetweenDates function for given table
-	///
-	/// \pre wrote before findIDsBetweenDates
-	/// \param[in] table is a Table for the required search
-	/// \param[in] IDs is a vector of IDs found by our findIDsBetweenDates function
-	/// \param[in] strColToSearch is the column name of the table that holds the ID
-	/// \return a string of all sales between the two given dates
-	/// \throw DoesNotExistException if nothing exists between those dates
 	string reportBetweenDates(Table tblTableToReport, string startDate, string endDate, string strColToSearch) throw (DoesNotExistException);
 
 	string topSellersReport(string selectedCategory, string startDate, string endDate);
